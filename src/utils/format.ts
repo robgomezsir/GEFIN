@@ -17,6 +17,6 @@ export const capitalize = (str: string) => {
 };
 
 export const MESES = [
-    'janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho',
+    'janeiro', 'fevereiro', 'marco', 'abril', 'maio', 'junho',
     'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro'
 ];

@@ -52,6 +52,7 @@ export const TrendChart = ({ data }: TrendChartProps) => {
                         axisLine={false}
                         tickLine={false}
                         tick={{ fontSize: 10, fontWeight: 600, fill: '#94a3b8' }}
+                        interval={0}
                         dy={10}
                     />
                     <YAxis
