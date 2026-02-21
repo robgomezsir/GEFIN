@@ -3,7 +3,7 @@
 import * as React from 'react';
 import { Button, Input, Card } from '@/components/ui/base';
 import { useCategories } from '@/hooks/useCategories';
-import { ChevronLeft, Plus, Trash2, Settings as SettingsIcon, Wallet, Tags, Target, RefreshCw, ChevronDown } from 'lucide-react';
+import { ChevronLeft, Plus, Trash2, Settings as SettingsIcon, Wallet, Tags, Target, RefreshCw, ChevronDown, AlertTriangle } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { CATEGORIAS_DESPESA, TIPOS_RECEITA, CONTAS_POR_CATEGORIA } from '@/utils/constants';
 import { cn } from '@/utils/cn';
@@ -35,6 +35,11 @@ export const Settings = ({ onBack }: SettingsProps) => {
     const [expandedDespesas, setExpandedDespesas] = React.useState(true);
     const [expandedReceitas, setExpandedReceitas] = React.useState(true);
     const [expandedCategories, setExpandedCategories] = React.useState<Record<number, boolean>>({});
+    const [confirmDelete, setConfirmDelete] = React.useState<{
+        id: number;
+        nome: string;
+        type: 'category' | 'subcategory' | 'incomeType';
+    } | null>(null);
 
     const toggleCategory = (id: number) => {
         setExpandedCategories(prev => ({ ...prev, [id]: !prev[id] }));
@@ -149,6 +154,22 @@ export const Settings = ({ onBack }: SettingsProps) => {
         setNewSub(prev => ({ ...prev, [catId]: '' }));
     };
 
+    const onConfirmDelete = async () => {
+        if (!confirmDelete) return;
+
+        try {
+            if (confirmDelete.type === 'category') {
+                await deleteCategory(confirmDelete.id);
+            } else if (confirmDelete.type === 'subcategory') {
+                await deleteSubcategory(confirmDelete.id);
+            } else if (confirmDelete.type === 'incomeType') {
+                await deleteIncomeType(confirmDelete.id);
+            }
+        } finally {
+            setConfirmDelete(null);
+        }
+    };
+
     return (
         <div className="space-y-8 p-4 md:p-8 max-w-4xl mx-auto animate-in slide-in-from-right duration-500">
             <header className="flex items-center gap-4 mb-8">
@@ -248,7 +269,7 @@ export const Settings = ({ onBack }: SettingsProps) => {
                                                 <Button
                                                     variant="ghost"
                                                     size="sm"
-                                                    onClick={() => deleteCategory(cat.id)}
+                                                    onClick={() => setConfirmDelete({ id: cat.id, nome: cat.nome, type: 'category' })}
                                                     className="text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-900/10 rounded-xl transition-colors"
                                                 >
                                                     <Trash2 size={18} />
@@ -263,7 +284,7 @@ export const Settings = ({ onBack }: SettingsProps) => {
                                                             <div key={sub.id} className="flex items-center justify-between group/sub py-1">
                                                                 <span className="text-sm font-medium text-slate-600 dark:text-slate-400">{sub.nome}</span>
                                                                 <button
-                                                                    onClick={() => deleteSubcategory(sub.id)}
+                                                                    onClick={() => setConfirmDelete({ id: sub.id, nome: sub.nome, type: 'subcategory' })}
                                                                     className="text-rose-400 opacity-0 group-hover/sub:opacity-100 transition-opacity hover:text-rose-600"
                                                                 >
                                                                     <Plus size={14} className="rotate-45" />
@@ -336,7 +357,7 @@ export const Settings = ({ onBack }: SettingsProps) => {
                                             <Button
                                                 variant="ghost"
                                                 size="sm"
-                                                onClick={() => deleteIncomeType(inc.id)}
+                                                onClick={() => setConfirmDelete({ id: inc.id, nome: inc.nome, type: 'incomeType' })}
                                                 className="text-rose-500 opacity-0 group-hover:opacity-100 transition-all hover:bg-rose-50 dark:hover:bg-rose-900/10 rounded-xl"
                                             >
                                                 <Trash2 size={16} />
@@ -349,6 +370,42 @@ export const Settings = ({ onBack }: SettingsProps) => {
                     )}
                 </section>
             </div>
+
+            {/* Modal de Confirmação */}
+            {confirmDelete && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-300">
+                    <Card className="w-full max-w-sm p-6 shadow-2xl border-slate-200 dark:border-slate-800 animate-in zoom-in-95 duration-200">
+                        <div className="flex flex-col items-center text-center space-y-4">
+                            <div className="w-16 h-16 rounded-full bg-rose-100 dark:bg-rose-900/30 flex items-center justify-center text-rose-600 dark:text-rose-400">
+                                <AlertTriangle size={32} />
+                            </div>
+                            <div>
+                                <h3 className="text-xl font-bold text-slate-900 dark:text-white">Confirmar Exclusão?</h3>
+                                <p className="text-slate-500 dark:text-slate-400 mt-2 text-sm leading-relaxed">
+                                    Você está prestes a excluir <span className="font-bold text-slate-900 dark:text-white">"{confirmDelete.nome}"</span>.
+                                    Esta ação não pode ser desfeita e pode afetar transações já existentes.
+                                </p>
+                            </div>
+                            <div className="flex gap-3 w-full pt-4">
+                                <Button
+                                    variant="ghost"
+                                    onClick={() => setConfirmDelete(null)}
+                                    className="flex-1 rounded-xl h-12"
+                                >
+                                    Cancelar
+                                </Button>
+                                <Button
+                                    variant="danger"
+                                    onClick={onConfirmDelete}
+                                    className="flex-1 rounded-xl h-12 bg-rose-600 hover:bg-rose-700"
+                                >
+                                    Excluir
+                                </Button>
+                            </div>
+                        </div>
+                    </Card>
+                </div>
+            )}
         </div>
     );
 };
