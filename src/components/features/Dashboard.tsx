@@ -7,7 +7,7 @@ import { TransactionList } from './TransactionList';
 import { Button, Input, Card } from '@/components/ui/base';
 import { cn } from '@/utils/cn';
 import { MESES } from '@/utils/format';
-import { TrendingUp, TrendingDown, Wallet, ArrowRightLeft, Plus, Settings as SettingsIcon, LogOut, ChevronLeft, ChevronRight, FileText, BarChart3, PieChart as PieIcon, Target, Sun, Moon } from "lucide-react";
+import { TrendingUp, TrendingDown, Wallet, ArrowRightLeft, Plus, Settings as SettingsIcon, LogOut, ChevronLeft, ChevronRight, FileText, BarChart3, PieChart as PieIcon, Target, Sun, Moon, Menu, X } from "lucide-react";
 import { useFinanceData } from '@/hooks/useFinanceData';
 import { useAnnualData } from '@/hooks/useAnnualData';
 import { TrendChart, CategoryChart } from './FinancialCharts';
@@ -23,6 +23,7 @@ export const Dashboard = () => {
     const [isFormOpen, setIsFormOpen] = React.useState(false);
     const [isSettingsOpen, setIsSettingsOpen] = React.useState(false);
     const [isReportsOpen, setIsReportsOpen] = React.useState(false);
+    const [isMenuOpen, setIsMenuOpen] = React.useState(false);
     const [editingTransaction, setEditingTransaction] = React.useState<Transacao | null>(null);
 
     const mesNome = MESES[currentMonth];
@@ -125,39 +126,80 @@ export const Dashboard = () => {
                     <p className="text-slate-500 dark:text-slate-400 font-medium">Controle financeiro pessoal e familiar</p>
                 </div>
 
-                <div className="flex items-center gap-4">
-                    <div className="flex items-center gap-2 bg-white/80 backdrop-blur-md p-1.5 rounded-2xl shadow-xl shadow-slate-200/50 border border-slate-100 dark:bg-slate-900/80 dark:border-slate-800 dark:shadow-none">
-                        <Button variant="ghost" size="sm" onClick={handlePrevMonth} className="hover:bg-slate-100 rounded-xl">
-                            <ChevronLeft size={22} className="text-slate-600 dark:text-slate-400" />
+                <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-1.5 bg-white/80 backdrop-blur-md p-1.5 rounded-2xl shadow-xl shadow-slate-200/50 border border-slate-100 dark:bg-slate-900/80 dark:border-slate-800 dark:shadow-none">
+                        <Button variant="ghost" size="sm" onClick={handlePrevMonth} className="h-10 w-10 p-0 rounded-xl">
+                            <ChevronLeft size={20} className="text-slate-600 dark:text-slate-400" />
                         </Button>
-                        <div className="min-w-[160px] text-center flex flex-col">
-                            <span className="text-xs font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-widest">
+                        <div className="min-w-[120px] text-center flex flex-col">
+                            <span className="text-[10px] font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-widest">
                                 {currentYear}
                             </span>
-                            <span className="text-lg font-black text-slate-800 dark:text-slate-100 uppercase leading-none">
+                            <span className="text-base font-black text-slate-800 dark:text-slate-100 uppercase leading-none">
                                 {mesNome}
                             </span>
                         </div>
-                        <Button variant="ghost" size="sm" onClick={handleNextMonth} className="hover:bg-slate-100 rounded-xl">
-                            <ChevronRight size={22} className="text-slate-600 dark:text-slate-400" />
+                        <Button variant="ghost" size="sm" onClick={handleNextMonth} className="h-10 w-10 p-0 rounded-xl">
+                            <ChevronRight size={20} className="text-slate-600 dark:text-slate-400" />
                         </Button>
                     </div>
 
-                    <Button variant="secondary" size="md" onClick={() => setIsReportsOpen(true)} className="h-14 w-14 p-0 rounded-2xl shadow-lg border-none bg-white dark:bg-slate-800 hover:scale-105 active:scale-95 transition-all">
-                        <FileText size={22} className="text-slate-600 dark:text-slate-400" />
-                    </Button>
+                    {/* Menu Hamburguer para Mobile e Tablet */}
+                    <div className="relative">
+                        <Button
+                            variant="secondary"
+                            size="md"
+                            onClick={() => setIsMenuOpen(!isMenuOpen)}
+                            className="h-12 w-12 p-0 rounded-2xl shadow-lg border-none bg-white dark:bg-slate-800 hover:scale-105 active:scale-95 transition-all lg:hidden"
+                        >
+                            {isMenuOpen ? <X size={22} className="text-slate-600 dark:text-slate-400" /> : <Menu size={22} className="text-slate-600 dark:text-slate-400" />}
+                        </Button>
 
-                    <Button variant="secondary" size="md" onClick={() => setIsSettingsOpen(true)} className="h-14 w-14 p-0 rounded-2xl shadow-lg border-none bg-white dark:bg-slate-800 hover:scale-105 active:scale-95 transition-all">
-                        <SettingsIcon size={22} className="text-slate-600 dark:text-slate-400" />
-                    </Button>
+                        {/* Dropdown Menu */}
+                        {isMenuOpen && (
+                            <>
+                                <div className="fixed inset-0 z-40 lg:hidden" onClick={() => setIsMenuOpen(false)} />
+                                <div className="absolute right-0 mt-3 w-56 py-2 bg-white dark:bg-slate-900 rounded-3xl shadow-2xl border border-slate-100 dark:border-slate-800 z-50 lg:hidden animate-in fade-in zoom-in-95 duration-200 origin-top-right">
+                                    <button onClick={() => { setIsReportsOpen(true); setIsMenuOpen(false); }} className="w-full flex items-center gap-3 px-6 py-4 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors text-slate-700 dark:text-slate-300">
+                                        <FileText size={20} className="text-blue-500" />
+                                        <span className="font-bold">Relatórios</span>
+                                    </button>
+                                    <button onClick={() => { setIsSettingsOpen(true); setIsMenuOpen(false); }} className="w-full flex items-center gap-3 px-6 py-4 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors text-slate-700 dark:text-slate-300">
+                                        <SettingsIcon size={20} className="text-slate-500" />
+                                        <span className="font-bold">Configurações</span>
+                                    </button>
+                                    <button onClick={() => { toggleTheme(); setIsMenuOpen(false); }} className="w-full flex items-center gap-3 px-6 py-4 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors text-slate-700 dark:text-slate-300">
+                                        {theme === 'light' ? <Moon size={20} className="text-amber-500" /> : <Sun size={20} className="text-blue-400" />}
+                                        <span className="font-bold">{theme === 'light' ? 'Modo Escuro' : 'Modo Claro'}</span>
+                                    </button>
+                                    <div className="h-px bg-slate-100 dark:bg-slate-800 my-2 mx-4" />
+                                    <button onClick={() => { handleLogout(); setIsMenuOpen(false); }} className="w-full flex items-center gap-3 px-6 py-4 hover:bg-rose-50 dark:hover:bg-rose-900/10 transition-colors text-rose-600 dark:text-rose-400">
+                                        <LogOut size={20} />
+                                        <span className="font-bold">Sair</span>
+                                    </button>
+                                </div>
+                            </>
+                        )}
+                    </div>
 
-                    <Button variant="secondary" size="md" onClick={toggleTheme} className="h-14 w-14 p-0 rounded-2xl shadow-lg border-none bg-white dark:bg-slate-800 hover:scale-105 active:scale-95 transition-all text-amber-500 dark:text-blue-400">
-                        {theme === 'light' ? <Moon size={22} /> : <Sun size={22} />}
-                    </Button>
+                    {/* Desktop Actions (Visíveis apenas em LG+) */}
+                    <div className="hidden lg:flex items-center gap-3">
+                        <Button variant="secondary" size="md" onClick={() => setIsReportsOpen(true)} className="h-12 w-12 p-0 rounded-2xl shadow-lg border-none bg-white dark:bg-slate-800 hover:scale-105 active:scale-95 transition-all">
+                            <FileText size={22} className="text-slate-600 dark:text-slate-400" />
+                        </Button>
 
-                    <Button variant="secondary" size="md" onClick={handleLogout} className="h-14 w-14 p-0 rounded-2xl shadow-lg border-none bg-white dark:bg-slate-800 hover:scale-105 active:scale-95 transition-all">
-                        <LogOut size={22} className="text-slate-600 dark:text-slate-400" />
-                    </Button>
+                        <Button variant="secondary" size="md" onClick={() => setIsSettingsOpen(true)} className="h-12 w-12 p-0 rounded-2xl shadow-lg border-none bg-white dark:bg-slate-800 hover:scale-105 active:scale-95 transition-all">
+                            <SettingsIcon size={22} className="text-slate-600 dark:text-slate-400" />
+                        </Button>
+
+                        <Button variant="secondary" size="md" onClick={toggleTheme} className="h-12 w-12 p-0 rounded-2xl shadow-lg border-none bg-white dark:bg-slate-800 hover:scale-105 active:scale-95 transition-all">
+                            {theme === 'light' ? <Moon size={22} className="text-amber-500" /> : <Sun size={22} className="text-blue-400" />}
+                        </Button>
+
+                        <Button variant="secondary" size="md" onClick={handleLogout} className="h-12 w-12 p-0 rounded-2xl shadow-lg border-none bg-white dark:bg-slate-800 hover:scale-105 active:scale-95 transition-all">
+                            <LogOut size={22} className="text-slate-600 dark:text-slate-400" />
+                        </Button>
+                    </div>
                 </div>
             </header>
 
