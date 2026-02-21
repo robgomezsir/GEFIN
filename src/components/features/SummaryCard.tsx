@@ -2,12 +2,13 @@ import * as React from 'react';
 import { Card } from '@/components/ui/base';
 import { formatCurrency } from '@/utils/format';
 import { cn } from '@/utils/cn';
-import { TrendingUp, TrendingDown, Wallet, ArrowRightLeft, Plus } from 'lucide-react';
+import { TrendingUp, TrendingDown, Wallet, ArrowRightLeft, Plus, Target } from 'lucide-react';
 
 interface SummaryCardProps {
     title: string;
     value: number;
-    type: 'receita' | 'despesa' | 'fluxo' | 'saldo';
+    type: 'receita' | 'despesa' | 'fluxo' | 'saldo' | 'disponibilidade';
+    percent?: number;
     className?: string;
 }
 
@@ -16,6 +17,7 @@ const icons = {
     despesa: <TrendingDown className="text-rose-500" size={24} />,
     fluxo: <ArrowRightLeft className="text-blue-500" size={24} />,
     saldo: <Wallet className="text-violet-500" size={24} />,
+    disponibilidade: <Target className="text-indigo-500" size={24} />,
 };
 
 const colors = {
@@ -23,9 +25,10 @@ const colors = {
     despesa: "border-rose-200 bg-rose-50/70 dark:border-rose-500/20 dark:bg-rose-500/5",
     fluxo: "border-blue-200 bg-blue-50/70 dark:border-blue-500/20 dark:bg-blue-500/5",
     saldo: "border-indigo-200 bg-indigo-50/70 dark:border-indigo-500/20 dark:bg-indigo-500/5",
+    disponibilidade: "border-indigo-200 bg-indigo-50/70 dark:border-indigo-500/20 dark:bg-indigo-500/5",
 };
 
-export const SummaryCard = ({ title, value, type, className }: SummaryCardProps) => {
+export const SummaryCard = ({ title, value, type, percent, className }: SummaryCardProps) => {
     const [isExpanded, setIsExpanded] = React.useState(false);
 
     return (
@@ -46,18 +49,36 @@ export const SummaryCard = ({ title, value, type, className }: SummaryCardProps)
                     {icons[type]}
                 </div>
 
-                <p className="mt-2 text-xs font-bold text-slate-500 dark:text-slate-400 capitalize tracking-wider">
+                <p className="mt-1 text-xs font-bold text-slate-500 dark:text-slate-400 capitalize tracking-wider">
                     {title}
                 </p>
 
                 <div className={cn(
                     "grid transition-all duration-300 ease-in-out",
-                    isExpanded ? "grid-rows-[1fr] opacity-100 mt-2" : "grid-rows-[0fr] opacity-0"
+                    isExpanded ? "grid-rows-[1fr] opacity-100 mt-1" : "grid-rows-[0fr] opacity-0"
                 )}>
-                    <div className="overflow-hidden">
-                        <h3 className="text-xl font-bold tracking-tight text-slate-900 dark:text-white">
-                            {formatCurrency(value)}
+                    <div className="overflow-hidden flex flex-col items-center">
+                        <h3 className="text-xl font-black tracking-tight text-slate-900 dark:text-white">
+                            {type === 'disponibilidade' && percent !== undefined ? `${percent.toFixed(0)}%` : formatCurrency(value)}
                         </h3>
+
+                        {type === 'disponibilidade' && percent !== undefined && (
+                            <div className="w-24 h-1.5 bg-slate-200 dark:bg-slate-800 rounded-full mt-2 overflow-hidden">
+                                <div
+                                    className={cn(
+                                        "h-full rounded-full transition-all duration-1000",
+                                        percent > 20 ? "bg-indigo-500" : "bg-rose-500"
+                                    )}
+                                    style={{ width: `${Math.min(100, Math.max(0, percent))}%` }}
+                                />
+                            </div>
+                        )}
+
+                        {type === 'disponibilidade' && isExpanded && (
+                            <span className="text-[10px] font-bold text-slate-400 mt-1">
+                                {formatCurrency(value)} livre
+                            </span>
+                        )}
                     </div>
                 </div>
             </div>

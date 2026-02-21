@@ -7,7 +7,7 @@ import { TransactionList } from './TransactionList';
 import { Button, Input, Card } from '@/components/ui/base';
 import { cn } from '@/utils/cn';
 import { MESES } from '@/utils/format';
-import { ChevronLeft, ChevronRight, Plus, LogOut, User, BarChart3, PieChart as PieIcon, Settings as SettingsIcon, FileText, Sun, Moon } from 'lucide-react';
+import { TrendingUp, TrendingDown, Wallet, ArrowRightLeft, Plus, Settings as SettingsIcon, LogOut, ChevronLeft, ChevronRight, FileText, BarChart3, PieChart as PieIcon, Target, Sun, Moon } from "lucide-react";
 import { useFinanceData } from '@/hooks/useFinanceData';
 import { useAnnualData } from '@/hooks/useAnnualData';
 import { TrendChart, CategoryChart } from './FinancialCharts';
@@ -110,7 +110,9 @@ export const Dashboard = () => {
         despesas: resumo?.total_despesas ?? 0,
         fluxo: resumo?.fluxo_caixa ?? 0,
         saldo: saldoTotal,
-        percentualDisponivel: rendaPrevista > 0 ? ((rendaPrevista - (resumo?.total_despesas ?? 0)) / rendaPrevista) * 100 : 0
+        disponivelValor: (rendaPrevista > 0 ? rendaPrevista : (resumo?.total_receitas ?? 0)) - (resumo?.total_despesas ?? 0),
+        percentualDisponivel: rendaPrevista > 0 ? ((rendaPrevista - (resumo?.total_despesas ?? 0)) / rendaPrevista) * 100 :
+            (resumo?.total_receitas ?? 0) > 0 ? (((resumo?.total_receitas ?? 0) - (resumo?.total_despesas ?? 0)) / (resumo?.total_receitas ?? 0)) * 100 : 0
     };
 
     return (
@@ -173,23 +175,13 @@ export const Dashboard = () => {
                     <SummaryCard title="Despesas" value={data.despesas} type="despesa" className="snap-center" />
                     <SummaryCard title="Fluxo" value={data.fluxo} type="fluxo" className="snap-center" />
                     <SummaryCard title="Acumulado" value={data.saldo} type="saldo" className="snap-center" />
-                    <Card className="flex flex-col justify-center p-6 border-slate-100 dark:border-slate-800 bg-indigo-50/30 dark:bg-indigo-900/10 snap-center min-w-[200px] sm:min-w-0">
-                        <span className="text-xs font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-widest mb-1">Disponibilidade</span>
-                        <div className="flex items-end gap-2">
-                            <span className="text-2xl font-black text-slate-900 dark:text-white leading-none">
-                                {data.percentualDisponivel.toFixed(0)}%
-                            </span>
-                        </div>
-                        <div className="w-full h-1.5 bg-slate-200 dark:bg-slate-800 rounded-full mt-3 overflow-hidden">
-                            <div
-                                className={cn(
-                                    "h-full rounded-full transition-all duration-1000",
-                                    data.percentualDisponivel > 20 ? "bg-indigo-500" : "bg-rose-500"
-                                )}
-                                style={{ width: `${Math.min(100, Math.max(0, data.percentualDisponivel))}%` }}
-                            />
-                        </div>
-                    </Card>
+                    <SummaryCard
+                        title="Disponível"
+                        value={data.disponivelValor}
+                        percent={data.percentualDisponivel}
+                        type="disponibilidade"
+                        className="snap-center"
+                    />
                 </div>
                 {/* Indicador de scroll lateral visível apenas em mobile */}
                 <div className="flex justify-center gap-1.5 mt-2 sm:hidden">

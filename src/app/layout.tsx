@@ -13,21 +13,25 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+export const viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#f8fafc" },
+    { media: "(prefers-color-scheme: dark)", color: "#020617" },
+  ],
+};
+
 export const metadata: Metadata = {
   title: "GEFIN - Fluxo de Caixa",
   description: "Controle financeiro inteligente e familiar",
   manifest: "/manifest.json",
-  themeColor: "#059669",
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
     title: "GEFIN",
-  },
-  viewport: {
-    width: "device-width",
-    initialScale: 1,
-    maximumScale: 1,
-    userScalable: false,
   },
   icons: {
     icon: "/favicon.ico",
