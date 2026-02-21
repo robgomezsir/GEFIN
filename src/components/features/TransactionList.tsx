@@ -9,9 +9,10 @@ import { cn } from '@/utils/cn';
 
 interface TransactionListProps {
     transactions: Transacao[];
+    onSelect: (transaction: Transacao) => void;
 }
 
-export const TransactionList = ({ transactions }: TransactionListProps) => {
+export const TransactionList = ({ transactions, onSelect }: TransactionListProps) => {
     return (
         <Card className="p-0 overflow-hidden border-slate-100 dark:border-slate-800">
             <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
@@ -33,10 +34,14 @@ export const TransactionList = ({ transactions }: TransactionListProps) => {
                     </div>
                 ) : (
                     transactions.map((t) => (
-                        <div key={t.id} className="p-4 flex items-center justify-between hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-colors">
+                        <div
+                            key={t.id}
+                            onClick={() => onSelect(t)}
+                            className="p-4 flex items-center justify-between hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-all active:scale-[0.98] cursor-pointer group"
+                        >
                             <div className="flex items-center gap-4">
                                 <div className={cn(
-                                    "p-2 rounded-full",
+                                    "p-2 rounded-full transition-transform group-hover:scale-110",
                                     t.tipo === 'Receita' ? "bg-emerald-50 text-emerald-600 dark:bg-emerald-900/20" : "bg-rose-50 text-rose-600 dark:bg-rose-900/20"
                                 )}>
                                     {t.tipo === 'Receita' ? <ArrowUpCircle size={20} /> : <ArrowDownCircle size={20} />}

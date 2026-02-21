@@ -103,12 +103,38 @@ export function useFinanceData(mes: string, ano: number) {
         }
     };
 
+    const updateTransaction = async (id: number, updates: Partial<Transacao>) => {
+        const { error } = await supabase
+            .from('transacoes')
+            .update(updates)
+            .eq('id', id);
+
+        if (error) {
+            console.error('Erro ao atualizar transação:', error);
+            throw error;
+        }
+    };
+
+    const deleteTransaction = async (id: number) => {
+        const { error } = await supabase
+            .from('transacoes')
+            .delete()
+            .eq('id', id);
+
+        if (error) {
+            console.error('Erro ao excluir transação:', error);
+            throw error;
+        }
+    };
+
     return {
         transactions,
         resumo,
         saldoTotal,
         loading,
         addTransaction,
+        updateTransaction,
+        deleteTransaction,
         refresh: fetchTransactions
     };
 }

@@ -10,16 +10,18 @@ import { cn } from '@/utils/cn';
 interface TransactionFormProps {
     onClose: () => void;
     onSave: (data: any) => void;
+    initialData?: any;
+    onDelete?: () => void;
 }
 
-export const TransactionForm = ({ onClose, onSave }: TransactionFormProps) => {
-    const [tipo, setTipo] = React.useState<'Receita' | 'Despesa'>('Despesa');
-    const [categoria, setCategoria] = React.useState('');
-    const [conta, setConta] = React.useState('');
-    const [valor, setValor] = React.useState('');
-    const [mes, setMes] = React.useState(MESES[new Date().getMonth()]);
-    const [ano, setAno] = React.useState(new Date().getFullYear().toString());
-    const [data, setData] = React.useState(new Date().toISOString().split('T')[0]);
+export const TransactionForm = ({ onClose, onSave, initialData, onDelete }: TransactionFormProps) => {
+    const [tipo, setTipo] = React.useState<'Receita' | 'Despesa'>(initialData?.tipo || 'Despesa');
+    const [categoria, setCategoria] = React.useState(initialData?.categoria || '');
+    const [conta, setConta] = React.useState(initialData?.conta || '');
+    const [valor, setValor] = React.useState(initialData?.valor?.toString() || '');
+    const [mes, setMes] = React.useState(initialData?.mes || MESES[new Date().getMonth()]);
+    const [ano, setAno] = React.useState(initialData?.ano?.toString() || new Date().getFullYear().toString());
+    const [data, setData] = React.useState(initialData?.data_registro || new Date().toISOString().split('T')[0]);
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
@@ -40,9 +42,11 @@ export const TransactionForm = ({ onClose, onSave }: TransactionFormProps) => {
 
     return (
         <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/50 backdrop-blur-sm sm:items-center p-4">
-            <Card className="w-full max-w-lg rounded-b-none sm:rounded-2xl">
+            <Card className="w-full max-w-lg rounded-b-none sm:rounded-2xl shadow-2xl">
                 <div className="flex items-center justify-between mb-6">
-                    <h2 className="text-xl font-bold">Novo Lançamento</h2>
+                    <h2 className="text-xl font-bold">
+                        {initialData ? 'Editar Lançamento' : 'Novo Lançamento'}
+                    </h2>
                     <Button variant="ghost" size="sm" onClick={onClose}>
                         <X size={24} />
                     </Button>
@@ -143,12 +147,19 @@ export const TransactionForm = ({ onClose, onSave }: TransactionFormProps) => {
                         <Input type="date" value={data} onChange={(e) => setData(e.target.value)} required />
                     </div>
 
-                    <div className="flex gap-3 pt-2">
-                        <Button type="button" variant="secondary" className="flex-1" onClick={onClose}>
-                            Cancelar
-                        </Button>
-                        <Button type="submit" className="flex-1">
-                            Salvar Lançamento
+                    <div className="flex gap-3 pt-4 border-t border-slate-100 dark:border-slate-800">
+                        {initialData && onDelete && (
+                            <Button type="button" variant="danger" className="flex-1" onClick={onDelete}>
+                                Excluir
+                            </Button>
+                        )}
+                        {!initialData && (
+                            <Button type="button" variant="secondary" className="flex-1" onClick={onClose}>
+                                Cancelar
+                            </Button>
+                        )}
+                        <Button type="submit" className="flex-[2]">
+                            {initialData ? 'Atualizar' : 'Salvar Lançamento'}
                         </Button>
                     </div>
                 </form>

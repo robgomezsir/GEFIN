@@ -9,14 +9,16 @@ import { MESES } from '@/utils/format';
 import { ChevronLeft, ChevronRight, Plus, LogOut, User } from 'lucide-react';
 import { useFinanceData } from '@/hooks/useFinanceData';
 import { supabase } from '@/lib/supabase';
+import { Transacao } from '@/types';
 
 export const Dashboard = () => {
     const [currentMonth, setCurrentMonth] = React.useState(new Date().getMonth());
     const [currentYear, setCurrentYear] = React.useState(new Date().getFullYear());
     const [isFormOpen, setIsFormOpen] = React.useState(false);
+    const [editingTransaction, setEditingTransaction] = React.useState<Transacao | null>(null);
 
     const mesNome = MESES[currentMonth];
-    const { transactions, resumo, saldoTotal, loading, addTransaction } = useFinanceData(mesNome, currentYear);
+    const { transactions, resumo, saldoTotal, loading, addTransaction, updateTransaction, deleteTransaction } = useFinanceData(mesNome, currentYear);
 
     const handleLogout = () => supabase.auth.signOut();
 
@@ -40,11 +42,34 @@ export const Dashboard = () => {
 
     const handleSaveTransaction = async (newTransaction: any) => {
         try {
-            await addTransaction(newTransaction);
+            if (editingTransaction) {
+                await updateTransaction(editingTransaction.id, newTransaction);
+            } else {
+                await addTransaction(newTransaction);
+            }
             setIsFormOpen(false);
+            setEditingTransaction(null);
         } catch (err) {
             alert('Erro ao salvar transação');
         }
+    };
+
+    const handleDeleteTransaction = async () => {
+        if (!editingTransaction) return;
+        if (!confirm('Tem certeza que deseja excluir esta transação?')) return;
+
+        try {
+            await deleteTransaction(editingTransaction.id);
+            setIsFormOpen(false);
+            setEditingTransaction(null);
+        } catch (err) {
+            alert('Erro ao excluir transação');
+        }
+    };
+
+    const openEdit = (t: Transacao) => {
+        setEditingTransaction(t);
+        setIsFormOpen(true);
     };
 
     // Dashboard data using real values from Supabase
@@ -115,10 +140,15 @@ export const Dashboard = () => {
                 </Button>
             </div>
 
-            {isFormOpen && (
+            {(isFormOpen || editingTransaction) && (
                 <TransactionForm
-                    onClose={() => setIsFormOpen(false)}
+                    onClose={() => {
+                        setIsFormOpen(false);
+                        setEditingTransaction(null);
+                    }}
                     onSave={handleSaveTransaction}
+                    initialData={editingTransaction}
+                    onDelete={handleDeleteTransaction}
                 />
             )}
 
@@ -132,7 +162,7 @@ export const Dashboard = () => {
                         </div>
                     </div>
 
-                    <TransactionList transactions={transactions} />
+                    <TransactionList transactions={transactions} onSelect={openEdit} />
                 </div>
 
                 <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-100 dark:border-slate-800 p-8 h-fit">
