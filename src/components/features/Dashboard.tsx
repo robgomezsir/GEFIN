@@ -161,28 +161,36 @@ export const Dashboard = () => {
                 </div>
             )}
 
-            <section className="grid gap-6 sm:grid-cols-2 lg:grid-cols-5">
-                <SummaryCard title="Receitas" value={data.receitas} type="receita" />
-                <SummaryCard title="Despesas" value={data.despesas} type="despesa" />
-                <SummaryCard title="Fluxo" value={data.fluxo} type="fluxo" />
-                <SummaryCard title="Acumulado" value={data.saldo} type="saldo" />
-                <Card className="flex flex-col justify-center p-6 border-slate-100 dark:border-slate-800 bg-indigo-50/30 dark:bg-indigo-900/10">
-                    <span className="text-xs font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-widest mb-1">Disponibilidade</span>
-                    <div className="flex items-end gap-2">
-                        <span className="text-2xl font-black text-slate-900 dark:text-white leading-none">
-                            {data.percentualDisponivel.toFixed(0)}%
-                        </span>
-                    </div>
-                    <div className="w-full h-1.5 bg-slate-200 dark:bg-slate-800 rounded-full mt-3 overflow-hidden">
-                        <div
-                            className={cn(
-                                "h-full rounded-full transition-all duration-1000",
-                                data.percentualDisponivel > 20 ? "bg-indigo-500" : "bg-rose-500"
-                            )}
-                            style={{ width: `${Math.min(100, Math.max(0, data.percentualDisponivel))}%` }}
-                        />
-                    </div>
-                </Card>
+            <section className="relative">
+                <div className="flex overflow-x-auto snap-x snap-mandatory scrollbar-hide gap-4 pb-4 -mx-4 px-4 sm:mx-0 sm:px-0 sm:grid sm:grid-cols-2 lg:grid-cols-5 sm:overflow-visible">
+                    <SummaryCard title="Receitas" value={data.receitas} type="receita" className="snap-center" />
+                    <SummaryCard title="Despesas" value={data.despesas} type="despesa" className="snap-center" />
+                    <SummaryCard title="Fluxo" value={data.fluxo} type="fluxo" className="snap-center" />
+                    <SummaryCard title="Acumulado" value={data.saldo} type="saldo" className="snap-center" />
+                    <Card className="flex flex-col justify-center p-6 border-slate-100 dark:border-slate-800 bg-indigo-50/30 dark:bg-indigo-900/10 snap-center min-w-[200px] sm:min-w-0">
+                        <span className="text-xs font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-widest mb-1">Disponibilidade</span>
+                        <div className="flex items-end gap-2">
+                            <span className="text-2xl font-black text-slate-900 dark:text-white leading-none">
+                                {data.percentualDisponivel.toFixed(0)}%
+                            </span>
+                        </div>
+                        <div className="w-full h-1.5 bg-slate-200 dark:bg-slate-800 rounded-full mt-3 overflow-hidden">
+                            <div
+                                className={cn(
+                                    "h-full rounded-full transition-all duration-1000",
+                                    data.percentualDisponivel > 20 ? "bg-indigo-500" : "bg-rose-500"
+                                )}
+                                style={{ width: `${Math.min(100, Math.max(0, data.percentualDisponivel))}%` }}
+                            />
+                        </div>
+                    </Card>
+                </div>
+                {/* Indicador de scroll lateral visível apenas em mobile */}
+                <div className="flex justify-center gap-1.5 mt-2 sm:hidden">
+                    {[0, 1, 2, 3, 4].map((i) => (
+                        <div key={i} className="w-1.5 h-1.5 rounded-full bg-slate-200 dark:bg-slate-800" />
+                    ))}
+                </div>
             </section>
 
             <div className="fixed bottom-8 right-8 md:bottom-12 md:right-12 z-40">
