@@ -10,12 +10,13 @@ import { ChevronLeft, FileText, Download, Printer } from 'lucide-react';
 interface ReportsProps {
     transactions: Transacao[];
     resumo: ResumoFluxo | null;
+    saldoAnterior: number;
     mes: string;
     ano: number;
     onBack: () => void;
 }
 
-export const Reports = ({ transactions, resumo, mes, ano, onBack }: ReportsProps) => {
+export const Reports = ({ transactions, resumo, saldoAnterior, mes, ano, onBack }: ReportsProps) => {
     // Agrupar Receitas por Conta
     const receitasPorConta = transactions
         .filter(t => t.tipo === 'Receita')
@@ -55,7 +56,11 @@ export const Reports = ({ transactions, resumo, mes, ano, onBack }: ReportsProps
             <div className="hidden print:block mb-8 text-center">
                 <h1 className="text-2xl font-bold">Relatório de Fluxo de Caixa</h1>
                 <p className="text-slate-600 capitalize">{mes} / {ano}</p>
-                <div className="mt-4 border-b pb-4 grid grid-cols-3 gap-4">
+                <div className="mt-4 border-b pb-4 grid grid-cols-4 gap-4">
+                    <div className="text-left">
+                        <p className="text-xs text-slate-500 uppercase font-bold">Saldo Anterior</p>
+                        <p className="text-lg font-bold text-slate-600">{formatCurrency(saldoAnterior)}</p>
+                    </div>
                     <div className="text-left">
                         <p className="text-xs text-slate-500 uppercase font-bold">Receitas</p>
                         <p className="text-lg font-bold text-emerald-600">{formatCurrency(resumo?.total_receitas || 0)}</p>
@@ -65,8 +70,8 @@ export const Reports = ({ transactions, resumo, mes, ano, onBack }: ReportsProps
                         <p className="text-lg font-bold text-rose-600">{formatCurrency(resumo?.total_despesas || 0)}</p>
                     </div>
                     <div className="text-left">
-                        <p className="text-xs text-slate-500 uppercase font-bold">Fluxo</p>
-                        <p className="text-lg font-bold text-indigo-600">{formatCurrency(resumo?.fluxo_caixa || 0)}</p>
+                        <p className="text-xs text-slate-500 uppercase font-bold">Acumulado</p>
+                        <p className="text-lg font-bold text-indigo-600">{formatCurrency((resumo?.fluxo_caixa || 0) + saldoAnterior)}</p>
                     </div>
                 </div>
             </div>
@@ -137,8 +142,18 @@ export const Reports = ({ transactions, resumo, mes, ano, onBack }: ReportsProps
             <Card className="p-6 bg-slate-900 dark:bg-white text-white dark:text-slate-900 mt-8 print:hidden">
                 <div className="flex items-center justify-between">
                     <div>
-                        <p className="text-slate-400 dark:text-slate-500 text-sm font-bold uppercase tracking-wider mb-1">Resultado Líquido do Mês</p>
-                        <h3 className="text-3xl font-black">{formatCurrency(resumo?.fluxo_caixa || 0)}</h3>
+                        <div className="flex gap-4 mb-2">
+                            <div>
+                                <p className="text-slate-400 dark:text-slate-500 text-[10px] font-bold uppercase tracking-wider">Saldo Anterior</p>
+                                <p className="text-md font-bold">{formatCurrency(saldoAnterior)}</p>
+                            </div>
+                            <div>
+                                <p className="text-slate-400 dark:text-slate-500 text-[10px] font-bold uppercase tracking-wider">Fluxo do Mês</p>
+                                <p className="text-md font-bold">{formatCurrency(resumo?.fluxo_caixa || 0)}</p>
+                            </div>
+                        </div>
+                        <p className="text-slate-400 dark:text-slate-500 text-sm font-bold uppercase tracking-wider mb-1">Saldo Final Acumulado</p>
+                        <h3 className="text-3xl font-black">{formatCurrency((resumo?.fluxo_caixa || 0) + saldoAnterior)}</h3>
                     </div>
                     <div className={cn(
                         "h-14 w-14 rounded-2xl flex items-center justify-center",

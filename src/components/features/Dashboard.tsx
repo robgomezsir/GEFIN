@@ -27,7 +27,18 @@ export const Dashboard = () => {
     const [editingTransaction, setEditingTransaction] = React.useState<Transacao | null>(null);
 
     const mesNome = MESES[currentMonth];
-    const { transactions, resumo, saldoTotal, rendaPrevista, loading: loadingMonth, addTransaction, updateTransaction, deleteTransaction, refresh: refreshMonth } = useFinanceData(mesNome, currentYear);
+    const {
+        transactions,
+        resumo,
+        saldoTotal,
+        saldoAnterior,
+        rendaPrevista,
+        loading: loadingMonth,
+        addTransaction,
+        updateTransaction,
+        deleteTransaction,
+        refresh: refreshMonth
+    } = useFinanceData(mesNome, currentYear);
     const { annualData, loading: loadingAnnual, refresh: refreshAnnual } = useAnnualData(currentYear);
     const { theme, toggleTheme } = useTheme();
 
@@ -98,6 +109,7 @@ export const Dashboard = () => {
             <Reports
                 transactions={transactions}
                 resumo={resumo}
+                saldoAnterior={saldoAnterior}
                 mes={mesNome}
                 ano={currentYear}
                 onBack={() => setIsReportsOpen(false)}
@@ -110,10 +122,11 @@ export const Dashboard = () => {
         receitas: resumo?.total_receitas ?? 0,
         despesas: resumo?.total_despesas ?? 0,
         fluxo: resumo?.fluxo_caixa ?? 0,
-        saldo: saldoTotal,
-        disponivelValor: (rendaPrevista > 0 ? rendaPrevista : (resumo?.total_receitas ?? 0)) - (resumo?.total_despesas ?? 0),
-        percentualDisponivel: rendaPrevista > 0 ? ((rendaPrevista - (resumo?.total_despesas ?? 0)) / rendaPrevista) * 100 :
-            (resumo?.total_receitas ?? 0) > 0 ? (((resumo?.total_receitas ?? 0) - (resumo?.total_despesas ?? 0)) / (resumo?.total_receitas ?? 0)) * 100 : 0
+        saldoAnterior: saldoAnterior,
+        saldoDoMes: (resumo?.fluxo_caixa ?? 0) + saldoAnterior,
+        disponivelValor: (rendaPrevista > 0 ? (rendaPrevista + saldoAnterior) : (resumo?.total_receitas ?? 0 + saldoAnterior)) - (resumo?.total_despesas ?? 0),
+        percentualDisponivel: (rendaPrevista + saldoAnterior) > 0 ? (((rendaPrevista + saldoAnterior) - (resumo?.total_despesas ?? 0)) / (rendaPrevista + saldoAnterior)) * 100 :
+            (resumo?.total_receitas ?? 0 + saldoAnterior) > 0 ? (((resumo?.total_receitas ?? 0 + saldoAnterior) - (resumo?.total_despesas ?? 0)) / (resumo?.total_receitas ?? 0 + saldoAnterior)) * 100 : 0
     };
 
     const topDespesas = transactions
@@ -219,11 +232,12 @@ export const Dashboard = () => {
             )}
 
             <section className="relative">
-                <div className="flex overflow-x-auto snap-x snap-mandatory scrollbar-hide gap-4 pb-4 -mx-4 px-4 sm:mx-0 sm:px-0 sm:grid sm:grid-cols-2 lg:grid-cols-5 sm:overflow-visible">
+                <div className="flex overflow-x-auto snap-x snap-mandatory scrollbar-hide gap-4 pb-4 -mx-4 px-4 sm:mx-0 sm:px-0 sm:grid sm:grid-cols-2 lg:grid-cols-6 sm:overflow-visible">
                     <SummaryCard title="Receitas" value={data.receitas} type="receita" className="snap-center" />
                     <SummaryCard title="Despesas" value={data.despesas} type="despesa" className="snap-center" />
-                    <SummaryCard title="Fluxo" value={data.fluxo} type="fluxo" className="snap-center" />
-                    <SummaryCard title="Acumulado" value={data.saldo} type="saldo" className="snap-center" />
+                    <SummaryCard title="Mês (Fluxo)" value={data.fluxo} type="fluxo" className="snap-center" />
+                    <SummaryCard title="Saldo Anterior" value={data.saldoAnterior} type="saldo" className="snap-center" />
+                    <SummaryCard title="Acumulado" value={data.saldoDoMes} type="saldo" className="snap-center" />
                     <SummaryCard
                         title="Disponível"
                         value={data.disponivelValor}
@@ -234,7 +248,7 @@ export const Dashboard = () => {
                 </div>
                 {/* Indicador de scroll lateral visível apenas em mobile */}
                 <div className="flex justify-center gap-1.5 mt-2 sm:hidden">
-                    {[0, 1, 2, 3, 4].map((i) => (
+                    {[0, 1, 2, 3, 4, 5].map((i) => (
                         <div key={i} className="w-1.5 h-1.5 rounded-full bg-slate-200 dark:bg-slate-800" />
                     ))}
                 </div>

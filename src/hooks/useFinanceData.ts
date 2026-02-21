@@ -9,6 +9,7 @@ export function useFinanceData(mes: string, ano: number) {
     const [transactions, setTransactions] = useState<Transacao[]>([]);
     const [resumo, setResumo] = useState<ResumoFluxo | null>(null);
     const [saldoTotal, setSaldoTotal] = useState(0);
+    const [saldoAnterior, setSaldoAnterior] = useState(0);
     const [rendaPrevista, setRendaPrevista] = useState(0);
     const [loading, setLoading] = useState(true);
 
@@ -46,18 +47,35 @@ export function useFinanceData(mes: string, ano: number) {
                 setResumo(resumoData);
             }
 
-            // Calcular Saldo acumulado TOTAL do usuário
+            // Calcular Saldo acumulado TOTAL do usuário e SALDO ANTERIOR
             const { data: totalData } = await supabase
                 .from('transacoes')
-                .select('tipo, valor, conta')
+                .select('tipo, valor, mes, ano')
                 .eq('user_id', authData.user.id);
 
             if (totalData) {
-                const total = totalData.reduce((acc, current) => {
-                    if (current.tipo === 'Receita') return acc + Number(current.valor);
-                    return acc - Number(current.valor);
-                }, 0);
+                let total = 0;
+                let anterior = 0;
+                const currentMonthIndex = MESES.indexOf(mes);
+
+                totalData.forEach(t => {
+                    const val = Number(t.valor);
+                    const isReceita = t.tipo === 'Receita';
+                    const tMonthIndex = MESES.indexOf(t.mes.charAt(0).toUpperCase() + t.mes.slice(1));
+
+                    // Saldo Total (Até hoje)
+                    if (isReceita) total += val;
+                    else total -= val;
+
+                    // Saldo Anterior (Antes do mês/ano selecionado)
+                    if (t.ano < ano || (t.ano === ano && tMonthIndex < currentMonthIndex)) {
+                        if (isReceita) anterior += val;
+                        else anterior -= val;
+                    }
+                });
+
                 setSaldoTotal(total);
+                setSaldoAnterior(anterior);
             }
 
             // Buscar Renda Prevista (Meta)
@@ -151,6 +169,7 @@ export function useFinanceData(mes: string, ano: number) {
         transactions,
         resumo,
         saldoTotal,
+        saldoAnterior,
         rendaPrevista,
         loading,
         addTransaction,
