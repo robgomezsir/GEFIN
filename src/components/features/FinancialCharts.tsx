@@ -33,58 +33,63 @@ export const TrendChart = ({ data }: TrendChartProps) => {
     }));
 
     return (
-        <div className="h-[300px] w-full">
-            <ResponsiveContainer width="100%" height="100%">
-                <AreaChart data={chartData}>
-                    <defs>
-                        <linearGradient id="colorReceitas" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="5%" stopColor="#10b981" stopOpacity={0.1} />
-                            <stop offset="95%" stopColor="#10b981" stopOpacity={0} />
-                        </linearGradient>
-                        <linearGradient id="colorDespesas" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="5%" stopColor="#f43f5e" stopOpacity={0.1} />
-                            <stop offset="95%" stopColor="#f43f5e" stopOpacity={0} />
-                        </linearGradient>
-                    </defs>
-                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
-                    <XAxis
-                        dataKey="name"
-                        axisLine={false}
-                        tickLine={false}
-                        tick={{ fontSize: 10, fontWeight: 600, fill: '#94a3b8' }}
-                        interval={0}
-                        dy={10}
-                    />
-                    <YAxis
-                        hide
-                    />
-                    <Tooltip
-                        contentStyle={{
-                            borderRadius: '16px',
-                            border: 'none',
-                            boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)',
-                            padding: '12px'
-                        }}
-                        formatter={(value: any) => [formatCurrency(Number(value || 0)), '']}
-                    />
-                    <Area
-                        type="monotone"
-                        dataKey="receitas"
-                        stroke="#10b981"
-                        strokeWidth={3}
-                        fillOpacity={1}
-                        fill="url(#colorReceitas)"
-                    />
-                    <Area
-                        type="monotone"
-                        dataKey="despesas"
-                        stroke="#f43f5e"
-                        strokeWidth={3}
-                        fillOpacity={1}
-                        fill="url(#colorDespesas)"
-                    />
-                </AreaChart>
-            </ResponsiveContainer>
+        <div className="h-[300px] w-full overflow-x-auto overflow-y-hidden scrollbar-hide">
+            <div className="h-full min-w-[600px] sm:min-w-0">
+                <ResponsiveContainer width="100%" height="100%">
+                    <AreaChart data={chartData} margin={{ left: -20, right: 10, bottom: 20 }}>
+                        <defs>
+                            <linearGradient id="colorReceitas" x1="0" y1="0" x2="0" y2="1">
+                                <stop offset="5%" stopColor="#10b981" stopOpacity={0.1} />
+                                <stop offset="95%" stopColor="#10b981" stopOpacity={0} />
+                            </linearGradient>
+                            <linearGradient id="colorDespesas" x1="0" y1="0" x2="0" y2="1">
+                                <stop offset="5%" stopColor="#f43f5e" stopOpacity={0.1} />
+                                <stop offset="95%" stopColor="#f43f5e" stopOpacity={0} />
+                            </linearGradient>
+                        </defs>
+                        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
+                        <XAxis
+                            dataKey="name"
+                            axisLine={false}
+                            tickLine={false}
+                            tick={{ fontSize: 11, fontWeight: 700, fill: '#64748b' }}
+                            interval={0}
+                            dy={10}
+                        />
+                        <YAxis
+                            hide
+                        />
+                        <Tooltip
+                            contentStyle={{
+                                borderRadius: '16px',
+                                border: 'none',
+                                boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)',
+                                padding: '12px',
+                                backgroundColor: 'var(--card)',
+                                color: 'var(--foreground)'
+                            }}
+                            itemStyle={{ fontWeight: 600 }}
+                            formatter={(value: any) => [formatCurrency(Number(value || 0)), '']}
+                        />
+                        <Area
+                            type="monotone"
+                            dataKey="receitas"
+                            stroke="#10b981"
+                            strokeWidth={3}
+                            fillOpacity={1}
+                            fill="url(#colorReceitas)"
+                        />
+                        <Area
+                            type="monotone"
+                            dataKey="despesas"
+                            stroke="#f43f5e"
+                            strokeWidth={3}
+                            fillOpacity={1}
+                            fill="url(#colorDespesas)"
+                        />
+                    </AreaChart>
+                </ResponsiveContainer>
+            </div>
         </div>
     );
 };
