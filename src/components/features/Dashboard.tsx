@@ -11,6 +11,7 @@ import { ChevronLeft, ChevronRight, Plus, LogOut, User, BarChart3, PieChart as P
 import { useFinanceData } from '@/hooks/useFinanceData';
 import { useAnnualData } from '@/hooks/useAnnualData';
 import { TrendChart, CategoryChart } from './FinancialCharts';
+import { ThemeToggle } from '@/components/ui/ThemeToggle';
 import { Settings } from './Settings';
 import { Reports } from './Reports';
 import { supabase } from '@/lib/supabase';
@@ -146,6 +147,8 @@ export const Dashboard = () => {
                     <Button variant="secondary" size="md" onClick={() => setIsSettingsOpen(true)} className="h-14 w-14 p-0 rounded-2xl shadow-lg border-none bg-white dark:bg-slate-800 hover:scale-105 active:scale-95 transition-all">
                         <SettingsIcon size={22} className="text-slate-600 dark:text-slate-400" />
                     </Button>
+
+                    <ThemeToggle />
 
                     <Button variant="secondary" size="md" onClick={handleLogout} className="h-14 w-14 p-0 rounded-2xl shadow-lg border-none bg-white dark:bg-slate-800 hover:scale-105 active:scale-95 transition-all">
                         <LogOut size={22} className="text-slate-600 dark:text-slate-400" />
