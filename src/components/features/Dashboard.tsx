@@ -7,11 +7,12 @@ import { TransactionList } from './TransactionList';
 import { Button, Input, Card } from '@/components/ui/base';
 import { cn } from '@/utils/cn';
 import { MESES } from '@/utils/format';
-import { ChevronLeft, ChevronRight, Plus, LogOut, User, BarChart3, PieChart as PieIcon, Settings as SettingsIcon } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Plus, LogOut, User, BarChart3, PieChart as PieIcon, Settings as SettingsIcon, FileText } from 'lucide-react';
 import { useFinanceData } from '@/hooks/useFinanceData';
 import { useAnnualData } from '@/hooks/useAnnualData';
 import { TrendChart, CategoryChart } from './FinancialCharts';
 import { Settings } from './Settings';
+import { Reports } from './Reports';
 import { supabase } from '@/lib/supabase';
 import { Transacao } from '@/types';
 
@@ -20,6 +21,7 @@ export const Dashboard = () => {
     const [currentYear, setCurrentYear] = React.useState(new Date().getFullYear());
     const [isFormOpen, setIsFormOpen] = React.useState(false);
     const [isSettingsOpen, setIsSettingsOpen] = React.useState(false);
+    const [isReportsOpen, setIsReportsOpen] = React.useState(false);
     const [editingTransaction, setEditingTransaction] = React.useState<Transacao | null>(null);
 
     const mesNome = MESES[currentMonth];
@@ -88,6 +90,18 @@ export const Dashboard = () => {
         return <Settings onBack={() => setIsSettingsOpen(false)} />;
     }
 
+    if (isReportsOpen) {
+        return (
+            <Reports
+                transactions={transactions}
+                resumo={resumo}
+                mes={mesNome}
+                ano={currentYear}
+                onBack={() => setIsReportsOpen(false)}
+            />
+        );
+    }
+
     // Dashboard data using real values from Supabase
     const data = {
         receitas: resumo?.total_receitas ?? 0,
@@ -124,6 +138,10 @@ export const Dashboard = () => {
                             <ChevronRight size={22} className="text-slate-600 dark:text-slate-400" />
                         </Button>
                     </div>
+
+                    <Button variant="secondary" size="md" onClick={() => setIsReportsOpen(true)} className="h-14 w-14 p-0 rounded-2xl shadow-lg border-none bg-white dark:bg-slate-800 hover:scale-105 active:scale-95 transition-all">
+                        <FileText size={22} className="text-slate-600 dark:text-slate-400" />
+                    </Button>
 
                     <Button variant="secondary" size="md" onClick={() => setIsSettingsOpen(true)} className="h-14 w-14 p-0 rounded-2xl shadow-lg border-none bg-white dark:bg-slate-800 hover:scale-105 active:scale-95 transition-all">
                         <SettingsIcon size={22} className="text-slate-600 dark:text-slate-400" />

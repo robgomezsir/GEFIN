@@ -728,6 +728,9 @@ migrar();
 - [x] Configurar Next.js + Tailwind (em vez de Vite)
 - [x] Implementar rota `/` com cards de resumo do mês
 - [x] Implementar formulário de novo lançamento com validações
+- [x] Sincronização Realtime
+    - [x] Implementar Supabase Realtime para atualizações de transações
+    - [x] Implementar Realtime para categorias e configurações
 - [x] Implementar seletor de Mês/Ano
 - [ ] Implementar tela de Relatório filtrado
 - [x] Implementar tela de Histórico de transações
