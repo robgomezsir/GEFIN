@@ -6,8 +6,10 @@ import { TransactionForm } from './TransactionForm';
 import { TransactionList } from './TransactionList';
 import { Button } from '@/components/ui/base';
 import { MESES } from '@/utils/format';
-import { ChevronLeft, ChevronRight, Plus, LogOut, User } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Plus, LogOut, User, BarChart3, PieChart as PieIcon } from 'lucide-react';
 import { useFinanceData } from '@/hooks/useFinanceData';
+import { useAnnualData } from '@/hooks/useAnnualData';
+import { TrendChart, CategoryChart } from './FinancialCharts';
 import { supabase } from '@/lib/supabase';
 import { Transacao } from '@/types';
 
@@ -18,7 +20,10 @@ export const Dashboard = () => {
     const [editingTransaction, setEditingTransaction] = React.useState<Transacao | null>(null);
 
     const mesNome = MESES[currentMonth];
-    const { transactions, resumo, saldoTotal, loading, addTransaction, updateTransaction, deleteTransaction } = useFinanceData(mesNome, currentYear);
+    const { transactions, resumo, saldoTotal, loading: loadingMonth, addTransaction, updateTransaction, deleteTransaction, refresh: refreshMonth } = useFinanceData(mesNome, currentYear);
+    const { annualData, loading: loadingAnnual, refresh: refreshAnnual } = useAnnualData(currentYear);
+
+    const loading = loadingMonth || loadingAnnual;
 
     const handleLogout = () => supabase.auth.signOut();
 
@@ -49,6 +54,8 @@ export const Dashboard = () => {
             }
             setIsFormOpen(false);
             setEditingTransaction(null);
+            refreshMonth();
+            refreshAnnual();
         } catch (err) {
             alert('Erro ao salvar transação');
         }
@@ -62,6 +69,8 @@ export const Dashboard = () => {
             await deleteTransaction(editingTransaction.id);
             setIsFormOpen(false);
             setEditingTransaction(null);
+            refreshMonth();
+            refreshAnnual();
         } catch (err) {
             alert('Erro ao excluir transação');
         }
@@ -155,21 +164,23 @@ export const Dashboard = () => {
             {/* Charts and List */}
             <section className="grid gap-8 lg:grid-cols-3">
                 <div className="lg:col-span-2 space-y-8">
-                    <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-100 dark:border-slate-800 p-8 min-h-[400px]">
-                        <h2 className="text-xl font-bold mb-6">Tendência Mensal</h2>
-                        <div className="flex items-center justify-center h-[300px] text-slate-400">
-                            [Gráfico de Tendência em Breve]
+                    <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-100 dark:border-slate-800 p-8 shadow-sm">
+                        <div className="flex items-center gap-2 mb-6 text-slate-900 dark:text-white">
+                            <BarChart3 className="text-emerald-500" size={20} />
+                            <h2 className="text-xl font-bold">Tendência de Receitas e Despesas</h2>
                         </div>
+                        <TrendChart data={annualData} />
                     </div>
 
                     <TransactionList transactions={transactions} onSelect={openEdit} />
                 </div>
 
-                <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-100 dark:border-slate-800 p-8 h-fit">
-                    <h2 className="text-xl font-bold mb-6">Categorias</h2>
-                    <div className="flex items-center justify-center h-[300px] text-slate-400">
-                        [Gráfico de Pizza em Breve]
+                <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-100 dark:border-slate-800 p-8 shadow-sm h-fit">
+                    <div className="flex items-center gap-2 mb-6 text-slate-900 dark:text-white">
+                        <PieIcon className="text-emerald-500" size={20} />
+                        <h2 className="text-xl font-bold">Distribuição por Categoria</h2>
                     </div>
+                    <CategoryChart transactions={transactions} />
                 </div>
             </section>
         </div>

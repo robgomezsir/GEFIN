@@ -711,38 +711,38 @@ migrar();
 ## 11. CHECKLIST DE IMPLEMENTAÇÃO
 
 ### Fase 1 — Infraestrutura
-- [ ] Criar projeto no Supabase
-- [ ] Executar SQL de criação das tabelas e views
-- [ ] Configurar RLS em todas as tabelas
-- [ ] Criar índices de performance
-- [ ] Habilitar Realtime nas tabelas `transacoes`
+- [x] Criar projeto no Supabase
+- [x] Executar SQL de criação das tabelas e views
+- [x] Configurar RLS em todas as tabelas
+- [x] Criar índices de performance
+- [x] Habilitar Realtime nas tabelas `transacoes`
 
 ### Fase 2 — Backend/API
-- [ ] Implementar autenticação (Supabase Auth)
-- [ ] Criar funções CRUD para transações
-- [ ] Criar hook `useTransacoesRealtime`
-- [ ] Implementar função `calcularFluxoAnual` com saldo encadeado
-- [ ] Testar sincronização entre duas abas/dispositivos
+- [x] Implementar autenticação (Supabase Auth)
+- [x] Criar funções CRUD para transações
+- [x] Criar hook `useTransacoesRealtime`
+- [x] Implementar função `calcularFluxoAnual` com saldo encadeado
+- [x] Testar sincronização entre duas abas/dispositivos
 
 ### Fase 3 — Frontend Mobile-First
-- [ ] Configurar Vite + React + Tailwind
-- [ ] Implementar rota `/` com cards de resumo do mês
-- [ ] Implementar formulário de novo lançamento com validações
-- [ ] Implementar seletor de Mês/Ano
+- [x] Configurar Next.js + Tailwind (em vez de Vite)
+- [x] Implementar rota `/` com cards de resumo do mês
+- [x] Implementar formulário de novo lançamento com validações
+- [x] Implementar seletor de Mês/Ano
 - [ ] Implementar tela de Relatório filtrado
-- [ ] Implementar tela de Histórico de transações
-- [ ] Adicionar confirmação antes de deletar
+- [x] Implementar tela de Histórico de transações
+- [x] Adicionar confirmação antes de deletar (CRUD completo)
 
 ### Fase 4 — Gráficos
-- [ ] Gráfico de barras: Receitas × Despesas × Saldo por mês (anual)
-- [ ] Gráfico de pizza: Distribuição de despesas por categoria (mensal)
-- [ ] Gráfico de linha: Saldo acumulado ao longo do ano
+- [x] Gráfico de tendência: Receitas × Despesas por mês (anual)
+- [x] Gráfico de pizza: Distribuição de despesas por categoria (mensal)
+- [x] Gráfico de linha/área: Saldo acumulado ao longo do ano
 - [ ] Indicador: % disponível em relação à média salarial
 
 ### Fase 5 — PWA
-- [ ] Configurar `vite-plugin-pwa` com manifest
-- [ ] Adicionar ícones (192x192 e 512x512)
-- [ ] Configurar service worker para cache offline
+- [x] Configurar `next-pwa` com manifest
+- [x] Adicionar ícones (192x192 e 512x512)
+- [x] Configurar service worker para cache offline
 - [ ] Testar instalação no Android e iOS (Safari)
 - [ ] Testar comportamento offline com dados em cache
 
