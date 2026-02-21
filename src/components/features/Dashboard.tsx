@@ -118,48 +118,31 @@ export const Dashboard = () => {
 
     return (
         <div className="space-y-8 p-4 md:p-8 max-w-7xl mx-auto animate-in fade-in duration-500">
-            <header className="flex items-center justify-between gap-2 mb-6">
-                <div>
-                    <h1 className="text-2xl sm:text-4xl font-black text-slate-900 dark:text-white tracking-tight">
-                        Fluxo de Caixa
-                    </h1>
-                    <p className="hidden sm:block text-slate-500 dark:text-slate-400 font-medium">Controle financeiro pessoal e familiar</p>
-                </div>
-
-                <div className="flex items-center gap-3">
-                    <div className="flex items-center gap-1.5 bg-white/80 backdrop-blur-md p-1.5 rounded-2xl shadow-xl shadow-slate-200/50 border border-slate-100 dark:bg-slate-900/80 dark:border-slate-800 dark:shadow-none">
-                        <Button variant="ghost" size="sm" onClick={handlePrevMonth} className="h-10 w-10 p-0 rounded-xl">
-                            <ChevronLeft size={20} className="text-slate-600 dark:text-slate-400" />
-                        </Button>
-                        <div className="min-w-[120px] text-center flex flex-col">
-                            <span className="text-[10px] font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-widest">
-                                {currentYear}
-                            </span>
-                            <span className="text-base font-black text-slate-800 dark:text-slate-100 uppercase leading-none">
-                                {mesNome}
-                            </span>
-                        </div>
-                        <Button variant="ghost" size="sm" onClick={handleNextMonth} className="h-10 w-10 p-0 rounded-xl">
-                            <ChevronRight size={20} className="text-slate-600 dark:text-slate-400" />
-                        </Button>
+            <header className="space-y-4 mb-2">
+                <div className="flex items-center justify-between">
+                    <div>
+                        <h1 className="text-2xl md:text-4xl font-black text-slate-900 dark:text-white tracking-tight leading-tight">
+                            Fluxo de Caixa
+                        </h1>
+                        <p className="text-sm md:text-base text-slate-500 dark:text-slate-400 font-medium">Controle financeiro familiar</p>
                     </div>
 
                     {/* Menu Hamburguer para Mobile e Tablet */}
-                    <div className="relative">
+                    <div className="relative lg:hidden">
                         <Button
                             variant="secondary"
                             size="md"
                             onClick={() => setIsMenuOpen(!isMenuOpen)}
-                            className="h-10 w-10 sm:h-12 sm:w-12 p-0 rounded-2xl shadow-lg border-none bg-white dark:bg-slate-800 hover:scale-105 active:scale-95 transition-all lg:hidden"
+                            className="h-12 w-12 p-0 rounded-2xl shadow-lg border-none bg-white dark:bg-slate-800 hover:scale-105 active:scale-95 transition-all"
                         >
-                            {isMenuOpen ? <X size={20} className="text-slate-600 dark:text-slate-400" /> : <Menu size={20} className="text-slate-600 dark:text-slate-400" />}
+                            {isMenuOpen ? <X size={22} className="text-slate-600 dark:text-slate-400" /> : <Menu size={22} className="text-slate-600 dark:text-slate-400" />}
                         </Button>
 
                         {/* Dropdown Menu */}
                         {isMenuOpen && (
                             <>
-                                <div className="fixed inset-0 z-40 lg:hidden" onClick={() => setIsMenuOpen(false)} />
-                                <div className="absolute right-0 mt-3 w-56 py-2 bg-white dark:bg-slate-900 rounded-3xl shadow-2xl border border-slate-100 dark:border-slate-800 z-50 lg:hidden animate-in fade-in zoom-in-95 duration-200 origin-top-right">
+                                <div className="fixed inset-0 z-40" onClick={() => setIsMenuOpen(false)} />
+                                <div className="absolute right-0 mt-3 w-56 py-2 bg-white dark:bg-slate-900 rounded-3xl shadow-2xl border border-slate-100 dark:border-slate-800 z-50 animate-in fade-in zoom-in-95 duration-200 origin-top-right">
                                     <button onClick={() => { setIsReportsOpen(true); setIsMenuOpen(false); }} className="w-full flex items-center gap-3 px-6 py-4 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors text-slate-700 dark:text-slate-300">
                                         <FileText size={20} className="text-blue-500" />
                                         <span className="font-bold">Relatórios</span>
@@ -180,6 +163,25 @@ export const Dashboard = () => {
                                 </div>
                             </>
                         )}
+                    </div>
+                </div>
+
+                <div className="flex items-center justify-between lg:justify-end gap-3">
+                    <div className="flex items-center gap-1.5 bg-white/80 backdrop-blur-md p-1.5 rounded-2xl shadow-xl shadow-slate-200/50 border border-slate-100 dark:bg-slate-900/80 dark:border-slate-800 dark:shadow-none w-full sm:w-auto">
+                        <Button variant="ghost" size="sm" onClick={handlePrevMonth} className="h-10 w-10 p-0 rounded-xl">
+                            <ChevronLeft size={20} className="text-slate-600 dark:text-slate-400" />
+                        </Button>
+                        <div className="flex-1 sm:min-w-[120px] text-center flex flex-col">
+                            <span className="text-[10px] font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-widest">
+                                {currentYear}
+                            </span>
+                            <span className="text-base font-black text-slate-800 dark:text-slate-100 uppercase leading-none">
+                                {mesNome}
+                            </span>
+                        </div>
+                        <Button variant="ghost" size="sm" onClick={handleNextMonth} className="h-10 w-10 p-0 rounded-xl">
+                            <ChevronRight size={20} className="text-slate-600 dark:text-slate-400" />
+                        </Button>
                     </div>
 
                     {/* Desktop Actions (Visíveis apenas em LG+) */}
