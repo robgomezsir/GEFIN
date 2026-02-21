@@ -118,12 +118,12 @@ export const Dashboard = () => {
 
     return (
         <div className="space-y-8 p-4 md:p-8 max-w-7xl mx-auto animate-in fade-in duration-500">
-            <header className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-2">
+            <header className="flex items-center justify-between gap-2 mb-6">
                 <div>
-                    <h1 className="text-4xl font-black text-slate-900 dark:text-white tracking-tight">
+                    <h1 className="text-2xl sm:text-4xl font-black text-slate-900 dark:text-white tracking-tight">
                         Fluxo de Caixa
                     </h1>
-                    <p className="text-slate-500 dark:text-slate-400 font-medium">Controle financeiro pessoal e familiar</p>
+                    <p className="hidden sm:block text-slate-500 dark:text-slate-400 font-medium">Controle financeiro pessoal e familiar</p>
                 </div>
 
                 <div className="flex items-center gap-3">
@@ -150,9 +150,9 @@ export const Dashboard = () => {
                             variant="secondary"
                             size="md"
                             onClick={() => setIsMenuOpen(!isMenuOpen)}
-                            className="h-12 w-12 p-0 rounded-2xl shadow-lg border-none bg-white dark:bg-slate-800 hover:scale-105 active:scale-95 transition-all lg:hidden"
+                            className="h-10 w-10 sm:h-12 sm:w-12 p-0 rounded-2xl shadow-lg border-none bg-white dark:bg-slate-800 hover:scale-105 active:scale-95 transition-all lg:hidden"
                         >
-                            {isMenuOpen ? <X size={22} className="text-slate-600 dark:text-slate-400" /> : <Menu size={22} className="text-slate-600 dark:text-slate-400" />}
+                            {isMenuOpen ? <X size={20} className="text-slate-600 dark:text-slate-400" /> : <Menu size={20} className="text-slate-600 dark:text-slate-400" />}
                         </Button>
 
                         {/* Dropdown Menu */}
