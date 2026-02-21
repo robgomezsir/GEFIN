@@ -35,7 +35,7 @@ export const TrendChart = ({ data }: TrendChartProps) => {
     return (
         <div className="h-[300px] w-full">
             <ResponsiveContainer width="100%" height="100%">
-                <AreaChart data={chartData}>
+                <AreaChart data={chartData} margin={{ left: 0, right: 15, top: 10, bottom: 0 }}>
                     <defs>
                         <linearGradient id="colorReceitas" x1="0" y1="0" x2="0" y2="1">
                             <stop offset="5%" stopColor="#10b981" stopOpacity={0.1} />
@@ -54,6 +54,7 @@ export const TrendChart = ({ data }: TrendChartProps) => {
                         tick={{ fontSize: 10, fontWeight: 600, fill: '#94a3b8' }}
                         interval={0}
                         dy={10}
+                        padding={{ left: 10, right: 10 }}
                     />
                     <YAxis
                         hide
