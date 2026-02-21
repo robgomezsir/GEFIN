@@ -15,16 +15,8 @@ interface TransactionListProps {
 export const TransactionList = ({ transactions, onSelect }: TransactionListProps) => {
     return (
         <Card className="p-0 overflow-hidden border-slate-100 dark:border-slate-800">
-            <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
+            <div className="p-6 border-b border-slate-100 dark:border-slate-800">
                 <h2 className="text-xl font-bold">Últimos Lançamentos</h2>
-                <div className="relative">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
-                    <input
-                        type="text"
-                        placeholder="Buscar..."
-                        className="pl-10 pr-4 h-10 rounded-xl bg-slate-50 border-none text-sm focus:ring-2 focus:ring-emerald-500 dark:bg-slate-800"
-                    />
-                </div>
             </div>
 
             <div className="divide-y divide-slate-50 dark:divide-slate-800/50">

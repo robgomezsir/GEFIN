@@ -261,62 +261,69 @@ export const Dashboard = () => {
                 />
             )}
 
-            {/* Charts and List */}
-            <section className="grid gap-8 lg:grid-cols-3">
-                <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-100 dark:border-slate-800 p-8 shadow-sm h-fit">
-                    <div className="flex items-center gap-2 mb-6 text-slate-900 dark:text-white">
-                        <PieIcon className="text-emerald-500" size={20} />
-                        <h2 className="text-xl font-bold">Distribuição por Categoria</h2>
-                    </div>
-                    <CategoryChart transactions={transactions} />
-                </div>
-
-                <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-100 dark:border-slate-800 p-8 shadow-sm h-fit">
-                    <div className="flex items-center gap-2 mb-6 text-slate-900 dark:text-white">
-                        <TrendingDown className="text-rose-500" size={20} />
-                        <h2 className="text-xl font-bold">Maiores Despesas</h2>
+            {/* Dashboard Layout Reorganized */}
+            <div className="grid gap-8 lg:grid-cols-3">
+                {/* Column 1: Charts & Top Expenses */}
+                <div className="space-y-8">
+                    {/* 1. Gráfico de Pizza */}
+                    <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-100 dark:border-slate-800 p-8 shadow-sm h-fit">
+                        <div className="flex items-center gap-2 mb-6 text-slate-900 dark:text-white">
+                            <PieIcon className="text-emerald-500" size={20} />
+                            <h2 className="text-xl font-bold">Distribuição por Categoria</h2>
+                        </div>
+                        <CategoryChart transactions={transactions} />
                     </div>
 
-                    <div className="space-y-4">
-                        {topDespesas.length > 0 ? (
-                            topDespesas.map((t, idx) => (
-                                <div key={t.id} className="flex items-center justify-between group">
-                                    <div className="flex items-center gap-3">
-                                        <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-rose-50 dark:bg-rose-900/20 text-rose-500 text-xs font-bold">
-                                            {idx + 1}º
-                                        </div>
-                                        <div>
-                                            <p className="text-sm font-bold text-slate-900 dark:text-white truncate max-w-[120px]">
-                                                {t.conta}
-                                            </p>
-                                            <p className="text-[10px] text-slate-500 dark:text-slate-400 font-medium">
-                                                {t.categoria}
-                                            </p>
-                                        </div>
-                                    </div>
-                                    <span className="text-sm font-black text-slate-900 dark:text-white">
-                                        {formatCurrency(Number(t.valor))}
-                                    </span>
-                                </div>
-                            ))
-                        ) : (
-                            <p className="text-center text-sm text-slate-500 py-4 italic">Nenhuma despesa encontrada.</p>
-                        )}
-                    </div>
-                </div>
-
-                <div className="lg:col-span-2 space-y-8">
-                    <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-100 dark:border-slate-800 p-8 shadow-sm">
+                    {/* 2. Gráfico de Linha */}
+                    <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-100 dark:border-slate-800 p-8 shadow-sm h-fit">
                         <div className="flex items-center gap-2 mb-6 text-slate-900 dark:text-white">
                             <BarChart3 className="text-emerald-500" size={20} />
-                            <h2 className="text-xl font-bold">Tendência de Receitas e Despesas</h2>
+                            <h2 className="text-xl font-bold">Tendência</h2>
                         </div>
                         <TrendChart data={annualData} />
                     </div>
 
+                    {/* 3. TOP 5 Despesas */}
+                    <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-100 dark:border-slate-800 p-8 shadow-sm h-fit">
+                        <div className="flex items-center gap-2 mb-6 text-slate-900 dark:text-white">
+                            <TrendingDown className="text-rose-500" size={20} />
+                            <h2 className="text-xl font-bold">Maiores Despesas</h2>
+                        </div>
+
+                        <div className="space-y-4">
+                            {topDespesas.length > 0 ? (
+                                topDespesas.map((t, idx) => (
+                                    <div key={t.id} className="flex items-center justify-between group">
+                                        <div className="flex items-center gap-3">
+                                            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-rose-50 dark:bg-rose-900/20 text-rose-500 text-xs font-bold">
+                                                {idx + 1}º
+                                            </div>
+                                            <div>
+                                                <p className="text-sm font-bold text-slate-900 dark:text-white truncate max-w-[120px]">
+                                                    {t.conta}
+                                                </p>
+                                                <p className="text-[10px] text-slate-500 dark:text-slate-400 font-medium">
+                                                    {t.categoria}
+                                                </p>
+                                            </div>
+                                        </div>
+                                        <span className="text-sm font-black text-slate-900 dark:text-white">
+                                            {formatCurrency(Number(t.valor))}
+                                        </span>
+                                    </div>
+                                ))
+                            ) : (
+                                <p className="text-center text-sm text-slate-500 py-4 italic">Nenhuma despesa encontrada.</p>
+                            )}
+                        </div>
+                    </div>
+                </div>
+
+                {/* Column 2 & 3: Transaction List */}
+                <div className="lg:col-span-2">
                     <TransactionList transactions={transactions} onSelect={openEdit} />
                 </div>
-            </section>
+            </div>
         </div>
     );
 };
