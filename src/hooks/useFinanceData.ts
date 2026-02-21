@@ -101,6 +101,9 @@ export function useFinanceData(mes: string, ano: number) {
             console.error('Erro ao salvar transação:', error);
             throw error;
         }
+
+        // Forçar atualização imediata para feedback instantâneo na UI
+        fetchTransactions();
     };
 
     const updateTransaction = async (id: number, updates: Partial<Transacao>) => {
@@ -113,6 +116,9 @@ export function useFinanceData(mes: string, ano: number) {
             console.error('Erro ao atualizar transação:', error);
             throw error;
         }
+
+        // Forçar atualização imediata para feedback instantâneo na UI
+        fetchTransactions();
     };
 
     const deleteTransaction = async (id: number) => {
@@ -125,6 +131,9 @@ export function useFinanceData(mes: string, ano: number) {
             console.error('Erro ao excluir transação:', error);
             throw error;
         }
+
+        // Forçar atualização imediata para feedback instantâneo na UI
+        fetchTransactions();
     };
 
     return {
