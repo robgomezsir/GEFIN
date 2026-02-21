@@ -33,6 +33,7 @@ export const Settings = ({ onBack }: SettingsProps) => {
     const [savingConfig, setSavingConfig] = React.useState(false);
     const [seeding, setSeeding] = React.useState(false);
     const [migrating, setMigrating] = React.useState(false);
+    const [clearing, setClearing] = React.useState(false);
     const [expandedDespesas, setExpandedDespesas] = React.useState(true);
     const [expandedReceitas, setExpandedReceitas] = React.useState(true);
     const [expandedCategories, setExpandedCategories] = React.useState<Record<number, boolean>>({});
@@ -46,13 +47,56 @@ export const Settings = ({ onBack }: SettingsProps) => {
         setExpandedCategories(prev => ({ ...prev, [id]: !prev[id] }));
     };
 
+    const handleClearTransactions = async () => {
+        if (!confirm('ATENÇÃO: Isso apagará TODAS as suas transações permanentemente. Deseja continuar?')) return;
+
+        setClearing(true);
+        try {
+            const { data: { user } } = await supabase.auth.getUser();
+            if (!user) return;
+
+            const { error } = await supabase
+                .from('transacoes')
+                .delete()
+                .eq('user_id', user.id);
+
+            if (error) throw error;
+            alert('Todas as transações foram apagadas com sucesso!');
+            refresh();
+        } catch (err: any) {
+            console.error('Erro ao limpar transações:', err);
+            alert('Erro ao limpar dados: ' + err.message);
+        } finally {
+            setClearing(false);
+        }
+    };
+
     const handleMigrateHistoricalData = async () => {
-        if (!confirm('Deseja realmente carregar os dados históricos de Julho/2025?')) return;
+        if (!confirm('Deseja realmente carregar os dados históricos? (Dados antigos deste período serão substituídos para evitar duplicatas)')) return;
 
         setMigrating(true);
         try {
             const { data: { user } } = await supabase.auth.getUser();
             if (!user) return;
+
+            // Limpar dados do período de migração para evitar duplicatas
+            const periodos = [
+                { mes: 'julho', ano: 2025 },
+                { mes: 'agosto', ano: 2025 },
+                { mes: 'setembro', ano: 2025 },
+                { mes: 'outubro', ano: 2025 },
+                { mes: 'janeiro', ano: 2026 },
+                { mes: 'fevereiro', ano: 2026 }
+            ];
+
+            for (const p of periodos) {
+                await supabase
+                    .from('transacoes')
+                    .delete()
+                    .eq('user_id', user.id)
+                    .eq('mes', p.mes)
+                    .eq('ano', p.ano);
+            }
 
             const HISTORICAL_DATA = [
                 // JULHO 2025
@@ -523,7 +567,7 @@ export const Settings = ({ onBack }: SettingsProps) => {
                             Popular Padrões do Sistema
                         </Button>
 
-                        <div className="mt-4 pt-4 border-t border-slate-100 dark:border-slate-800">
+                        <div className="mt-4 pt-4 border-t border-slate-100 dark:border-slate-800 space-y-3">
                             <Button
                                 variant="ghost"
                                 onClick={handleMigrateHistoricalData}
@@ -532,6 +576,16 @@ export const Settings = ({ onBack }: SettingsProps) => {
                             >
                                 <RefreshCw size={16} className={cn(migrating && "animate-spin")} />
                                 Migrar Dados do Excel (Histórico)
+                            </Button>
+
+                            <Button
+                                variant="ghost"
+                                onClick={handleClearTransactions}
+                                loading={clearing}
+                                className="w-full gap-2 rounded-2xl h-12 text-rose-300 hover:text-rose-600 text-[10px] font-medium"
+                            >
+                                <Trash2 size={14} />
+                                Limpar Todas as Transações (Reset)
                             </Button>
                         </div>
                     </div>
