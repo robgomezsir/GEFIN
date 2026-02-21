@@ -180,18 +180,6 @@ export const Settings = ({ onBack }: SettingsProps) => {
                     <h1 className="text-3xl font-black text-slate-900 dark:text-white tracking-tight">Configurações</h1>
                     <p className="text-slate-500 dark:text-slate-400 font-medium">Personalize suas metas e categorias</p>
                 </div>
-                <div className="ml-auto">
-                    <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={handleSeedData}
-                        loading={seeding}
-                        className="gap-2 text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-900/20"
-                    >
-                        <RefreshCw size={18} />
-                        Popular Padrões
-                    </Button>
-                </div>
             </header>
 
             {/* Metas Section */}
@@ -406,6 +394,26 @@ export const Settings = ({ onBack }: SettingsProps) => {
                     </Card>
                 </div>
             )}
+
+            <div className="pt-12 pb-8 border-t border-slate-100 dark:border-slate-800">
+                <div className="flex flex-col items-center text-center space-y-4">
+                    <div className="bg-indigo-50 dark:bg-indigo-900/10 p-6 rounded-3xl max-w-md">
+                        <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-2">Restaurar Dados Padrão</h3>
+                        <p className="text-sm text-slate-500 dark:text-slate-400 mb-6">
+                            Clique abaixo para preencher automaticamente as categorias e subcategorias essenciais para o seu controle financeiro.
+                        </p>
+                        <Button
+                            variant="secondary"
+                            onClick={handleSeedData}
+                            loading={seeding}
+                            className="w-full gap-2 rounded-2xl h-14 font-bold text-indigo-600 dark:text-indigo-400 border-indigo-100 dark:border-indigo-800"
+                        >
+                            <RefreshCw size={20} className={cn(seeding && "animate-spin")} />
+                            Popular Padrões do Sistema
+                        </Button>
+                    </div>
+                </div>
+            </div>
         </div>
     );
 };
