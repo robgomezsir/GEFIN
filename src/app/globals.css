@@ -1,30 +1,27 @@
 @import "tailwindcss";
 
+@theme {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-border: var(--border);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+@variant dark (&:where(.dark, .dark *));
+
 :root {
   --background: #f8fafc;
-  /* Pastel Blue Tint */
   --foreground: #0f172a;
-  /* Navy Blue Text */
   --card: #ffffff;
   --card-foreground: #0f172a;
   --border: #e2e8f0;
   --primary: #1e3a8a;
-  /* Navy Primary */
   --primary-foreground: #ffffff;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #020617;
-    /* Very Deep Navy */
-    --foreground: #f8fafc;
-    --card: #0f172a;
-    /* Navy Card */
-    --card-foreground: #f8fafc;
-    --border: #1e293b;
-    --primary: #3b82f6;
-    /* Lighter Navy/Blue */
-  }
 }
 
 .dark {

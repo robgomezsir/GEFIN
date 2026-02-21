@@ -201,12 +201,10 @@ export const Dashboard = () => {
 
             <div className="fixed bottom-8 right-8 md:bottom-12 md:right-12 z-40">
                 <Button
-                    size="lg"
                     onClick={() => setIsFormOpen(true)}
-                    className="rounded-full h-16 w-16 sm:w-auto sm:px-8 shadow-xl shadow-emerald-500/30 gap-3"
+                    className="rounded-full h-16 w-16 p-0 shadow-2xl shadow-emerald-500/40 hover:scale-110 active:scale-95 transition-all flex items-center justify-center bg-emerald-500 hover:bg-emerald-600 border-none"
                 >
-                    <Plus size={28} />
-                    <span className="hidden sm:inline text-lg">Novo Lançamento</span>
+                    <Plus size={32} strokeWidth={2.5} className="text-white" />
                 </Button>
             </div>
 
