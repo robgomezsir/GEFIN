@@ -56,19 +56,21 @@ export function useFinanceData(mes: string, ano: number) {
             if (totalData) {
                 let total = 0;
                 let anterior = 0;
-                const currentMonthIndex = MESES.indexOf(mes);
+                const currentMonthIndex = MESES.indexOf(mes.toLowerCase()); // Ensure current month is lowercase for comparison
 
                 totalData.forEach(t => {
                     const val = Number(t.valor);
                     const isReceita = t.tipo === 'Receita';
-                    const tMonthIndex = MESES.indexOf(t.mes.charAt(0).toUpperCase() + t.mes.slice(1));
+                    // Normalizar para minúsculas antes de buscar o índice
+                    const tMonthIndex = MESES.indexOf(t.mes.toLowerCase());
 
                     // Saldo Total (Até hoje)
                     if (isReceita) total += val;
                     else total -= val;
 
                     // Saldo Anterior (Antes do mês/ano selecionado)
-                    if (t.ano < ano || (t.ano === ano && tMonthIndex < currentMonthIndex)) {
+                    // Só conta se o ano for menor OU (se for o mesmo ano E o mês for realmente anterior)
+                    if (t.ano < ano || (t.ano === ano && tMonthIndex !== -1 && tMonthIndex < currentMonthIndex)) {
                         if (isReceita) anterior += val;
                         else anterior -= val;
                     }
