@@ -737,7 +737,7 @@ migrar();
 - [x] Gráfico de tendência: Receitas × Despesas por mês (anual)
 - [x] Gráfico de pizza: Distribuição de despesas por categoria (mensal)
 - [x] Gráfico de linha/área: Saldo acumulado ao longo do ano
-- [ ] Indicador: % disponível em relação à média salarial
+- [x] Indicador: % disponível em relação à média salarial
 
 ### Fase 5 — PWA
 - [x] Configurar `next-pwa` com manifest
@@ -747,10 +747,10 @@ migrar();
 - [ ] Testar comportamento offline com dados em cache
 
 ### Fase 6 — Configurações
-- [ ] Tela de gerenciamento de categorias de despesa
-- [ ] Tela de gerenciamento de subcategorias
-- [ ] Tela de gerenciamento de tipos de receita
-- [ ] Migração dos dados históricos do Excel
+- [x] Implementar tela de gerenciamento de categorias de despesa
+- [x] Implementar tela de gerenciamento de tipos de receita
+- [x] Implementar tela de metas (média salarial / renda prevista)
+- [ ] Planejar e executar migração de dados do Excel
 
 ---
 

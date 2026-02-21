@@ -4,12 +4,14 @@ import * as React from 'react';
 import { SummaryCard } from './SummaryCard';
 import { TransactionForm } from './TransactionForm';
 import { TransactionList } from './TransactionList';
-import { Button } from '@/components/ui/base';
+import { Button, Input, Card } from '@/components/ui/base';
+import { cn } from '@/utils/cn';
 import { MESES } from '@/utils/format';
-import { ChevronLeft, ChevronRight, Plus, LogOut, User, BarChart3, PieChart as PieIcon } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Plus, LogOut, User, BarChart3, PieChart as PieIcon, Settings as SettingsIcon } from 'lucide-react';
 import { useFinanceData } from '@/hooks/useFinanceData';
 import { useAnnualData } from '@/hooks/useAnnualData';
 import { TrendChart, CategoryChart } from './FinancialCharts';
+import { Settings } from './Settings';
 import { supabase } from '@/lib/supabase';
 import { Transacao } from '@/types';
 
@@ -17,10 +19,11 @@ export const Dashboard = () => {
     const [currentMonth, setCurrentMonth] = React.useState(new Date().getMonth());
     const [currentYear, setCurrentYear] = React.useState(new Date().getFullYear());
     const [isFormOpen, setIsFormOpen] = React.useState(false);
+    const [isSettingsOpen, setIsSettingsOpen] = React.useState(false);
     const [editingTransaction, setEditingTransaction] = React.useState<Transacao | null>(null);
 
     const mesNome = MESES[currentMonth];
-    const { transactions, resumo, saldoTotal, loading: loadingMonth, addTransaction, updateTransaction, deleteTransaction, refresh: refreshMonth } = useFinanceData(mesNome, currentYear);
+    const { transactions, resumo, saldoTotal, rendaPrevista, loading: loadingMonth, addTransaction, updateTransaction, deleteTransaction, refresh: refreshMonth } = useFinanceData(mesNome, currentYear);
     const { annualData, loading: loadingAnnual, refresh: refreshAnnual } = useAnnualData(currentYear);
 
     const loading = loadingMonth || loadingAnnual;
@@ -39,9 +42,9 @@ export const Dashboard = () => {
     const handleNextMonth = () => {
         if (currentMonth === 11) {
             setCurrentMonth(0);
-            setCurrentYear(prev => prev + 1);
+            setCurrentYear(currentYear + 1);
         } else {
-            setCurrentMonth(prev => prev + 1);
+            setCurrentMonth(currentMonth + 1);
         }
     };
 
@@ -81,12 +84,17 @@ export const Dashboard = () => {
         setIsFormOpen(true);
     };
 
+    if (isSettingsOpen) {
+        return <Settings onBack={() => setIsSettingsOpen(false)} />;
+    }
+
     // Dashboard data using real values from Supabase
     const data = {
         receitas: resumo?.total_receitas ?? 0,
         despesas: resumo?.total_despesas ?? 0,
         fluxo: resumo?.fluxo_caixa ?? 0,
-        saldo: saldoTotal
+        saldo: saldoTotal,
+        percentualDisponivel: rendaPrevista > 0 ? ((rendaPrevista - (resumo?.total_despesas ?? 0)) / rendaPrevista) * 100 : 0
     };
 
     return (
@@ -117,6 +125,10 @@ export const Dashboard = () => {
                         </Button>
                     </div>
 
+                    <Button variant="secondary" size="md" onClick={() => setIsSettingsOpen(true)} className="h-14 w-14 p-0 rounded-2xl shadow-lg border-none bg-white dark:bg-slate-800 hover:scale-105 active:scale-95 transition-all">
+                        <SettingsIcon size={22} className="text-slate-600 dark:text-slate-400" />
+                    </Button>
+
                     <Button variant="secondary" size="md" onClick={handleLogout} className="h-14 w-14 p-0 rounded-2xl shadow-lg border-none bg-white dark:bg-slate-800 hover:scale-105 active:scale-95 transition-all">
                         <LogOut size={22} className="text-slate-600 dark:text-slate-400" />
                     </Button>
@@ -131,11 +143,28 @@ export const Dashboard = () => {
                 </div>
             )}
 
-            <section className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+            <section className="grid gap-6 sm:grid-cols-2 lg:grid-cols-5">
                 <SummaryCard title="Receitas" value={data.receitas} type="receita" />
                 <SummaryCard title="Despesas" value={data.despesas} type="despesa" />
                 <SummaryCard title="Fluxo" value={data.fluxo} type="fluxo" />
-                <SummaryCard title="Saldo Acumulado" value={data.saldo} type="saldo" />
+                <SummaryCard title="Acumulado" value={data.saldo} type="saldo" />
+                <Card className="flex flex-col justify-center p-6 border-slate-100 dark:border-slate-800 bg-indigo-50/30 dark:bg-indigo-900/10">
+                    <span className="text-xs font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-widest mb-1">Disponibilidade</span>
+                    <div className="flex items-end gap-2">
+                        <span className="text-2xl font-black text-slate-900 dark:text-white leading-none">
+                            {data.percentualDisponivel.toFixed(0)}%
+                        </span>
+                    </div>
+                    <div className="w-full h-1.5 bg-slate-200 dark:bg-slate-800 rounded-full mt-3 overflow-hidden">
+                        <div
+                            className={cn(
+                                "h-full rounded-full transition-all duration-1000",
+                                data.percentualDisponivel > 20 ? "bg-indigo-500" : "bg-rose-500"
+                            )}
+                            style={{ width: `${Math.min(100, Math.max(0, data.percentualDisponivel))}%` }}
+                        />
+                    </div>
+                </Card>
             </section>
 
             <div className="fixed bottom-8 right-8 md:bottom-12 md:right-12 z-40">

@@ -9,6 +9,7 @@ export function useFinanceData(mes: string, ano: number) {
     const [transactions, setTransactions] = useState<Transacao[]>([]);
     const [resumo, setResumo] = useState<ResumoFluxo | null>(null);
     const [saldoTotal, setSaldoTotal] = useState(0);
+    const [rendaPrevista, setRendaPrevista] = useState(0);
     const [loading, setLoading] = useState(true);
 
     const fetchTransactions = async () => {
@@ -58,6 +59,16 @@ export function useFinanceData(mes: string, ano: number) {
                 }, 0);
                 setSaldoTotal(total);
             }
+
+            // Buscar Renda Prevista (Meta)
+            const { data: configData } = await supabase
+                .from('configuracoes')
+                .select('valor')
+                .eq('user_id', authData.user.id)
+                .eq('chave', 'renda_prevista')
+                .single();
+
+            if (configData) setRendaPrevista(Number(configData.valor));
         } catch (err) {
             console.error('Erro ao buscar transações:', err);
         } finally {
@@ -140,6 +151,7 @@ export function useFinanceData(mes: string, ano: number) {
         transactions,
         resumo,
         saldoTotal,
+        rendaPrevista,
         loading,
         addTransaction,
         updateTransaction,
