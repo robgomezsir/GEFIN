@@ -19,10 +19,10 @@ const icons = {
 };
 
 const colors = {
-    receita: "border-emerald-100 bg-emerald-50/50 dark:border-emerald-900/30 dark:bg-emerald-900/10",
-    despesa: "border-rose-100 bg-rose-50/50 dark:border-rose-900/30 dark:bg-rose-900/10",
-    fluxo: "border-blue-100 bg-blue-50/50 dark:border-blue-900/30 dark:bg-blue-900/10",
-    saldo: "border-violet-100 bg-violet-50/50 dark:border-violet-900/30 dark:bg-violet-900/10",
+    receita: "border-emerald-200 bg-emerald-50/70 dark:border-emerald-500/20 dark:bg-emerald-500/5",
+    despesa: "border-rose-200 bg-rose-50/70 dark:border-rose-500/20 dark:bg-rose-500/5",
+    fluxo: "border-blue-200 bg-blue-50/70 dark:border-blue-500/20 dark:bg-blue-500/5",
+    saldo: "border-indigo-200 bg-indigo-50/70 dark:border-indigo-500/20 dark:bg-indigo-500/5",
 };
 
 export const SummaryCard = ({ title, value, type, className }: SummaryCardProps) => {

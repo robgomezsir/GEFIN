@@ -12,7 +12,7 @@ export const Card = React.forwardRef<HTMLDivElement, CardProps>(
         <div
             ref={ref}
             className={cn(
-                "rounded-2xl border border-slate-200 bg-[var(--card)] p-6 shadow-sm transition-all dark:border-slate-800",
+                "rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition-all dark:border-slate-800 dark:bg-slate-900",
                 glass && "bg-opacity-80 backdrop-blur-md dark:bg-opacity-80",
                 className
             )}
@@ -67,7 +67,7 @@ export const Input = React.forwardRef<HTMLInputElement, React.InputHTMLAttribute
         <input
             ref={ref}
             className={cn(
-                "flex h-12 w-full rounded-xl border border-slate-200 bg-[var(--card)] px-4 py-2 transition-all focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500 disabled:opacity-50 dark:border-slate-800 dark:text-white",
+                "flex h-12 w-full rounded-xl border border-slate-200 bg-white px-4 py-2 transition-all focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500 disabled:opacity-50 dark:border-slate-800 dark:bg-slate-950 dark:text-white",
                 className
             )}
             {...props}

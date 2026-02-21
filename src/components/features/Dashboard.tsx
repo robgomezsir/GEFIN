@@ -7,15 +7,15 @@ import { TransactionList } from './TransactionList';
 import { Button, Input, Card } from '@/components/ui/base';
 import { cn } from '@/utils/cn';
 import { MESES } from '@/utils/format';
-import { ChevronLeft, ChevronRight, Plus, LogOut, User, BarChart3, PieChart as PieIcon, Settings as SettingsIcon, FileText } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Plus, LogOut, User, BarChart3, PieChart as PieIcon, Settings as SettingsIcon, FileText, Sun, Moon } from 'lucide-react';
 import { useFinanceData } from '@/hooks/useFinanceData';
 import { useAnnualData } from '@/hooks/useAnnualData';
 import { TrendChart, CategoryChart } from './FinancialCharts';
-import { ThemeToggle } from '@/components/ui/ThemeToggle';
 import { Settings } from './Settings';
 import { Reports } from './Reports';
 import { supabase } from '@/lib/supabase';
 import { Transacao } from '@/types';
+import { useTheme } from '@/context/ThemeContext';
 
 export const Dashboard = () => {
     const [currentMonth, setCurrentMonth] = React.useState(new Date().getMonth());
@@ -28,6 +28,7 @@ export const Dashboard = () => {
     const mesNome = MESES[currentMonth];
     const { transactions, resumo, saldoTotal, rendaPrevista, loading: loadingMonth, addTransaction, updateTransaction, deleteTransaction, refresh: refreshMonth } = useFinanceData(mesNome, currentYear);
     const { annualData, loading: loadingAnnual, refresh: refreshAnnual } = useAnnualData(currentYear);
+    const { theme, toggleTheme } = useTheme();
 
     const loading = loadingMonth || loadingAnnual;
 
@@ -148,7 +149,9 @@ export const Dashboard = () => {
                         <SettingsIcon size={22} className="text-slate-600 dark:text-slate-400" />
                     </Button>
 
-                    <ThemeToggle />
+                    <Button variant="secondary" size="md" onClick={toggleTheme} className="h-14 w-14 p-0 rounded-2xl shadow-lg border-none bg-white dark:bg-slate-800 hover:scale-105 active:scale-95 transition-all text-amber-500 dark:text-blue-400">
+                        {theme === 'light' ? <Moon size={22} /> : <Sun size={22} />}
+                    </Button>
 
                     <Button variant="secondary" size="md" onClick={handleLogout} className="h-14 w-14 p-0 rounded-2xl shadow-lg border-none bg-white dark:bg-slate-800 hover:scale-105 active:scale-95 transition-all">
                         <LogOut size={22} className="text-slate-600 dark:text-slate-400" />
@@ -221,17 +224,7 @@ export const Dashboard = () => {
 
             {/* Charts and List */}
             <section className="grid gap-8 lg:grid-cols-3">
-                {/* Distribuição por Categoria - Agora em Primeiro */}
-                <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-100 dark:border-slate-800 p-8 shadow-sm h-fit lg:order-1">
-                    <div className="flex items-center gap-2 mb-6 text-slate-900 dark:text-white">
-                        <PieIcon className="text-emerald-500" size={20} />
-                        <h2 className="text-xl font-bold">Distribuição por Categoria</h2>
-                    </div>
-                    <CategoryChart transactions={transactions} />
-                </div>
-
-                {/* Tendência e Lista - Agora em Segundo */}
-                <div className="lg:col-span-2 space-y-8 lg:order-2">
+                <div className="lg:col-span-2 space-y-8">
                     <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-100 dark:border-slate-800 p-8 shadow-sm">
                         <div className="flex items-center gap-2 mb-6 text-slate-900 dark:text-white">
                             <BarChart3 className="text-emerald-500" size={20} />
@@ -241,6 +234,14 @@ export const Dashboard = () => {
                     </div>
 
                     <TransactionList transactions={transactions} onSelect={openEdit} />
+                </div>
+
+                <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-100 dark:border-slate-800 p-8 shadow-sm h-fit">
+                    <div className="flex items-center gap-2 mb-6 text-slate-900 dark:text-white">
+                        <PieIcon className="text-emerald-500" size={20} />
+                        <h2 className="text-xl font-bold">Distribuição por Categoria</h2>
+                    </div>
+                    <CategoryChart transactions={transactions} />
                 </div>
             </section>
         </div>
