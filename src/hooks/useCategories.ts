@@ -10,8 +10,12 @@ export function useCategories() {
 
     const fetchData = async () => {
         const { data: { user } } = await supabase.auth.getUser();
-        if (!user) return;
+        if (!user) {
+            console.log('useCategories: Usuário não autenticado ainda.');
+            return;
+        }
 
+        console.log('useCategories: Buscando categorias para o usuário:', user.id);
         setLoading(true);
         try {
             const { data: catData, error: catError } = await supabase
@@ -20,16 +24,26 @@ export function useCategories() {
                 .eq('user_id', user.id)
                 .order('nome');
 
+            if (catError) console.error('useCategories: Erro catData:', catError);
+
             const { data: incData, error: incError } = await supabase
                 .from('tipos_receita')
                 .select('*')
                 .eq('user_id', user.id)
                 .order('nome');
 
-            if (!catError) setCategories(catData || []);
-            if (!incError) setIncomeTypes(incData || []);
+            if (incError) console.error('useCategories: Erro incData:', incError);
+
+            if (!catError) {
+                console.log('useCategories: Categorias encontradas:', catData?.length);
+                setCategories(catData || []);
+            }
+            if (!incError) {
+                console.log('useCategories: Tipos de receita encontrados:', incData?.length);
+                setIncomeTypes(incData || []);
+            }
         } catch (err) {
-            console.error('Erro ao buscar categorias:', err);
+            console.error('useCategories: Erro fatal ao buscar categorias:', err);
         } finally {
             setLoading(false);
         }

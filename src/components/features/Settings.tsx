@@ -23,26 +23,36 @@ export const Settings = ({ onBack }: SettingsProps) => {
         setSeeding(true);
         try {
             const { data: { user } } = await supabase.auth.getUser();
-            if (!user) return;
+            if (!user) {
+                alert('Usuário não autenticado!');
+                return;
+            }
+
+            console.log('Iniciando semeio para:', user.id);
 
             // Popular Categorias
             for (const nome of CATEGORIAS_DESPESA) {
-                await supabase.from('categorias_despesa').upsert({
+                const { error } = await supabase.from('categorias_despesa').upsert({
                     nome,
                     user_id: user.id
                 }, { onConflict: 'nome,user_id' });
+                if (error) console.error(`Erro ao semear categoria ${nome}:`, error);
             }
+
             // Popular Tipos de Receita
             for (const nome of TIPOS_RECEITA) {
-                await supabase.from('tipos_receita').upsert({
+                const { error } = await supabase.from('tipos_receita').upsert({
                     nome,
                     user_id: user.id
                 }, { onConflict: 'nome,user_id' });
+                if (error) console.error(`Erro ao semear receita ${nome}:`, error);
             }
-            alert('Dados padrão populados com sucesso!');
+
+            alert('Processo de semeio finalizado! Verifique as listas.');
             refresh();
-        } catch (err) {
-            console.error('Erro ao semear dados:', err);
+        } catch (err: any) {
+            console.error('Erro fatal no semeio:', err);
+            alert('Erro ao semear dados: ' + err.message);
         } finally {
             setSeeding(false);
         }

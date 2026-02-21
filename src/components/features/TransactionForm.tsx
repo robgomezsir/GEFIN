@@ -3,7 +3,7 @@
 import * as React from 'react';
 import { Button, Input, Card } from '@/components/ui/base';
 import { useCategories } from '@/hooks/useCategories';
-import { CONTAS_POR_CATEGORIA } from '@/utils/constants';
+import { CATEGORIAS_DESPESA, TIPOS_RECEITA, CONTAS_POR_CATEGORIA } from '@/utils/constants';
 import { MESES } from '@/utils/format';
 import { X, ArrowUpCircle, ArrowDownCircle } from 'lucide-react';
 import { cn } from '@/utils/cn';
@@ -39,8 +39,10 @@ export const TransactionForm = ({ onClose, onSave, initialData, onDelete }: Tran
     };
 
     const contasDisponiveis = tipo === 'Receita'
-        ? incomeTypes.map(it => it.nome)
+        ? (incomeTypes.length > 0 ? incomeTypes.map(it => it.nome) : TIPOS_RECEITA)
         : (categoria ? CONTAS_POR_CATEGORIA[categoria] || ['Geral'] : []);
+
+    const categoriasExibicao = categories.length > 0 ? categories.map(c => c.nome) : CATEGORIAS_DESPESA;
 
     return (
         <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/50 backdrop-blur-sm sm:items-center p-4">
@@ -106,10 +108,9 @@ export const TransactionForm = ({ onClose, onSave, initialData, onDelete }: Tran
                                 }}
                                 className="w-full h-12 rounded-xl border border-slate-200 bg-white px-4 dark:border-slate-800 dark:bg-slate-950"
                                 required
-                                disabled={loadingCats}
                             >
                                 <option value="">{loadingCats ? 'Carregando...' : 'Selecione uma categoria'}</option>
-                                {categories.map(c => <option key={c.id} value={c.nome}>{c.nome}</option>)}
+                                {categoriasExibicao.map(c => <option key={c} value={c}>{c}</option>)}
                             </select>
                         </div>
                     )}
