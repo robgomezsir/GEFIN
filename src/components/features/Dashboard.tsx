@@ -224,6 +224,14 @@ export const Dashboard = () => {
 
             {/* Charts and List */}
             <section className="grid gap-8 lg:grid-cols-3">
+                <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-100 dark:border-slate-800 p-8 shadow-sm h-fit">
+                    <div className="flex items-center gap-2 mb-6 text-slate-900 dark:text-white">
+                        <PieIcon className="text-emerald-500" size={20} />
+                        <h2 className="text-xl font-bold">Distribuição por Categoria</h2>
+                    </div>
+                    <CategoryChart transactions={transactions} />
+                </div>
+
                 <div className="lg:col-span-2 space-y-8">
                     <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-100 dark:border-slate-800 p-8 shadow-sm">
                         <div className="flex items-center gap-2 mb-6 text-slate-900 dark:text-white">
@@ -234,14 +242,6 @@ export const Dashboard = () => {
                     </div>
 
                     <TransactionList transactions={transactions} onSelect={openEdit} />
-                </div>
-
-                <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-100 dark:border-slate-800 p-8 shadow-sm h-fit">
-                    <div className="flex items-center gap-2 mb-6 text-slate-900 dark:text-white">
-                        <PieIcon className="text-emerald-500" size={20} />
-                        <h2 className="text-xl font-bold">Distribuição por Categoria</h2>
-                    </div>
-                    <CategoryChart transactions={transactions} />
                 </div>
             </section>
         </div>
