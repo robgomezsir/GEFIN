@@ -32,6 +32,7 @@ export const Settings = ({ onBack }: SettingsProps) => {
     const [rendaPrevista, setRendaPrevista] = React.useState('');
     const [savingConfig, setSavingConfig] = React.useState(false);
     const [seeding, setSeeding] = React.useState(false);
+    const [migrating, setMigrating] = React.useState(false);
     const [expandedDespesas, setExpandedDespesas] = React.useState(true);
     const [expandedReceitas, setExpandedReceitas] = React.useState(true);
     const [expandedCategories, setExpandedCategories] = React.useState<Record<number, boolean>>({});
@@ -43,6 +44,116 @@ export const Settings = ({ onBack }: SettingsProps) => {
 
     const toggleCategory = (id: number) => {
         setExpandedCategories(prev => ({ ...prev, [id]: !prev[id] }));
+    };
+
+    const handleMigrateHistoricalData = async () => {
+        if (!confirm('Deseja realmente carregar os dados históricos de Julho/2025?')) return;
+
+        setMigrating(true);
+        try {
+            const { data: { user } } = await supabase.auth.getUser();
+            if (!user) return;
+
+            const HISTORICAL_DATA = [
+                // JULHO 2025
+                { tipo: 'Receita', categoria: null, conta: 'Salário', valor: 2457.87, mes: 'julho', ano: 2025, data_registro: '2025-07-04' },
+                { tipo: 'Despesa', categoria: 'Casa', conta: 'Luz', valor: 123.61, mes: 'julho', ano: 2025, data_registro: '2025-07-04' },
+                { tipo: 'Despesa', categoria: 'Casa', conta: 'Gás', valor: 125.00, mes: 'julho', ano: 2025, data_registro: '2025-07-04' },
+                { tipo: 'Despesa', categoria: 'Obrigações', conta: 'Faculdade', valor: 166.55, mes: 'julho', ano: 2025, data_registro: '2025-07-07' },
+                { tipo: 'Despesa', categoria: 'Casa', conta: 'AÇOUGUE', valor: 408.63, mes: 'julho', ano: 2025, data_registro: '2025-07-07' },
+                { tipo: 'Receita', categoria: null, conta: 'comissão vendas Zhonet', valor: 93.57, mes: 'julho', ano: 2025, data_registro: '2025-07-07' },
+                { tipo: 'Despesa', categoria: 'Casa', conta: 'Luz', valor: 161.05, mes: 'julho', ano: 2025, data_registro: '2025-07-07' },
+                { tipo: 'Despesa', categoria: 'Obrigações', conta: 'Cartão de crédito itau MA!', valor: 984.47, mes: 'julho', ano: 2025, data_registro: '2025-07-07' },
+                { tipo: 'Despesa', categoria: 'Obrigações', conta: 'Cartão NUNBANK', valor: 451.64, mes: 'julho', ano: 2025, data_registro: '2025-07-07' },
+                { tipo: 'Despesa', categoria: 'Casa', conta: 'Outros', valor: 12.99, mes: 'julho', ano: 2025, data_registro: '2025-07-07' },
+                { tipo: 'Despesa', categoria: 'Casa', conta: 'Outros', valor: 17.50, mes: 'julho', ano: 2025, data_registro: '2025-07-07' },
+                { tipo: 'Despesa', categoria: 'Filhos', conta: 'Vestuário', valor: 50.00, mes: 'julho', ano: 2025, data_registro: '2025-07-07' },
+                { tipo: 'Despesa', categoria: 'Sara', conta: 'Sara', valor: 50.00, mes: 'julho', ano: 2025, data_registro: '2025-07-07' },
+
+                // AGOSTO 2025
+                { tipo: 'Despesa', categoria: 'Obrigações', conta: 'Cartão NUNBANK', valor: 1169.24, mes: 'agosto', ano: 2025, data_registro: '2025-08-05' },
+                { tipo: 'Despesa', categoria: 'Obrigações', conta: 'Cartão de crédito itau MA!', valor: 1134.90, mes: 'agosto', ano: 2025, data_registro: '2025-08-08' },
+                { tipo: 'Despesa', categoria: 'Casa', conta: 'Gás', valor: 125.00, mes: 'agosto', ano: 2025, data_registro: '2025-08-08' },
+                { tipo: 'Despesa', categoria: 'Casa', conta: 'Luz', valor: 183.50, mes: 'agosto', ano: 2025, data_registro: '2025-08-08' },
+                { tipo: 'Receita', categoria: null, conta: 'Salário', valor: 2612.64, mes: 'agosto', ano: 2025, data_registro: '2025-08-08' },
+
+                // SETEMBRO 2025
+                { tipo: 'Despesa', categoria: 'Obrigações', conta: 'Cartão de crédito itau MA!', valor: 257.29, mes: 'setembro', ano: 2025, data_registro: '2025-09-01' },
+                { tipo: 'Despesa', categoria: 'Obrigações', conta: 'Cartão NUNBANK', valor: 1113.77, mes: 'setembro', ano: 2025, data_registro: '2025-09-01' },
+                { tipo: 'Despesa', categoria: 'Casa', conta: 'Gás', valor: 125.00, mes: 'setembro', ano: 2025, data_registro: '2025-09-01' },
+                { tipo: 'Despesa', categoria: 'Casa', conta: 'Luz', valor: 184.00, mes: 'setembro', ano: 2025, data_registro: '2025-09-01' },
+                { tipo: 'Despesa', categoria: 'Casa', conta: 'AÇOUGUE', valor: 488.13, mes: 'setembro', ano: 2025, data_registro: '2025-09-01' },
+                { tipo: 'Despesa', categoria: 'Casa', conta: 'Material de Contrução', valor: 198.00, mes: 'setembro', ano: 2025, data_registro: '2025-09-01' },
+                { tipo: 'Despesa', categoria: 'Obrigações', conta: 'INVESTIMENTOS', valor: 144.57, mes: 'setembro', ano: 2025, data_registro: '2025-09-01' },
+                { tipo: 'Despesa', categoria: 'Assinaturas', conta: 'Conta Claro', valor: 63.21, mes: 'setembro', ano: 2025, data_registro: '2025-09-04' },
+                { tipo: 'Despesa', categoria: 'Sara', conta: 'short', valor: 50.00, mes: 'setembro', ano: 2025, data_registro: '2025-09-04' },
+                { tipo: 'Despesa', categoria: 'Sara', conta: 'roupa meninos', valor: 50.00, mes: 'setembro', ano: 2025, data_registro: '2025-09-04' },
+                { tipo: 'Receita', categoria: null, conta: 'Salário', valor: 2800.00, mes: 'setembro', ano: 2025, data_registro: '2025-09-04' },
+                { tipo: 'Receita', categoria: null, conta: 'comissão vendas Zhonet', valor: 115.00, mes: 'setembro', ano: 2025, data_registro: '2025-09-04' },
+                { tipo: 'Despesa', categoria: 'Filhos', conta: 'Outros', valor: 241.03, mes: 'setembro', ano: 2025, data_registro: '2025-09-21' },
+
+                // OUTUBRO 2025
+                { tipo: 'Despesa', categoria: 'Assinaturas', conta: 'Conta Claro', valor: 30.00, mes: 'outubro', ano: 2025, data_registro: '2025-10-21' },
+                { tipo: 'Despesa', categoria: 'Casa', conta: 'Mercado', valor: 800.00, mes: 'outubro', ano: 2025, data_registro: '2025-10-21' },
+                { tipo: 'Despesa', categoria: 'Casa', conta: 'AÇOUGUE', valor: 450.00, mes: 'outubro', ano: 2025, data_registro: '2025-10-21' },
+                { tipo: 'Despesa', categoria: 'Obrigações', conta: 'Cartão de crédito itau MA!', valor: 269.00, mes: 'outubro', ano: 2025, data_registro: '2025-10-21' },
+                { tipo: 'Despesa', categoria: 'Obrigações', conta: 'Cartão NUNBANK', valor: 500.00, mes: 'outubro', ano: 2025, data_registro: '2025-10-21' },
+                { tipo: 'Despesa', categoria: 'Casa', conta: 'Luz', valor: 136.00, mes: 'outubro', ano: 2025, data_registro: '2025-10-21' },
+                { tipo: 'Despesa', categoria: 'Casa', conta: 'Gás', valor: 125.00, mes: 'outubro', ano: 2025, data_registro: '2025-10-21' },
+                { tipo: 'Despesa', categoria: 'Férias', conta: 'Férias', valor: 230.00, mes: 'outubro', ano: 2025, data_registro: '2025-10-21' },
+                { tipo: 'Receita', categoria: null, conta: 'Salário', valor: 2500.00, mes: 'outubro', ano: 2025, data_registro: '2025-10-21' },
+                { tipo: 'Receita', categoria: null, conta: 'comissão vendas Zhonet', valor: 150.00, mes: 'outubro', ano: 2025, data_registro: '2025-10-21' },
+                { tipo: 'Despesa', categoria: 'Obrigações', conta: 'Cartão NUNBANK', valor: 1157.00, mes: 'outubro', ano: 2025, data_registro: '2025-10-21' },
+                { tipo: 'Receita', categoria: null, conta: 'Diárias', valor: 1265.00, mes: 'outubro', ano: 2025, data_registro: '2025-10-30' },
+                { tipo: 'Receita', categoria: null, conta: 'Diárias', valor: 2485.00, mes: 'outubro', ano: 2025, data_registro: '2025-10-30' },
+                { tipo: 'Receita', categoria: null, conta: 'Diárias', valor: 414.40, mes: 'outubro', ano: 2025, data_registro: '2025-10-30' },
+                { tipo: 'Receita', categoria: null, conta: 'Diárias', valor: 185.00, mes: 'outubro', ano: 2025, data_registro: '2025-10-30' },
+
+                // JANEIRO 2026
+                { tipo: 'Receita', categoria: null, conta: 'Valor inicial do Ano', valor: 500.00, mes: 'janeiro', ano: 2026, data_registro: '2026-01-02' },
+                { tipo: 'Despesa', categoria: 'Obrigações', conta: 'Cartão NUNBANK', valor: 629.39, mes: 'janeiro', ano: 2026, data_registro: '2026-01-02' },
+                { tipo: 'Despesa', categoria: 'Obrigações', conta: 'Cartão de crédito itau MA!', valor: 102.45, mes: 'janeiro', ano: 2026, data_registro: '2026-01-02' },
+                { tipo: 'Despesa', categoria: 'Casa', conta: 'Luz', valor: 155.92, mes: 'janeiro', ano: 2026, data_registro: '2026-01-02' },
+                { tipo: 'Despesa', categoria: 'Casa', conta: 'Mercado', valor: 750.00, mes: 'janeiro', ano: 2026, data_registro: '2026-01-02' },
+                { tipo: 'Despesa', categoria: 'Casa', conta: 'AÇOUGUE', valor: 400.00, mes: 'janeiro', ano: 2026, data_registro: '2026-01-02' },
+                { tipo: 'Receita', categoria: null, conta: 'Salário', valor: 2500.00, mes: 'janeiro', ano: 2026, data_registro: '2026-01-02' },
+                { tipo: 'Despesa', categoria: 'Obrigações', conta: 'INVESTIMENTOS', valor: 200.00, mes: 'janeiro', ano: 2026, data_registro: '2026-01-02' },
+                { tipo: 'Despesa', categoria: 'Obrigações', conta: 'compra de terreno', valor: 350.00, mes: 'janeiro', ano: 2026, data_registro: '2026-01-02' },
+                { tipo: 'Receita', categoria: null, conta: 'IPTV (LUCROS)', valor: 500.00, mes: 'janeiro', ano: 2026, data_registro: '2026-01-02' },
+                { tipo: 'Despesa', categoria: 'Obrigações', conta: 'CAIXA DE CASAL', valor: 200.00, mes: 'janeiro', ano: 2026, data_registro: '2026-01-02' },
+
+                // FEVEREIRO 2026
+                { tipo: 'Despesa', categoria: 'Assinaturas', conta: 'Conta Claro', valor: 40.00, mes: 'fevereiro', ano: 2026, data_registro: '2026-02-26' },
+                { tipo: 'Despesa', categoria: 'Obrigações', conta: 'Cartão de crédito itau MA!', valor: 102.45, mes: 'fevereiro', ano: 2026, data_registro: '2026-02-26' },
+                { tipo: 'Despesa', categoria: 'Obrigações', conta: 'Cartão NUNBANK', valor: 1038.15, mes: 'fevereiro', ano: 2026, data_registro: '2026-02-26' },
+                { tipo: 'Despesa', categoria: 'Obrigações', conta: 'compra de terreno', valor: 350.00, mes: 'fevereiro', ano: 2026, data_registro: '2026-02-26' },
+                { tipo: 'Despesa', categoria: 'DespesasDiárias', conta: 'GASOLINA', valor: 300.00, mes: 'fevereiro', ano: 2026, data_registro: '2026-02-26' },
+                { tipo: 'Despesa', categoria: 'Casa', conta: 'Mercado', valor: 700.00, mes: 'fevereiro', ano: 2026, data_registro: '2026-02-26' },
+                { tipo: 'Despesa', categoria: 'Casa', conta: 'Gás', valor: 125.00, mes: 'fevereiro', ano: 2026, data_registro: '2026-02-26' },
+                { tipo: 'Despesa', categoria: 'Casa', conta: 'Luz', valor: 196.00, mes: 'fevereiro', ano: 2026, data_registro: '2026-02-26' },
+                { tipo: 'Despesa', categoria: 'Poupança', conta: 'Investimentos', valor: 150.00, mes: 'fevereiro', ano: 2026, data_registro: '2026-02-26' },
+                { tipo: 'Despesa', categoria: 'Poupança', conta: 'CAIXA CASAL VIAGEM', valor: 100.00, mes: 'fevereiro', ano: 2026, data_registro: '2026-02-26' },
+                { tipo: 'Receita', categoria: null, conta: 'Salário', valor: 2400.00, mes: 'fevereiro', ano: 2026, data_registro: '2026-02-26' },
+                { tipo: 'Receita', categoria: null, conta: 'IPTV (LUCROS)', valor: 800.00, mes: 'fevereiro', ano: 2026, data_registro: '2026-02-26' },
+                { tipo: 'Despesa', categoria: 'Obrigações', conta: 'SEGURO DO CARRO', valor: 188.00, mes: 'fevereiro', ano: 2026, data_registro: '2026-02-26' },
+                { tipo: 'Receita', categoria: null, conta: 'Outros', valor: 360.00, mes: 'fevereiro', ano: 2026, data_registro: '2026-02-26' },
+            ];
+
+            const transactionsWithUser = HISTORICAL_DATA.map(t => ({
+                ...t,
+                user_id: user.id
+            }));
+
+            const { error } = await supabase.from('transacoes').insert(transactionsWithUser);
+            if (error) throw error;
+
+            alert('Migração concluída com sucesso!');
+        } catch (err: any) {
+            console.error('Erro na migração:', err);
+            alert('Erro ao migrar dados: ' + err.message);
+        } finally {
+            setMigrating(false);
+        }
     };
 
     const handleSeedData = async () => {
@@ -411,6 +522,18 @@ export const Settings = ({ onBack }: SettingsProps) => {
                             <RefreshCw size={20} className={cn(seeding && "animate-spin")} />
                             Popular Padrões do Sistema
                         </Button>
+
+                        <div className="mt-4 pt-4 border-t border-slate-100 dark:border-slate-800">
+                            <Button
+                                variant="ghost"
+                                onClick={handleMigrateHistoricalData}
+                                loading={migrating}
+                                className="w-full gap-2 rounded-2xl h-12 text-slate-400 hover:text-indigo-600 text-xs font-bold"
+                            >
+                                <RefreshCw size={16} className={cn(migrating && "animate-spin")} />
+                                Migrar Dados do Excel (Histórico)
+                            </Button>
+                        </div>
                     </div>
                 </div>
             </div>
