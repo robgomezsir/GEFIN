@@ -16,7 +16,7 @@ export const Dashboard = () => {
     const [isFormOpen, setIsFormOpen] = React.useState(false);
 
     const mesNome = MESES[currentMonth];
-    const { transactions, resumo, loading, addTransaction } = useFinanceData(mesNome, currentYear);
+    const { transactions, resumo, saldoTotal, loading, addTransaction } = useFinanceData(mesNome, currentYear);
 
     const handleLogout = () => supabase.auth.signOut();
 
@@ -47,42 +47,57 @@ export const Dashboard = () => {
         }
     };
 
-    // Dashboard data from Supabase Resumo View
+    // Dashboard data using real values from Supabase
     const data = {
         receitas: resumo?.total_receitas ?? 0,
         despesas: resumo?.total_despesas ?? 0,
         fluxo: resumo?.fluxo_caixa ?? 0,
-        saldo: (resumo?.valor_inicial_ano ?? 0) + (resumo?.fluxo_caixa ?? 0) // Simplificado por enquanto, o ideal é o saldo acumulado total
+        saldo: saldoTotal
     };
 
     return (
-        <div className="space-y-8 p-4 md:p-8 max-w-7xl mx-auto">
-            <header className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="space-y-8 p-4 md:p-8 max-w-7xl mx-auto animate-in fade-in duration-500">
+            <header className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-2">
                 <div>
-                    <h1 className="text-3xl font-bold text-slate-900 dark:text-white">Fluxo de Caixa</h1>
-                    <p className="text-slate-500 dark:text-slate-400">Controle financeiro pessoal e familiar</p>
+                    <h1 className="text-4xl font-black text-slate-900 dark:text-white tracking-tight">
+                        Fluxo de Caixa
+                    </h1>
+                    <p className="text-slate-500 dark:text-slate-400 font-medium">Controle financeiro pessoal e familiar</p>
                 </div>
 
                 <div className="flex items-center gap-4">
-                    <div className="flex items-center gap-2 bg-white p-1 rounded-2xl shadow-sm border border-slate-100 dark:bg-slate-900 dark:border-slate-800">
-                        <Button variant="ghost" size="sm" onClick={handlePrevMonth}>
-                            <ChevronLeft size={20} />
+                    <div className="flex items-center gap-2 bg-white/80 backdrop-blur-md p-1.5 rounded-2xl shadow-xl shadow-slate-200/50 border border-slate-100 dark:bg-slate-900/80 dark:border-slate-800 dark:shadow-none">
+                        <Button variant="ghost" size="sm" onClick={handlePrevMonth} className="hover:bg-slate-100 rounded-xl">
+                            <ChevronLeft size={22} className="text-slate-600 dark:text-slate-400" />
                         </Button>
-                        <span className="min-w-[140px] text-center font-semibold text-slate-700 dark:text-slate-200 uppercase tracking-wider">
-                            {mesNome} {currentYear}
-                        </span>
-                        <Button variant="ghost" size="sm" onClick={handleNextMonth}>
-                            <ChevronRight size={20} />
+                        <div className="min-w-[160px] text-center flex flex-col">
+                            <span className="text-xs font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-widest">
+                                {currentYear}
+                            </span>
+                            <span className="text-lg font-black text-slate-800 dark:text-slate-100 uppercase leading-none">
+                                {mesNome}
+                            </span>
+                        </div>
+                        <Button variant="ghost" size="sm" onClick={handleNextMonth} className="hover:bg-slate-100 rounded-xl">
+                            <ChevronRight size={22} className="text-slate-600 dark:text-slate-400" />
                         </Button>
                     </div>
 
-                    <Button variant="secondary" size="sm" onClick={handleLogout} className="h-12 w-12 p-0 rounded-2xl">
-                        <LogOut size={20} />
+                    <Button variant="secondary" size="md" onClick={handleLogout} className="h-14 w-14 p-0 rounded-2xl shadow-lg border-none bg-white dark:bg-slate-800 hover:scale-105 active:scale-95 transition-all">
+                        <LogOut size={22} className="text-slate-600 dark:text-slate-400" />
                     </Button>
                 </div>
             </header>
 
-            <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {loading && (
+                <div className="fixed top-4 right-4 z-50">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-emerald-500 shadow-lg text-white animate-spin">
+                        <Plus size={20} className="rotate-45" />
+                    </div>
+                </div>
+            )}
+
+            <section className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
                 <SummaryCard title="Receitas" value={data.receitas} type="receita" />
                 <SummaryCard title="Despesas" value={data.despesas} type="despesa" />
                 <SummaryCard title="Fluxo" value={data.fluxo} type="fluxo" />
