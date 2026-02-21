@@ -6,6 +6,7 @@ import { supabase } from '@/lib/supabase';
 export function useCategories() {
     const [categories, setCategories] = useState<any[]>([]);
     const [incomeTypes, setIncomeTypes] = useState<any[]>([]);
+    const [subcategories, setSubcategories] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
 
     const fetchData = async () => {
@@ -34,6 +35,14 @@ export function useCategories() {
 
             if (incError) console.error('useCategories: Erro incData:', incError);
 
+            const { data: subData, error: subError } = await supabase
+                .from('contas_despesa')
+                .select('*')
+                .eq('user_id', user.id)
+                .order('nome');
+
+            if (subError) console.error('useCategories: Erro subData:', subError);
+
             if (!catError) {
                 console.log('useCategories: Categorias encontradas:', catData?.length);
                 setCategories(catData || []);
@@ -41,6 +50,10 @@ export function useCategories() {
             if (!incError) {
                 console.log('useCategories: Tipos de receita encontrados:', incData?.length);
                 setIncomeTypes(incData || []);
+            }
+            if (!subError) {
+                console.log('useCategories: Subcategorias encontradas:', subData?.length);
+                setSubcategories(subData || []);
             }
         } catch (err) {
             console.error('useCategories: Erro fatal ao buscar categorias:', err);
@@ -58,6 +71,19 @@ export function useCategories() {
         return { error };
     };
 
+    const addSubcategory = async (categoriaId: number, nome: string) => {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) return { error: { message: 'Usuário não autenticado' } };
+
+        const { error } = await supabase.from('contas_despesa').insert({
+            nome,
+            categoria_id: categoriaId,
+            user_id: user.id
+        });
+        if (!error) fetchData();
+        return { error };
+    };
+
     const addIncomeType = async (nome: string) => {
         const { data: { user } } = await supabase.auth.getUser();
         if (!user) return { error: { message: 'Usuário não autenticado' } };
@@ -69,6 +95,12 @@ export function useCategories() {
 
     const deleteCategory = async (id: number) => {
         const { error } = await supabase.from('categorias_despesa').delete().eq('id', id);
+        if (!error) fetchData();
+        return { error };
+    };
+
+    const deleteSubcategory = async (id: number) => {
+        const { error } = await supabase.from('contas_despesa').delete().eq('id', id);
         if (!error) fetchData();
         return { error };
     };
@@ -97,20 +129,31 @@ export function useCategories() {
             })
             .subscribe();
 
+        const subChannel = supabase
+            .channel('public:contas_despesa')
+            .on('postgres_changes', { event: '*', schema: 'public', table: 'contas_despesa' }, () => {
+                fetchData();
+            })
+            .subscribe();
+
         return () => {
             supabase.removeChannel(catChannel);
             supabase.removeChannel(incChannel);
+            supabase.removeChannel(subChannel);
         };
     }, []);
 
     return {
         categories,
         incomeTypes,
+        subcategories,
         loading,
         addCategory,
         addIncomeType,
+        addSubcategory,
         deleteCategory,
         deleteIncomeType,
+        deleteSubcategory,
         refresh: fetchData
     };
 }

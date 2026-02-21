@@ -16,7 +16,7 @@ interface TransactionFormProps {
 }
 
 export const TransactionForm = ({ onClose, onSave, initialData, onDelete }: TransactionFormProps) => {
-    const { categories, incomeTypes, loading: loadingCats } = useCategories();
+    const { categories, incomeTypes, subcategories, loading: loadingCats } = useCategories();
     const [tipo, setTipo] = React.useState<'Receita' | 'Despesa'>(initialData?.tipo || 'Despesa');
     const [categoria, setCategoria] = React.useState(initialData?.categoria || '');
     const [conta, setConta] = React.useState(initialData?.conta || '');
@@ -38,10 +38,25 @@ export const TransactionForm = ({ onClose, onSave, initialData, onDelete }: Tran
         });
     };
 
-    const contasDisponiveis = tipo === 'Receita'
-        ? (incomeTypes.length > 0 ? incomeTypes.map(it => it.nome) : TIPOS_RECEITA)
-        : (categoria ? CONTAS_POR_CATEGORIA[categoria] || ['Geral'] : []);
+    const getContasDisponiveis = () => {
+        if (tipo === 'Receita') {
+            return incomeTypes.length > 0 ? incomeTypes.map(it => it.nome) : TIPOS_RECEITA;
+        }
 
+        if (!categoria) return [];
+
+        // Tentar buscar do banco
+        const catObj = categories.find(c => c.nome === categoria);
+        if (catObj) {
+            const subs = subcategories.filter(s => s.categoria_id === catObj.id);
+            if (subs.length > 0) return subs.map(s => s.nome);
+        }
+
+        // Fallback para constantes
+        return CONTAS_POR_CATEGORIA[categoria] || ['Geral'];
+    };
+
+    const contasDisponiveis = getContasDisponiveis();
     const categoriasExibicao = categories.length > 0 ? categories.map(c => c.nome) : CATEGORIAS_DESPESA;
 
     return (

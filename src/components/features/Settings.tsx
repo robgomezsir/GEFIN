@@ -5,16 +5,29 @@ import { Button, Input, Card } from '@/components/ui/base';
 import { useCategories } from '@/hooks/useCategories';
 import { ChevronLeft, Plus, Trash2, Settings as SettingsIcon, Wallet, Tags, Target, RefreshCw } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
-import { CATEGORIAS_DESPESA, TIPOS_RECEITA } from '@/utils/constants';
+import { CATEGORIAS_DESPESA, TIPOS_RECEITA, CONTAS_POR_CATEGORIA } from '@/utils/constants';
 
 interface SettingsProps {
     onBack: () => void;
 }
 
 export const Settings = ({ onBack }: SettingsProps) => {
-    const { categories, incomeTypes, loading: loadingCats, addCategory, addIncomeType, deleteCategory, deleteIncomeType, refresh } = useCategories();
+    const {
+        categories,
+        incomeTypes,
+        subcategories,
+        loading: loadingCats,
+        addCategory,
+        addIncomeType,
+        addSubcategory,
+        deleteCategory,
+        deleteIncomeType,
+        deleteSubcategory,
+        refresh
+    } = useCategories();
     const [newCat, setNewCat] = React.useState('');
     const [newInc, setNewInc] = React.useState('');
+    const [newSub, setNewSub] = React.useState<Record<number, string>>({});
     const [rendaPrevista, setRendaPrevista] = React.useState('');
     const [savingConfig, setSavingConfig] = React.useState(false);
     const [seeding, setSeeding] = React.useState(false);
@@ -30,13 +43,29 @@ export const Settings = ({ onBack }: SettingsProps) => {
 
             console.log('Iniciando semeio para:', user.id);
 
-            // Popular Categorias
-            for (const nome of CATEGORIAS_DESPESA) {
-                const { error } = await supabase.from('categorias_despesa').upsert({
-                    nome,
+            // Popular Categorias e Subcategorias
+            for (const catNome of CATEGORIAS_DESPESA) {
+                const { data: catData, error: catError } = await supabase.from('categorias_despesa').upsert({
+                    nome: catNome,
                     user_id: user.id
-                }, { onConflict: 'nome,user_id' });
-                if (error) console.error(`Erro ao semear categoria ${nome}:`, error);
+                }, { onConflict: 'nome,user_id' }).select().single();
+
+                if (catError) {
+                    console.error(`Erro ao semear categoria ${catNome}:`, catError);
+                    continue;
+                }
+
+                if (catData) {
+                    const subsPadrao = CONTAS_POR_CATEGORIA[catNome] || [];
+                    for (const subNome of subsPadrao) {
+                        const { error: subError } = await supabase.from('contas_despesa').upsert({
+                            nome: subNome,
+                            categoria_id: catData.id,
+                            user_id: user.id
+                        }, { onConflict: 'nome,categoria_id,user_id' });
+                        if (subError) console.error(`Erro ao semear subcategoria ${subNome} para ${catNome}:`, subError);
+                    }
+                }
             }
 
             // Popular Tipos de Receita
@@ -103,6 +132,13 @@ export const Settings = ({ onBack }: SettingsProps) => {
         if (!newInc.trim()) return;
         await addIncomeType(newInc);
         setNewInc('');
+    };
+
+    const handleAddSub = async (catId: number) => {
+        const subName = newSub[catId];
+        if (!subName?.trim()) return;
+        await addSubcategory(catId, subName);
+        setNewSub(prev => ({ ...prev, [catId]: '' }));
     };
 
     return (
@@ -178,23 +214,58 @@ export const Settings = ({ onBack }: SettingsProps) => {
                             </Button>
                         </form>
 
-                        <div className="space-y-2">
+                        <div className="space-y-4">
                             {loadingCats ? (
                                 <div className="h-20 flex items-center justify-center text-slate-400 text-sm">Carregando...</div>
                             ) : categories.length === 0 ? (
                                 <div className="h-20 flex items-center justify-center text-slate-400 text-sm italic">Nenhuma categoria cadastrada</div>
                             ) : (
                                 categories.map(cat => (
-                                    <div key={cat.id} className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-800/50 rounded-xl group transition-all hover:bg-slate-100 dark:hover:bg-slate-800">
-                                        <span className="font-medium text-slate-700 dark:text-slate-200">{cat.nome}</span>
-                                        <Button
-                                            variant="ghost"
-                                            size="sm"
-                                            onClick={() => deleteCategory(cat.id)}
-                                            className="text-rose-500 opacity-0 group-hover:opacity-100 transition-opacity"
-                                        >
-                                            <Trash2 size={16} />
-                                        </Button>
+                                    <div key={cat.id} className="space-y-2 p-4 bg-slate-50 dark:bg-slate-800/50 rounded-2xl border border-slate-100 dark:border-slate-800/50">
+                                        <div className="flex items-center justify-between group">
+                                            <span className="font-bold text-slate-900 dark:text-white text-lg">{cat.nome}</span>
+                                            <Button
+                                                variant="ghost"
+                                                size="sm"
+                                                onClick={() => deleteCategory(cat.id)}
+                                                className="text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-900/10 rounded-xl"
+                                            >
+                                                <Trash2 size={18} />
+                                            </Button>
+                                        </div>
+
+                                        <div className="pl-4 space-y-2 border-l-2 border-slate-100 dark:border-slate-800">
+                                            {subcategories
+                                                .filter(sub => sub.categoria_id === cat.id)
+                                                .map(sub => (
+                                                    <div key={sub.id} className="flex items-center justify-between group/sub py-1">
+                                                        <span className="text-sm font-medium text-slate-600 dark:text-slate-400">{sub.nome}</span>
+                                                        <button
+                                                            onClick={() => deleteSubcategory(sub.id)}
+                                                            className="text-rose-400 opacity-0 group-hover/sub:opacity-100 transition-opacity hover:text-rose-600"
+                                                        >
+                                                            <Plus size={14} className="rotate-45" />
+                                                        </button>
+                                                    </div>
+                                                ))}
+
+                                            <div className="flex gap-2 pt-2">
+                                                <Input
+                                                    placeholder="Nova subcategoria..."
+                                                    value={newSub[cat.id] || ''}
+                                                    onChange={e => setNewSub(prev => ({ ...prev, [cat.id]: e.target.value }))}
+                                                    onKeyDown={e => e.key === 'Enter' && handleAddSub(cat.id)}
+                                                    className="h-8 text-xs rounded-lg"
+                                                />
+                                                <Button
+                                                    size="sm"
+                                                    onClick={() => handleAddSub(cat.id)}
+                                                    className="h-8 w-8 p-0 rounded-lg shrink-0"
+                                                >
+                                                    <Plus size={14} />
+                                                </Button>
+                                            </div>
+                                        </div>
                                     </div>
                                 ))
                             )}
