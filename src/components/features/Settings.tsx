@@ -3,19 +3,50 @@
 import * as React from 'react';
 import { Button, Input, Card } from '@/components/ui/base';
 import { useCategories } from '@/hooks/useCategories';
-import { ChevronLeft, Plus, Trash2, Settings as SettingsIcon, Wallet, Tags, Target } from 'lucide-react';
+import { ChevronLeft, Plus, Trash2, Settings as SettingsIcon, Wallet, Tags, Target, RefreshCw } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
+import { CATEGORIAS_DESPESA, TIPOS_RECEITA } from '@/utils/constants';
 
 interface SettingsProps {
     onBack: () => void;
 }
 
 export const Settings = ({ onBack }: SettingsProps) => {
-    const { categories, incomeTypes, loading: loadingCats, addCategory, addIncomeType, deleteCategory, deleteIncomeType } = useCategories();
+    const { categories, incomeTypes, loading: loadingCats, addCategory, addIncomeType, deleteCategory, deleteIncomeType, refresh } = useCategories();
     const [newCat, setNewCat] = React.useState('');
     const [newInc, setNewInc] = React.useState('');
     const [rendaPrevista, setRendaPrevista] = React.useState('');
     const [savingConfig, setSavingConfig] = React.useState(false);
+    const [seeding, setSeeding] = React.useState(false);
+
+    const handleSeedData = async () => {
+        setSeeding(true);
+        try {
+            const { data: { user } } = await supabase.auth.getUser();
+            if (!user) return;
+
+            // Popular Categorias
+            for (const nome of CATEGORIAS_DESPESA) {
+                await supabase.from('categorias_despesa').upsert({
+                    nome,
+                    user_id: user.id
+                }, { onConflict: 'nome,user_id' });
+            }
+            // Popular Tipos de Receita
+            for (const nome of TIPOS_RECEITA) {
+                await supabase.from('tipos_receita').upsert({
+                    nome,
+                    user_id: user.id
+                }, { onConflict: 'nome,user_id' });
+            }
+            alert('Dados padrão populados com sucesso!');
+            refresh();
+        } catch (err) {
+            console.error('Erro ao semear dados:', err);
+        } finally {
+            setSeeding(false);
+        }
+    };
 
     React.useEffect(() => {
         const fetchConfig = async () => {
@@ -73,6 +104,18 @@ export const Settings = ({ onBack }: SettingsProps) => {
                 <div>
                     <h1 className="text-3xl font-black text-slate-900 dark:text-white tracking-tight">Configurações</h1>
                     <p className="text-slate-500 dark:text-slate-400 font-medium">Personalize suas metas e categorias</p>
+                </div>
+                <div className="ml-auto">
+                    <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={handleSeedData}
+                        loading={seeding}
+                        className="gap-2 text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-900/20"
+                    >
+                        <RefreshCw size={18} />
+                        Popular Padrões
+                    </Button>
                 </div>
             </header>
 
