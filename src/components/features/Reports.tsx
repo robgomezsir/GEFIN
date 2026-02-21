@@ -49,12 +49,6 @@ export const Reports = ({ transactions, resumo, mes, ano, onBack }: ReportsProps
                         <p className="text-slate-500 dark:text-slate-400 font-medium capitalize">{mes} de {ano}</p>
                     </div>
                 </div>
-                <div className="flex gap-2">
-                    <Button variant="secondary" onClick={handlePrint} className="gap-2 rounded-xl h-11">
-                        <Printer size={18} />
-                        Gerar PDF / Imprimir
-                    </Button>
-                </div>
             </header>
 
             {/* Print Header */}
@@ -154,6 +148,13 @@ export const Reports = ({ transactions, resumo, mes, ano, onBack }: ReportsProps
                     </div>
                 </div>
             </Card>
+
+            <div className="flex justify-center pt-4 print:hidden">
+                <Button variant="secondary" onClick={handlePrint} className="w-full sm:w-auto gap-3 rounded-2xl h-14 font-bold shadow-lg shadow-slate-200/50 dark:shadow-none transition-all active:scale-95">
+                    <Printer size={20} />
+                    Gerar PDF / Imprimir Relatório
+                </Button>
+            </div>
 
             <footer className="pt-8 text-center print:mt-12">
                 <p className="text-slate-400 text-xs font-medium">Relatório gerado automaticamente • {new Date().toLocaleDateString('pt-BR')}</p>
