@@ -19,6 +19,7 @@ import { TrendChart, CategoryChart } from './FinancialCharts';
 import { Settings } from './Settings';
 import { Profile } from './Profile';
 import { Reports } from './Reports';
+import { TransactionsByYear } from './TransactionsByYear';
 import { supabase } from '@/lib/supabase';
 import { Transacao } from '@/types';
 import { useTheme } from '@/context/ThemeContext';
@@ -340,18 +341,11 @@ export const Dashboard = () => {
         switch (activeTab) {
             case 'transactions':
                 return (
-                    <div className="space-y-8 animate-in slide-in-from-right duration-500 pb-20">
-                        <header className="flex items-center gap-4 mb-2">
-                            <Button variant="ghost" size="sm" onClick={() => setActiveTab('dashboard')} className="rounded-xl h-12 w-12 p-0">
-                                <ChevronLeft size={24} />
-                            </Button>
-                            <div>
-                                <h1 className="text-3xl font-black text-slate-900 dark:text-white tracking-tight leading-tight">Lançamentos</h1>
-                                <p className="text-sm font-medium text-slate-500 dark:text-slate-400">{mesNome} {currentYear}</p>
-                            </div>
-                        </header>
-                        <TransactionList transactions={transactions} onSelect={openEdit} />
-                    </div>
+                    <TransactionsByYear
+                        onBack={() => setActiveTab('dashboard')}
+                        onEditTransaction={openEdit}
+                        initialYear={currentYear}
+                    />
                 );
             case 'settings':
                 return <Settings onBack={() => setActiveTab('dashboard')} />;
