@@ -48,7 +48,10 @@ export const Reports = ({ transactions, resumo, saldoAnterior, mes, ano, onBack,
                         <Button variant="ghost" size="sm" onClick={onBack} className="rounded-xl h-12 w-12 p-0">
                             <ChevronLeft size={24} />
                         </Button>
-                        <h1 className="text-3xl font-black text-slate-900 dark:text-white tracking-tight">Relatórios</h1>
+                        <div>
+                            <h1 className="text-2xl md:text-3xl font-black text-slate-900 dark:text-white tracking-tight leading-tight">Relatórios</h1>
+                            <p className="text-sm md:text-base text-slate-500 dark:text-slate-400 font-medium">Fluxo de caixa mensal</p>
+                        </div>
                     </div>
 
                     <div className="flex items-center gap-2 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md p-1.5 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-800">

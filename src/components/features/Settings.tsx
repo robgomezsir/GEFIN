@@ -410,8 +410,8 @@ export const Settings = ({ onBack }: SettingsProps) => {
                     <ChevronLeft size={24} />
                 </Button>
                 <div>
-                    <h1 className="text-3xl font-black text-slate-900 dark:text-white tracking-tight">Configurações</h1>
-                    <p className="text-slate-500 dark:text-slate-400 font-medium">Personalize suas metas e categorias</p>
+                    <h1 className="text-2xl md:text-3xl font-black text-slate-900 dark:text-white tracking-tight leading-tight">Configurações</h1>
+                    <p className="text-sm md:text-base text-slate-500 dark:text-slate-400 font-medium">Personalize suas metas e categorias</p>
                 </div>
             </header>
 

@@ -255,10 +255,10 @@ export const TransactionsByYear = ({ onBack, onEditTransaction, initialYear }: T
                         <ChevronLeft size={24} />
                     </Button>
                     <div>
-                        <h1 className="text-3xl font-black text-slate-900 dark:text-white tracking-tight leading-tight">
+                        <h1 className="text-2xl md:text-3xl font-black text-slate-900 dark:text-white tracking-tight leading-tight">
                             Lançamentos
                         </h1>
-                        <p className="text-sm font-medium text-slate-500 dark:text-slate-400">Visão anual por mês</p>
+                        <p className="text-sm md:text-base font-medium text-slate-500 dark:text-slate-400">Visão anual por mês</p>
                     </div>
                 </div>
 
