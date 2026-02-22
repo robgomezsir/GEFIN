@@ -3,7 +3,7 @@
 import * as React from 'react';
 import { Button, Input, Card } from '@/components/ui/base';
 import { useCategories } from '@/hooks/useCategories';
-import { ChevronLeft, Plus, Trash2, Settings as SettingsIcon, Wallet, Tags, Target, RefreshCw, ChevronDown, AlertTriangle, Download } from 'lucide-react';
+import { ChevronLeft, Plus, Trash2, Settings as SettingsIcon, Wallet, Tags, Target, RefreshCw, ChevronDown, AlertTriangle, Download, Lock } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { CATEGORIAS_DESPESA, TIPOS_RECEITA, CONTAS_POR_CATEGORIA } from '@/utils/constants';
 import { cn } from '@/utils/cn';
@@ -35,6 +35,8 @@ export const Settings = ({ onBack }: SettingsProps) => {
     const [migrating, setMigrating] = React.useState(false);
     const [clearing, setClearing] = React.useState(false);
     const [exporting, setExporting] = React.useState(false);
+    const [showResetModal, setShowResetModal] = React.useState(false);
+    const [resetPasswordInput, setResetPasswordInput] = React.useState('');
     const [expandedDespesas, setExpandedDespesas] = React.useState(true);
     const [expandedReceitas, setExpandedReceitas] = React.useState(true);
     const [expandedCategories, setExpandedCategories] = React.useState<Record<number, boolean>>({});
@@ -125,9 +127,18 @@ export const Settings = ({ onBack }: SettingsProps) => {
         }
     };
 
-    const handleClearTransactions = async () => {
-        if (!confirm('ATENÇÃO: Isso apagará TODAS as suas transações permanentemente. Deseja continuar?')) return;
+    const handleClearTransactions = () => {
+        setResetPasswordInput('');
+        setShowResetModal(true);
+    };
 
+    const confirmClearTransactions = async () => {
+        if (resetPasswordInput !== 'admin123') {
+            alert('Senha incorreta. Operação cancelada.');
+            setResetPasswordInput('');
+            return;
+        }
+        setShowResetModal(false);
         setClearing(true);
         try {
             const { data: { user } } = await supabase.auth.getUser();
@@ -625,6 +636,50 @@ export const Settings = ({ onBack }: SettingsProps) => {
                             </div>
                         </div>
                     </Card>
+                </div>
+            )}
+
+            {/* Modal de Senha para Reset/Limpeza */}
+            {showResetModal && (
+                <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/70 backdrop-blur-sm animate-in fade-in duration-300">
+                    <div className="w-full max-w-sm bg-white dark:bg-slate-900 rounded-3xl border border-rose-100 dark:border-rose-900/30 p-6 shadow-2xl animate-in zoom-in-95 duration-200">
+                        <div className="flex flex-col items-center text-center space-y-4">
+                            <div className="w-16 h-16 rounded-full bg-rose-100 dark:bg-rose-900/30 flex items-center justify-center text-rose-600 dark:text-rose-400">
+                                <Lock size={28} />
+                            </div>
+                            <div>
+                                <h3 className="text-xl font-bold text-slate-900 dark:text-white">Ação Restrita</h3>
+                                <p className="text-sm text-slate-500 dark:text-slate-400 mt-1 leading-relaxed">
+                                    Digite a senha de administrador para apagar{' '}
+                                    <span className="font-bold text-rose-600 dark:text-rose-400">todas as transações</span>.
+                                </p>
+                            </div>
+                            <input
+                                type="password"
+                                placeholder="Senha de administrador"
+                                value={resetPasswordInput}
+                                onChange={e => setResetPasswordInput(e.target.value)}
+                                onKeyDown={e => e.key === 'Enter' && confirmClearTransactions()}
+                                className="w-full px-4 py-3 rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-transparent transition"
+                                autoFocus
+                            />
+                            <div className="flex gap-3 w-full pt-2">
+                                <button
+                                    onClick={() => { setShowResetModal(false); setResetPasswordInput(''); }}
+                                    className="flex-1 h-12 rounded-2xl font-bold text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
+                                >
+                                    Cancelar
+                                </button>
+                                <button
+                                    onClick={confirmClearTransactions}
+                                    disabled={clearing || resetPasswordInput.length === 0}
+                                    className="flex-1 h-12 rounded-2xl font-bold text-white bg-rose-600 hover:bg-rose-700 disabled:opacity-50 transition-colors"
+                                >
+                                    {clearing ? 'Apagando...' : 'Confirmar'}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             )}
 
