@@ -60,9 +60,9 @@ export const TransactionForm = ({ onClose, onSave, initialData, onDelete }: Tran
     const categoriasExibicao = categories.length > 0 ? categories.map(c => c.nome) : CATEGORIAS_DESPESA;
 
     return (
-        <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/50 backdrop-blur-sm sm:items-center p-4">
-            <Card className="w-full max-w-lg rounded-b-none sm:rounded-2xl shadow-2xl">
-                <div className="flex items-center justify-between mb-6">
+        <div className="fixed inset-0 z-[100] flex items-end justify-center bg-black/60 backdrop-blur-md sm:items-center p-4 overflow-y-auto py-8">
+            <Card className="w-full max-w-lg rounded-t-3xl sm:rounded-3xl shadow-2xl flex flex-col max-h-[90vh] sm:max-h-[85vh]">
+                <div className="flex items-center justify-between mb-6 shrink-0">
                     <h2 className="text-xl font-bold">
                         {initialData ? 'Editar Lançamento' : 'Novo Lançamento'}
                     </h2>
@@ -71,8 +71,8 @@ export const TransactionForm = ({ onClose, onSave, initialData, onDelete }: Tran
                     </Button>
                 </div>
 
-                <form onSubmit={handleSubmit} className="space-y-6">
-                    <div className="flex gap-2 p-1 bg-slate-100 dark:bg-slate-800 rounded-xl">
+                <form onSubmit={handleSubmit} className="space-y-6 overflow-y-auto pr-2 custom-scrollbar">
+                    <div className="flex gap-2 p-1 bg-slate-100 dark:bg-slate-800 rounded-xl shrink-0">
                         <button
                             type="button"
                             onClick={() => setTipo('Receita')}
@@ -166,7 +166,7 @@ export const TransactionForm = ({ onClose, onSave, initialData, onDelete }: Tran
                         <Input type="date" value={data} onChange={(e) => setData(e.target.value)} required />
                     </div>
 
-                    <div className="flex gap-3 pt-4 border-t border-slate-100 dark:border-slate-800">
+                    <div className="flex gap-3 pt-6 border-t border-slate-100 dark:border-slate-800 sticky bottom-0 bg-white dark:bg-slate-900 mt-auto">
                         {initialData && onDelete && (
                             <Button type="button" variant="danger" className="flex-1" onClick={onDelete}>
                                 Excluir

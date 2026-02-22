@@ -516,7 +516,7 @@ export const Settings = ({ onBack }: SettingsProps) => {
 
             {/* Modal de Confirmação */}
             {confirmDelete && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-300">
+                <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-300">
                     <Card className="w-full max-w-sm p-6 shadow-2xl border-slate-200 dark:border-slate-800 animate-in zoom-in-95 duration-200">
                         <div className="flex flex-col items-center text-center space-y-4">
                             <div className="w-16 h-16 rounded-full bg-rose-100 dark:bg-rose-900/30 flex items-center justify-center text-rose-600 dark:text-rose-400">
