@@ -26,7 +26,7 @@ import { useTheme } from '@/context/ThemeContext';
 export const Dashboard = () => {
     const [currentMonth, setCurrentMonth] = React.useState(new Date().getMonth());
     const [currentYear, setCurrentYear] = React.useState(new Date().getFullYear());
-    const [activeTab, setActiveTab] = React.useState<'dashboard' | 'reports' | 'settings' | 'profile'>('dashboard');
+    const [activeTab, setActiveTab] = React.useState<'dashboard' | 'transactions' | 'reports' | 'settings' | 'profile'>('dashboard');
     const [isMenuOpen, setIsMenuOpen] = React.useState(false);
     const [isFormOpen, setIsFormOpen] = React.useState(false);
     const [editingTransaction, setEditingTransaction] = React.useState<Transacao | null>(null);
@@ -216,7 +216,11 @@ export const Dashboard = () => {
 
                     {/* Desktop Actions */}
                     <div className="hidden lg:flex items-center gap-3">
-                        <Button variant="secondary" size="md" onClick={() => setActiveTab('reports')} className={cn("h-12 w-12 p-0 rounded-2xl shadow-lg border-none hover:scale-105 active:scale-95 transition-all", activeTab === 'reports' ? "bg-emerald-500 text-white shadow-emerald-500/20" : "bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-400")}>
+                        <Button variant="secondary" size="md" title="Lançamentos" onClick={() => setActiveTab('transactions')} className={cn("h-12 w-12 p-0 rounded-2xl shadow-lg border-none hover:scale-105 active:scale-95 transition-all", activeTab === 'transactions' ? "bg-emerald-500 text-white shadow-emerald-500/20" : "bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-400")}>
+                            <ArrowRightLeft size={22} />
+                        </Button>
+
+                        <Button variant="secondary" size="md" title="Relatórios" onClick={() => setActiveTab('reports')} className={cn("h-12 w-12 p-0 rounded-2xl shadow-lg border-none hover:scale-105 active:scale-95 transition-all", activeTab === 'reports' ? "bg-emerald-500 text-white shadow-emerald-500/20" : "bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-400")}>
                             <FileText size={22} />
                         </Button>
 
@@ -273,61 +277,60 @@ export const Dashboard = () => {
                 </Button>
             </div>
 
-            <div className="grid gap-8 lg:grid-cols-3">
-                <div className="space-y-8">
-                    <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-100 dark:border-slate-800 p-8 shadow-sm h-fit">
-                        <div className="flex items-center gap-2 mb-6 text-slate-900 dark:text-white">
-                            <PieIcon className="text-emerald-500" size={20} />
-                            <h2 className="text-xl font-bold">Distribuição por Categoria</h2>
-                        </div>
-                        <CategoryChart transactions={transactions} />
+            <div className="grid gap-8 lg:grid-cols-2">
+                <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-100 dark:border-slate-800 p-8 shadow-sm">
+                    <div className="flex items-center gap-2 mb-6 text-slate-900 dark:text-white">
+                        <PieIcon className="text-emerald-500" size={20} />
+                        <h2 className="text-xl font-bold">Distribuição por Categoria</h2>
                     </div>
+                    <CategoryChart transactions={transactions} />
+                </div>
 
-                    <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-100 dark:border-slate-800 p-8 shadow-sm h-fit">
-                        <div className="flex items-center gap-2 mb-6 text-slate-900 dark:text-white">
-                            <BarChart3 className="text-emerald-500" size={20} />
-                            <h2 className="text-xl font-bold">Tendência</h2>
-                        </div>
-                        <TrendChart data={annualData} />
-                    </div>
-
-                    <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-100 dark:border-slate-800 p-8 shadow-sm h-fit">
-                        <div className="flex items-center gap-2 mb-6 text-slate-900 dark:text-white">
+                <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-100 dark:border-slate-800 p-8 shadow-sm">
+                    <div className="flex items-center justify-between mb-6">
+                        <div className="flex items-center gap-2 text-slate-900 dark:text-white">
                             <TrendingDown className="text-rose-500" size={20} />
                             <h2 className="text-xl font-bold">Maiores Despesas</h2>
                         </div>
+                        <Button variant="ghost" size="sm" onClick={() => setActiveTab('transactions')} className="text-xs font-bold text-emerald-600 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 px-4 rounded-xl">
+                            Ver todos
+                        </Button>
+                    </div>
 
-                        <div className="space-y-4">
-                            {topDespesas.length > 0 ? (
-                                topDespesas.map((t, idx) => (
-                                    <div key={t.id} className="flex items-center justify-between group">
-                                        <div className="flex items-center gap-3">
-                                            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-rose-50 dark:bg-rose-900/20 text-rose-500 text-xs font-bold">
-                                                {idx + 1}º
-                                            </div>
-                                            <div>
-                                                <p className="text-sm font-bold text-slate-900 dark:text-white truncate max-w-[120px]">
-                                                    {t.conta}
-                                                </p>
-                                                <p className="text-[10px] text-slate-500 dark:text-slate-400 font-medium">
-                                                    {t.categoria}
-                                                </p>
-                                            </div>
+                    <div className="space-y-4">
+                        {topDespesas.length > 0 ? (
+                            topDespesas.map((t, idx) => (
+                                <div key={t.id} className="flex items-center justify-between group">
+                                    <div className="flex items-center gap-3">
+                                        <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-rose-50 dark:bg-rose-900/20 text-rose-500 text-xs font-bold">
+                                            {idx + 1}º
                                         </div>
-                                        <span className="text-sm font-black text-slate-900 dark:text-white">
-                                            {formatCurrency(Number(t.valor))}
-                                        </span>
+                                        <div>
+                                            <p className="text-sm font-bold text-slate-900 dark:text-white truncate max-w-[120px]">
+                                                {t.conta}
+                                            </p>
+                                            <p className="text-[10px] text-slate-500 dark:text-slate-400 font-medium">
+                                                {t.categoria}
+                                            </p>
+                                        </div>
                                     </div>
-                                ))
-                            ) : (
-                                <p className="text-center text-sm text-slate-500 py-4 italic">Nenhuma despesa encontrada.</p>
-                            )}
-                        </div>
+                                    <span className="text-sm font-black text-slate-900 dark:text-white">
+                                        {formatCurrency(Number(t.valor))}
+                                    </span>
+                                </div>
+                            ))
+                        ) : (
+                            <p className="text-center text-sm text-slate-500 py-4 italic">Nenhuma despesa encontrada.</p>
+                        )}
                     </div>
                 </div>
 
-                <div className="lg:col-span-2">
-                    <TransactionList transactions={transactions} onSelect={openEdit} />
+                <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-100 dark:border-slate-800 p-8 shadow-sm lg:col-span-2">
+                    <div className="flex items-center gap-2 mb-6 text-slate-900 dark:text-white">
+                        <BarChart3 className="text-emerald-500" size={20} />
+                        <h2 className="text-xl font-bold">Tendência Anual</h2>
+                    </div>
+                    <TrendChart data={annualData} />
                 </div>
             </div>
         </div>
@@ -335,6 +338,21 @@ export const Dashboard = () => {
 
     const renderContent = () => {
         switch (activeTab) {
+            case 'transactions':
+                return (
+                    <div className="space-y-8 animate-in slide-in-from-right duration-500 pb-20">
+                        <header className="flex items-center gap-4 mb-2">
+                            <Button variant="ghost" size="sm" onClick={() => setActiveTab('dashboard')} className="rounded-xl h-12 w-12 p-0">
+                                <ChevronLeft size={24} />
+                            </Button>
+                            <div>
+                                <h1 className="text-3xl font-black text-slate-900 dark:text-white tracking-tight leading-tight">Lançamentos</h1>
+                                <p className="text-sm font-medium text-slate-500 dark:text-slate-400">{mesNome} {currentYear}</p>
+                            </div>
+                        </header>
+                        <TransactionList transactions={transactions} onSelect={openEdit} />
+                    </div>
+                );
             case 'settings':
                 return <Settings onBack={() => setActiveTab('dashboard')} />;
             case 'reports':
@@ -384,6 +402,17 @@ export const Dashboard = () => {
                 >
                     <Wallet size={24} strokeWidth={activeTab === 'dashboard' ? 2.5 : 2} />
                     <span className="text-[10px] font-bold uppercase tracking-tight">Dash</span>
+                </button>
+
+                <button
+                    onClick={() => setActiveTab('transactions')}
+                    className={cn(
+                        "flex flex-col items-center gap-1 transition-all duration-300",
+                        activeTab === 'transactions' ? "text-emerald-500 scale-110" : "text-slate-400"
+                    )}
+                >
+                    <ArrowRightLeft size={24} strokeWidth={activeTab === 'transactions' ? 2.5 : 2} />
+                    <span className="text-[10px] font-bold uppercase tracking-tight">Lançamentos</span>
                 </button>
 
                 <button
