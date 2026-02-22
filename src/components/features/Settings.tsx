@@ -3,7 +3,7 @@
 import * as React from 'react';
 import { Button, Input, Card } from '@/components/ui/base';
 import { useCategories } from '@/hooks/useCategories';
-import { ChevronLeft, Plus, Trash2, Settings as SettingsIcon, Wallet, Tags, Target, RefreshCw, ChevronDown, AlertTriangle } from 'lucide-react';
+import { ChevronLeft, Plus, Trash2, Settings as SettingsIcon, Wallet, Tags, Target, RefreshCw, ChevronDown, AlertTriangle, Download } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { CATEGORIAS_DESPESA, TIPOS_RECEITA, CONTAS_POR_CATEGORIA } from '@/utils/constants';
 import { cn } from '@/utils/cn';
@@ -34,6 +34,7 @@ export const Settings = ({ onBack }: SettingsProps) => {
     const [seeding, setSeeding] = React.useState(false);
     const [migrating, setMigrating] = React.useState(false);
     const [clearing, setClearing] = React.useState(false);
+    const [exporting, setExporting] = React.useState(false);
     const [expandedDespesas, setExpandedDespesas] = React.useState(true);
     const [expandedReceitas, setExpandedReceitas] = React.useState(true);
     const [expandedCategories, setExpandedCategories] = React.useState<Record<number, boolean>>({});
@@ -45,6 +46,83 @@ export const Settings = ({ onBack }: SettingsProps) => {
 
     const toggleCategory = (id: number) => {
         setExpandedCategories(prev => ({ ...prev, [id]: !prev[id] }));
+    };
+
+    const handleExportCSV = async () => {
+        setExporting(true);
+        try {
+            const { data: { user } } = await supabase.auth.getUser();
+            if (!user) return;
+
+            const { data: rows, error } = await supabase
+                .from('transacoes')
+                .select('categoria, conta, tipo, valor, mes, ano, data_registro')
+                .eq('user_id', user.id)
+                .order('ano', { ascending: true })
+                .order('mes', { ascending: true })
+                .order('data_registro', { ascending: true });
+
+            if (error) throw error;
+            if (!rows || rows.length === 0) {
+                alert('Nenhuma transação encontrada para exportar.');
+                return;
+            }
+
+            const headers = ['Categoria da Conta', 'Conta/Subcategoria', 'Tipo', 'Valor', 'Mês', 'Ano', 'Data do Registro'];
+
+            const formatValue = (v: number) =>
+                v.toFixed(2).replace('.', ',');
+
+            const formatDate = (dateStr: string | null) => {
+                if (!dateStr) return '';
+                try {
+                    const d = new Date(dateStr);
+                    return `${String(d.getDate()).padStart(2, '0')}/${String(d.getMonth() + 1).padStart(2, '0')}/${d.getFullYear()}`;
+                } catch { return dateStr; }
+            };
+
+            const escapeCell = (v: unknown): string => {
+                const s = String(v ?? '');
+                if (s.includes(';') || s.includes('"') || s.includes('\n')) {
+                    return `"${s.replace(/"/g, '""')}"`;
+                }
+                return s;
+            };
+
+            const csvRows = [
+                headers.map(escapeCell).join(';'),
+                ...rows.map(r =>
+                    [
+                        escapeCell(r.categoria ?? ''),
+                        escapeCell(r.conta ?? ''),
+                        escapeCell(r.tipo ?? ''),
+                        escapeCell(formatValue(Number(r.valor))),
+                        escapeCell(r.mes ?? ''),
+                        escapeCell(r.ano ?? ''),
+                        escapeCell(formatDate(r.data_registro)),
+                    ].join(';')
+                ),
+            ].join('\r\n');
+
+            // UTF-8 BOM so Excel opens correctly
+            const bom = '\uFEFF';
+            const blob = new Blob([bom + csvRows], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            const now = new Date();
+            const stamp = `${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, '0')}${String(now.getDate()).padStart(2, '0')}`;
+            link.href = url;
+            link.download = `gefin_transacoes_${stamp}.csv`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+        } catch (err) {
+            console.error('Erro ao exportar:', err);
+            alert('Erro ao exportar. Tente novamente.');
+        } finally {
+            setExporting(false);
+        }
     };
 
     const handleClearTransactions = async () => {
@@ -550,7 +628,33 @@ export const Settings = ({ onBack }: SettingsProps) => {
                 </div>
             )}
 
-            <div className="pt-12 pb-8 border-t border-slate-100 dark:border-slate-800">
+            {/* Export CSV */}
+            <div className="pt-12 pb-4 border-t border-slate-100 dark:border-slate-800">
+                <div className="flex flex-col items-center text-center space-y-4">
+                    <div className="bg-emerald-50 dark:bg-emerald-900/10 p-6 rounded-3xl max-w-md w-full">
+                        <div className="w-12 h-12 rounded-2xl bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center text-emerald-600 dark:text-emerald-400 mx-auto mb-3">
+                            <Download size={22} />
+                        </div>
+                        <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-1">Exportar Dados</h3>
+                        <p className="text-sm text-slate-500 dark:text-slate-400 mb-5">
+                            Baixe todas as suas transações em formato CSV compatível com Excel.
+                        </p>
+                        <Button
+                            onClick={handleExportCSV}
+                            loading={exporting}
+                            className="w-full gap-2 rounded-2xl h-14 font-bold bg-emerald-500 hover:bg-emerald-600 text-white border-none shadow-lg shadow-emerald-500/20"
+                        >
+                            <Download size={20} className={exporting ? 'animate-bounce' : ''} />
+                            {exporting ? 'Exportando...' : 'Baixar CSV / Excel'}
+                        </Button>
+                        <p className="text-[11px] text-slate-400 dark:text-slate-500 mt-3">
+                            Colunas: Categoria da Conta · Conta/Subcategoria · Tipo · Valor · Mês · Ano · Data do Registro
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div className="pt-6 pb-8 border-t border-slate-100 dark:border-slate-800">
                 <div className="flex flex-col items-center text-center space-y-4">
                     <div className="bg-indigo-50 dark:bg-indigo-900/10 p-6 rounded-3xl max-w-md">
                         <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-2">Restaurar Dados Padrão</h3>
