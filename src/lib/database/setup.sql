@@ -132,7 +132,7 @@ RETURNS trigger AS $$
 BEGIN
   -- Criar perfil
   INSERT INTO public.profiles (id, nome)
-  VALUES (new.id, new.raw_user_meta_data->>'full_name');
+  VALUES (new.id, COALESCE(new.raw_user_meta_data->>'full_name', 'Usuário Novo'));
 
   -- Categorias padrão
   INSERT INTO public.categorias_despesa (user_id, nome)
@@ -162,6 +162,6 @@ END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
 -- Trigger disparado no Auth Signup
--- CREATE TRIGGER on_auth_user_created
--- AFTER INSERT ON auth.users
--- FOR EACH ROW EXECUTE PROCEDURE public.handle_new_user();
+CREATE TRIGGER on_auth_user_created
+AFTER INSERT ON auth.users
+FOR EACH ROW EXECUTE PROCEDURE public.handle_new_user();

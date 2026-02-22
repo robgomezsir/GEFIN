@@ -25,6 +25,36 @@ export const Dashboard = () => {
     const [isReportsOpen, setIsReportsOpen] = React.useState(false);
     const [isMenuOpen, setIsMenuOpen] = React.useState(false);
     const [editingTransaction, setEditingTransaction] = React.useState<Transacao | null>(null);
+    const [userName, setUserName] = React.useState<string | null>(null);
+
+    React.useEffect(() => {
+        const getUser = async () => {
+            const { data: { user } } = await supabase.auth.getUser();
+            if (user) {
+                const name = user.user_metadata?.full_name;
+                if (name) {
+                    setUserName(name.split(' ')[0]);
+                } else {
+                    const { data: profile } = await supabase
+                        .from('profiles')
+                        .select('nome')
+                        .eq('id', user.id)
+                        .maybeSingle();
+                    if (profile?.nome) {
+                        setUserName(profile.nome.split(' ')[0]);
+                    }
+                }
+            }
+        };
+        getUser();
+    }, []);
+
+    const getGreeting = () => {
+        const hour = new Date().getHours();
+        if (hour >= 5 && hour < 12) return 'Bom dia';
+        if (hour >= 12 && hour < 18) return 'Boa tarde';
+        return 'Boa noite';
+    };
 
     const mesNome = MESES[currentMonth];
     const {
@@ -139,10 +169,12 @@ export const Dashboard = () => {
             <header className="space-y-4 mb-2">
                 <div className="flex items-center justify-between">
                     <div>
-                        <h1 className="text-2xl md:text-4xl font-black text-slate-900 dark:text-white tracking-tight leading-tight">
-                            Fluxo de Caixa
+                        <h1 className="text-2xl md:text-3xl font-black text-slate-900 dark:text-white tracking-tight leading-tight">
+                            {getGreeting()}{userName ? `, ${userName}` : ''}!
                         </h1>
-                        <p className="text-sm md:text-base text-slate-500 dark:text-slate-400 font-medium">Controle financeiro familiar</p>
+                        <p className="text-sm md:text-base text-slate-500 dark:text-slate-400 font-medium">
+                            Fluxo de Caixa • Controle financeiro familiar
+                        </p>
                     </div>
 
                     {/* Menu Hamburguer para Mobile e Tablet */}
