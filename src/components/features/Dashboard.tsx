@@ -7,11 +7,17 @@ import { TransactionList } from './TransactionList';
 import { Button, Input, Card } from '@/components/ui/base';
 import { cn } from '@/utils/cn';
 import { MESES, formatCurrency } from '@/utils/format';
-import { TrendingUp, TrendingDown, Wallet, ArrowRightLeft, Plus, Settings as SettingsIcon, LogOut, ChevronLeft, ChevronRight, FileText, BarChart3, PieChart as PieIcon, Target, Sun, Moon, Menu, X } from "lucide-react";
+import {
+    TrendingUp, TrendingDown, Wallet, ArrowRightLeft, Plus,
+    Settings as SettingsIcon, LogOut, ChevronLeft, ChevronRight,
+    FileText, BarChart3, PieChart as PieIcon, Target, Sun, Moon,
+    Menu, X, User
+} from "lucide-react";
 import { useFinanceData } from '@/hooks/useFinanceData';
 import { useAnnualData } from '@/hooks/useAnnualData';
 import { TrendChart, CategoryChart } from './FinancialCharts';
 import { Settings } from './Settings';
+import { Profile } from './Profile';
 import { Reports } from './Reports';
 import { supabase } from '@/lib/supabase';
 import { Transacao } from '@/types';
@@ -20,10 +26,9 @@ import { useTheme } from '@/context/ThemeContext';
 export const Dashboard = () => {
     const [currentMonth, setCurrentMonth] = React.useState(new Date().getMonth());
     const [currentYear, setCurrentYear] = React.useState(new Date().getFullYear());
-    const [isFormOpen, setIsFormOpen] = React.useState(false);
-    const [isSettingsOpen, setIsSettingsOpen] = React.useState(false);
-    const [isReportsOpen, setIsReportsOpen] = React.useState(false);
+    const [activeTab, setActiveTab] = React.useState<'dashboard' | 'reports' | 'settings' | 'profile'>('dashboard');
     const [isMenuOpen, setIsMenuOpen] = React.useState(false);
+    const [isFormOpen, setIsFormOpen] = React.useState(false);
     const [editingTransaction, setEditingTransaction] = React.useState<Transacao | null>(null);
     const [userName, setUserName] = React.useState<string | null>(null);
 
@@ -130,23 +135,6 @@ export const Dashboard = () => {
         setIsFormOpen(true);
     };
 
-    if (isSettingsOpen) {
-        return <Settings onBack={() => setIsSettingsOpen(false)} />;
-    }
-
-    if (isReportsOpen) {
-        return (
-            <Reports
-                transactions={transactions}
-                resumo={resumo}
-                saldoAnterior={saldoAnterior}
-                mes={mesNome}
-                ano={currentYear}
-                onBack={() => setIsReportsOpen(false)}
-            />
-        );
-    }
-
     // Dashboard data using real values from Supabase
     const data = {
         receitas: resumo?.total_receitas ?? 0,
@@ -164,8 +152,8 @@ export const Dashboard = () => {
         .sort((a, b) => Number(b.valor) - Number(a.valor))
         .slice(0, 5);
 
-    return (
-        <div className="space-y-8 p-4 md:p-8 max-w-7xl mx-auto animate-in fade-in duration-500">
+    const renderDashboard = () => (
+        <div className="space-y-8 animate-in fade-in duration-500 pb-20 md:pb-8">
             <header className="space-y-4 mb-2">
                 <div className="flex items-center justify-between">
                     <div>
@@ -177,7 +165,7 @@ export const Dashboard = () => {
                         </p>
                     </div>
 
-                    {/* Menu Hamburguer para Mobile e Tablet */}
+                    {/* Menu Hamburguer (Keep for simple actions like theme/logout if needed) */}
                     <div className="relative lg:hidden">
                         <Button
                             variant="secondary"
@@ -193,14 +181,6 @@ export const Dashboard = () => {
                             <>
                                 <div className="fixed inset-0 z-40" onClick={() => setIsMenuOpen(false)} />
                                 <div className="absolute right-0 mt-3 w-56 py-2 bg-white dark:bg-slate-900 rounded-3xl shadow-2xl border border-slate-100 dark:border-slate-800 z-50 animate-in fade-in zoom-in-95 duration-200 origin-top-right">
-                                    <button onClick={() => { setIsReportsOpen(true); setIsMenuOpen(false); }} className="w-full flex items-center gap-3 px-6 py-4 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors text-slate-700 dark:text-slate-300">
-                                        <FileText size={20} className="text-blue-500" />
-                                        <span className="font-bold">Relatórios</span>
-                                    </button>
-                                    <button onClick={() => { setIsSettingsOpen(true); setIsMenuOpen(false); }} className="w-full flex items-center gap-3 px-6 py-4 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors text-slate-700 dark:text-slate-300">
-                                        <SettingsIcon size={20} className="text-slate-500" />
-                                        <span className="font-bold">Configurações</span>
-                                    </button>
                                     <button onClick={() => { toggleTheme(); setIsMenuOpen(false); }} className="w-full flex items-center gap-3 px-6 py-4 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors text-slate-700 dark:text-slate-300">
                                         {theme === 'light' ? <Moon size={20} className="text-amber-500" /> : <Sun size={20} className="text-blue-400" />}
                                         <span className="font-bold">{theme === 'light' ? 'Modo Escuro' : 'Modo Claro'}</span>
@@ -234,14 +214,18 @@ export const Dashboard = () => {
                         </Button>
                     </div>
 
-                    {/* Desktop Actions (Visíveis apenas em LG+) */}
+                    {/* Desktop Actions */}
                     <div className="hidden lg:flex items-center gap-3">
-                        <Button variant="secondary" size="md" onClick={() => setIsReportsOpen(true)} className="h-12 w-12 p-0 rounded-2xl shadow-lg border-none bg-white dark:bg-slate-800 hover:scale-105 active:scale-95 transition-all">
-                            <FileText size={22} className="text-slate-600 dark:text-slate-400" />
+                        <Button variant="secondary" size="md" onClick={() => setActiveTab('reports')} className={cn("h-12 w-12 p-0 rounded-2xl shadow-lg border-none hover:scale-105 active:scale-95 transition-all", activeTab === 'reports' ? "bg-emerald-500 text-white shadow-emerald-500/20" : "bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-400")}>
+                            <FileText size={22} />
                         </Button>
 
-                        <Button variant="secondary" size="md" onClick={() => setIsSettingsOpen(true)} className="h-12 w-12 p-0 rounded-2xl shadow-lg border-none bg-white dark:bg-slate-800 hover:scale-105 active:scale-95 transition-all">
-                            <SettingsIcon size={22} className="text-slate-600 dark:text-slate-400" />
+                        <Button variant="secondary" size="md" onClick={() => setActiveTab('settings')} className={cn("h-12 w-12 p-0 rounded-2xl shadow-lg border-none hover:scale-105 active:scale-95 transition-all", activeTab === 'settings' ? "bg-emerald-500 text-white shadow-emerald-500/20" : "bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-400")}>
+                            <SettingsIcon size={22} />
+                        </Button>
+
+                        <Button variant="secondary" size="md" onClick={() => setActiveTab('profile')} className={cn("h-12 w-12 p-0 rounded-2xl shadow-lg border-none hover:scale-105 active:scale-95 transition-all", activeTab === 'profile' ? "bg-emerald-500 text-white shadow-emerald-500/20" : "bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-400")}>
+                            <User size={22} />
                         </Button>
 
                         <Button variant="secondary" size="md" onClick={toggleTheme} className="h-12 w-12 p-0 rounded-2xl shadow-lg border-none bg-white dark:bg-slate-800 hover:scale-105 active:scale-95 transition-all">
@@ -278,15 +262,9 @@ export const Dashboard = () => {
                         className="snap-center"
                     />
                 </div>
-                {/* Indicador de scroll lateral visível apenas em mobile */}
-                <div className="flex justify-center gap-1.5 mt-2 sm:hidden">
-                    {[0, 1, 2, 3, 4, 5].map((i) => (
-                        <div key={i} className="w-1.5 h-1.5 rounded-full bg-slate-200 dark:bg-slate-800" />
-                    ))}
-                </div>
             </section>
 
-            <div className="fixed bottom-8 right-8 md:bottom-12 md:right-12 z-40">
+            <div className="fixed bottom-24 md:bottom-12 right-8 md:right-12 z-40">
                 <Button
                     onClick={() => setIsFormOpen(true)}
                     className="rounded-full h-16 w-16 p-0 shadow-2xl shadow-emerald-500/40 hover:scale-110 active:scale-95 transition-all flex items-center justify-center bg-emerald-500 hover:bg-emerald-600 border-none"
@@ -295,23 +273,8 @@ export const Dashboard = () => {
                 </Button>
             </div>
 
-            {(isFormOpen || editingTransaction) && (
-                <TransactionForm
-                    onClose={() => {
-                        setIsFormOpen(false);
-                        setEditingTransaction(null);
-                    }}
-                    onSave={handleSaveTransaction}
-                    initialData={editingTransaction}
-                    onDelete={handleDeleteTransaction}
-                />
-            )}
-
-            {/* Dashboard Layout Reorganized */}
             <div className="grid gap-8 lg:grid-cols-3">
-                {/* Column 1: Charts & Top Expenses */}
                 <div className="space-y-8">
-                    {/* 1. Gráfico de Pizza */}
                     <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-100 dark:border-slate-800 p-8 shadow-sm h-fit">
                         <div className="flex items-center gap-2 mb-6 text-slate-900 dark:text-white">
                             <PieIcon className="text-emerald-500" size={20} />
@@ -320,7 +283,6 @@ export const Dashboard = () => {
                         <CategoryChart transactions={transactions} />
                     </div>
 
-                    {/* 2. Gráfico de Linha */}
                     <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-100 dark:border-slate-800 p-8 shadow-sm h-fit">
                         <div className="flex items-center gap-2 mb-6 text-slate-900 dark:text-white">
                             <BarChart3 className="text-emerald-500" size={20} />
@@ -329,7 +291,6 @@ export const Dashboard = () => {
                         <TrendChart data={annualData} />
                     </div>
 
-                    {/* 3. TOP 5 Despesas */}
                     <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-100 dark:border-slate-800 p-8 shadow-sm h-fit">
                         <div className="flex items-center gap-2 mb-6 text-slate-900 dark:text-white">
                             <TrendingDown className="text-rose-500" size={20} />
@@ -365,11 +326,99 @@ export const Dashboard = () => {
                     </div>
                 </div>
 
-                {/* Column 2 & 3: Transaction List */}
                 <div className="lg:col-span-2">
                     <TransactionList transactions={transactions} onSelect={openEdit} />
                 </div>
             </div>
+        </div>
+    );
+
+    const renderContent = () => {
+        switch (activeTab) {
+            case 'settings':
+                return <Settings onBack={() => setActiveTab('dashboard')} />;
+            case 'reports':
+                return (
+                    <Reports
+                        transactions={transactions}
+                        resumo={resumo}
+                        saldoAnterior={saldoAnterior}
+                        mes={mesNome}
+                        ano={currentYear}
+                        onBack={() => setActiveTab('dashboard')}
+                    />
+                );
+            case 'profile':
+                return <Profile onBack={() => setActiveTab('dashboard')} />;
+            default:
+                return renderDashboard();
+        }
+    };
+
+    return (
+        <div className="min-h-screen bg-slate-50 dark:bg-black text-slate-900 dark:text-white">
+            <main className="p-4 md:p-8 max-w-7xl mx-auto">
+                {renderContent()}
+            </main>
+
+            {(isFormOpen || editingTransaction) && (
+                <TransactionForm
+                    onClose={() => {
+                        setIsFormOpen(false);
+                        setEditingTransaction(null);
+                    }}
+                    onSave={handleSaveTransaction}
+                    initialData={editingTransaction}
+                    onDelete={handleDeleteTransaction}
+                />
+            )}
+
+            {/* Bottom Navigation for Mobile */}
+            <nav className="fixed bottom-0 left-0 right-0 z-50 lg:hidden bg-white/90 dark:bg-slate-900/90 backdrop-blur-2xl border-t border-slate-100 dark:border-slate-800 px-6 py-3 pb-8 flex items-center justify-between shadow-[0_-8px_30px_rgb(0,0,0,0.04)]">
+                <button
+                    onClick={() => setActiveTab('dashboard')}
+                    className={cn(
+                        "flex flex-col items-center gap-1 transition-all duration-300",
+                        activeTab === 'dashboard' ? "text-emerald-500 scale-110" : "text-slate-400"
+                    )}
+                >
+                    <Wallet size={24} strokeWidth={activeTab === 'dashboard' ? 2.5 : 2} />
+                    <span className="text-[10px] font-bold uppercase tracking-tight">Dash</span>
+                </button>
+
+                <button
+                    onClick={() => setActiveTab('reports')}
+                    className={cn(
+                        "flex flex-col items-center gap-1 transition-all duration-300",
+                        activeTab === 'reports' ? "text-emerald-500 scale-110" : "text-slate-400"
+                    )}
+                >
+                    <FileText size={24} strokeWidth={activeTab === 'reports' ? 2.5 : 2} />
+                    <span className="text-[10px] font-bold uppercase tracking-tight">Relatórios</span>
+                </button>
+
+                <button
+                    onClick={() => setActiveTab('settings')}
+                    className={cn(
+                        "flex flex-col items-center gap-1 transition-all duration-300",
+                        activeTab === 'settings' ? "text-emerald-500 scale-110" : "text-slate-400"
+                    )}
+                >
+                    <SettingsIcon size={24} strokeWidth={activeTab === 'settings' ? 2.5 : 2} />
+                    <span className="text-[10px] font-bold uppercase tracking-tight">Config</span>
+                </button>
+
+                <button
+                    onClick={() => setActiveTab('profile')}
+                    className={cn(
+                        "flex flex-col items-center gap-1 transition-all duration-300",
+                        activeTab === 'profile' ? "text-emerald-500 scale-110" : "text-slate-400"
+                    )}
+                >
+                    <User size={24} strokeWidth={activeTab === 'profile' ? 2.5 : 2} />
+                    <span className="text-[10px] font-bold uppercase tracking-tight">Perfil</span>
+                </button>
+            </nav>
         </div>
     );
 };
