@@ -42,34 +42,34 @@ export const Reports = ({ transactions, resumo, saldoAnterior, mes, ano, onBack,
 
     return (
         <div className="space-y-8 p-4 md:p-8 max-w-4xl mx-auto animate-in fade-in zoom-in duration-500 print:p-0 print:max-w-none">
-            <header className="flex flex-col gap-6 mb-8 print:hidden">
-                <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-4">
-                        <Button variant="ghost" size="sm" onClick={onBack} className="rounded-xl h-12 w-12 p-0">
-                            <ChevronLeft size={24} />
-                        </Button>
-                        <div>
-                            <h1 className="text-2xl md:text-3xl font-black text-slate-900 dark:text-white tracking-tight leading-tight">Relatórios</h1>
-                            <p className="text-sm md:text-base text-slate-500 dark:text-slate-400 font-medium">Fluxo de caixa mensal</p>
-                        </div>
+            <header className="flex flex-col gap-4 mb-8 print:hidden">
+                {/* Linha 1: Voltar + Título */}
+                <div className="flex items-center gap-4">
+                    <Button variant="ghost" size="sm" onClick={onBack} className="rounded-xl h-12 w-12 p-0">
+                        <ChevronLeft size={24} />
+                    </Button>
+                    <div>
+                        <h1 className="text-2xl md:text-3xl font-black text-slate-900 dark:text-white tracking-tight leading-tight">Relatórios</h1>
+                        <p className="text-sm md:text-base text-slate-500 dark:text-slate-400 font-medium">Fluxo de caixa mensal</p>
                     </div>
+                </div>
 
-                    <div className="flex items-center gap-2 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md p-1.5 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-800">
-                        <Button variant="ghost" size="sm" onClick={onPrevMonth} className="h-10 w-10 p-0 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800">
-                            <ChevronLeft size={20} className="text-slate-600 dark:text-slate-400" />
-                        </Button>
-                        <div className="px-4 text-center flex flex-col min-w-[120px]">
-                            <span className="text-[10px] font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-widest leading-tight">
-                                {ano}
-                            </span>
-                            <span className="text-sm font-black text-slate-800 dark:text-slate-100 uppercase leading-tight">
-                                {mes}
-                            </span>
-                        </div>
-                        <Button variant="ghost" size="sm" onClick={onNextMonth} className="h-10 w-10 p-0 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800">
-                            <ChevronLeft size={20} className="text-slate-600 dark:text-slate-400 rotate-180" />
-                        </Button>
+                {/* Linha 2: Seletor de Mês/Ano */}
+                <div className="flex items-center gap-2 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md p-1.5 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-800 w-fit">
+                    <Button variant="ghost" size="sm" onClick={onPrevMonth} className="h-10 w-10 p-0 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800">
+                        <ChevronLeft size={20} className="text-slate-600 dark:text-slate-400" />
+                    </Button>
+                    <div className="px-4 text-center flex flex-col min-w-[120px]">
+                        <span className="text-[10px] font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-widest leading-tight">
+                            {ano}
+                        </span>
+                        <span className="text-sm font-black text-slate-800 dark:text-slate-100 uppercase leading-tight">
+                            {mes}
+                        </span>
                     </div>
+                    <Button variant="ghost" size="sm" onClick={onNextMonth} className="h-10 w-10 p-0 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800">
+                        <ChevronLeft size={20} className="text-slate-600 dark:text-slate-400 rotate-180" />
+                    </Button>
                 </div>
             </header>
 
