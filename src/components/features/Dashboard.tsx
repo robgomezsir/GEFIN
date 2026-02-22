@@ -364,6 +364,8 @@ export const Dashboard = () => {
                         mes={mesNome}
                         ano={currentYear}
                         onBack={() => setActiveTab('dashboard')}
+                        onPrevMonth={handlePrevMonth}
+                        onNextMonth={handleNextMonth}
                     />
                 );
             case 'profile':
