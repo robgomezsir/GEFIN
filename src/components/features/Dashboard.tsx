@@ -252,7 +252,7 @@ export const Dashboard = () => {
                 </div>
             )}
 
-            <section className="relative">
+            <section className="relative mt-6">
                 <div className="flex overflow-x-auto snap-x snap-mandatory scrollbar-hide gap-4 pb-4 -mx-4 px-4 sm:mx-0 sm:px-0 sm:grid sm:grid-cols-2 lg:grid-cols-6 sm:overflow-visible">
                     <SummaryCard title="Receitas" value={data.receitas} type="receita" className="snap-center" />
                     <SummaryCard title="Despesas" value={data.despesas} type="despesa" className="snap-center" />
