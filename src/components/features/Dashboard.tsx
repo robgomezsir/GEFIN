@@ -285,13 +285,19 @@ export const Dashboard = () => {
                 </div>
             </div>
 
-            {/* Floating Action Button */}
-            <div className="fixed bottom-10 right-10 z-50">
+            {/* Floating Action Button (Android Standard Refinement) */}
+            <div className="fixed bottom-24 right-4 lg:bottom-10 lg:right-10 z-50">
                 <Button
                     onClick={() => setIsFormOpen(true)}
-                    className="rounded-[2.5rem] h-20 w-20 p-0 shadow-2xl shadow-primary/40 hover:scale-110 active:scale-95 transition-all flex items-center justify-center bg-primary hover:bg-primary/90 border-none group"
+                    className={cn(
+                        "rounded-[1.5rem] lg:rounded-[2.5rem] p-0 shadow-2xl shadow-primary/40 hover:scale-110 active:scale-95 transition-all flex items-center justify-center bg-primary hover:bg-primary/90 border-none group",
+                        "h-14 w-14 lg:h-20 lg:w-20"
+                    )}
                 >
-                    <Plus size={36} strokeWidth={3} className="text-white group-hover:rotate-90 transition-transform duration-300" />
+                    <Plus
+                        className="text-white group-hover:rotate-90 transition-transform duration-300 w-7 h-7 lg:w-10 lg:h-10"
+                        strokeWidth={3}
+                    />
                 </Button>
             </div>
 
