@@ -2,13 +2,15 @@
 
 import * as React from 'react';
 import { useAuth } from '@/hooks/useAuth';
+import { useTheme } from '@/context/ThemeContext';
 import { supabase } from '@/lib/supabase';
-import { LogOut, User as UserIcon, Settings, ChevronDown, ShieldCheck } from 'lucide-react';
+import { LogOut, User as UserIcon, Settings, ChevronDown, ShieldCheck, Sun, Moon } from 'lucide-react';
 import { cn } from '@/utils/cn';
 import { Button } from '@/components/ui/base';
 
 export const UserProfile = () => {
     const { user } = useAuth();
+    const { theme, toggleTheme } = useTheme();
     const [isOpen, setIsOpen] = React.useState(false);
     const dropdownRef = React.useRef<HTMLDivElement>(null);
 
@@ -73,6 +75,25 @@ export const UserProfile = () => {
                         >
                             <Settings size={18} />
                             Configurações
+                        </button>
+
+                        <button
+                            onClick={toggleTheme}
+                            className="flex items-center justify-between p-3 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-400 hover:text-primary transition-all font-bold text-sm"
+                        >
+                            <div className="flex items-center gap-3">
+                                {theme === 'light' ? <Moon size={18} /> : <Sun size={18} />}
+                                {theme === 'light' ? 'Tema Escuro' : 'Tema Claro'}
+                            </div>
+                            <div className={cn(
+                                "w-8 h-4 rounded-full relative transition-colors",
+                                theme === 'light' ? "bg-slate-200" : "bg-primary"
+                            )}>
+                                <div className={cn(
+                                    "absolute top-1 w-2 h-2 rounded-full bg-white transition-all",
+                                    theme === 'light' ? "left-1" : "left-5"
+                                )} />
+                            </div>
                         </button>
 
                         <div className="h-px bg-slate-100 dark:bg-slate-800 my-1 mx-2" />

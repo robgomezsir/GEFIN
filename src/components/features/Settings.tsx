@@ -3,7 +3,8 @@
 import * as React from 'react';
 import { Button, Input, Card } from '@/components/ui/base';
 import { useCategories } from '@/hooks/useCategories';
-import { ChevronLeft, Plus, Trash2, Settings as SettingsIcon, Wallet, Tags, Target, RefreshCw, ChevronDown, AlertTriangle, Download, Lock, LogOut } from 'lucide-react';
+import { useTheme } from '@/context/ThemeContext';
+import { ChevronLeft, Plus, Trash2, Settings as SettingsIcon, Wallet, Tags, Target, RefreshCw, ChevronDown, AlertTriangle, Download, Lock, LogOut, Sun, Moon } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { CATEGORIAS_DESPESA, TIPOS_RECEITA, CONTAS_POR_CATEGORIA } from '@/utils/constants';
 import { cn } from '@/utils/cn';
@@ -13,6 +14,7 @@ interface SettingsProps {
 }
 
 export const Settings = ({ onBack }: SettingsProps) => {
+    const { theme, toggleTheme } = useTheme();
     const {
         categories,
         incomeTypes,
@@ -436,6 +438,46 @@ export const Settings = ({ onBack }: SettingsProps) => {
                     <p className="text-sm md:text-base text-slate-500 dark:text-slate-400 font-medium">Personalize suas metas e categorias</p>
                 </div>
             </header>
+
+            {/* Appearance Section */}
+            <section className="space-y-4">
+                <div className="flex items-center gap-2 text-primary px-2">
+                    <Sun size={20} className="font-black" />
+                    <h2 className="text-sm font-black uppercase tracking-widest">Aparência</h2>
+                </div>
+                <Card className="p-8 border-slate-100 dark:border-slate-800 rounded-3xl bg-slate-50/50 dark:bg-slate-900/50">
+                    <div className="flex flex-col sm:flex-row items-center justify-between gap-6">
+                        <div className="flex-1">
+                            <h3 className="text-lg font-black text-slate-900 dark:text-white mb-1 italic">Tema do Sistema</h3>
+                            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest leading-relaxed">
+                                Escolha entre o modo claro ou escuro para sua interface.
+                            </p>
+                        </div>
+                        <div className="flex bg-white dark:bg-slate-800 p-1.5 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-inner">
+                            <button
+                                onClick={() => theme !== 'light' && toggleTheme()}
+                                className={cn(
+                                    "flex items-center gap-2 px-6 py-3 rounded-xl font-black text-[10px] uppercase tracking-widest transition-all",
+                                    theme === 'light' ? "bg-primary text-white shadow-lg shadow-primary/20" : "text-slate-400 hover:text-slate-200"
+                                )}
+                            >
+                                <Sun size={14} />
+                                Claro
+                            </button>
+                            <button
+                                onClick={() => theme !== 'dark' && toggleTheme()}
+                                className={cn(
+                                    "flex items-center gap-2 px-6 py-3 rounded-xl font-black text-[10px] uppercase tracking-widest transition-all",
+                                    theme === 'dark' ? "bg-primary text-white shadow-lg shadow-primary/20" : "text-slate-400 hover:text-slate-600"
+                                )}
+                            >
+                                <Moon size={14} />
+                                Escuro
+                            </button>
+                        </div>
+                    </div>
+                </Card>
+            </section>
 
             {/* Metas Section */}
             <section className="space-y-4">
