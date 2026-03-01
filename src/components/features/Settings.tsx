@@ -3,7 +3,7 @@
 import * as React from 'react';
 import { Button, Input, Card } from '@/components/ui/base';
 import { useCategories } from '@/hooks/useCategories';
-import { ChevronLeft, Plus, Trash2, Settings as SettingsIcon, Wallet, Tags, Target, RefreshCw, ChevronDown, AlertTriangle, Download, Lock } from 'lucide-react';
+import { ChevronLeft, Plus, Trash2, Settings as SettingsIcon, Wallet, Tags, Target, RefreshCw, ChevronDown, AlertTriangle, Download, Lock, LogOut } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { CATEGORIAS_DESPESA, TIPOS_RECEITA, CONTAS_POR_CATEGORIA } from '@/utils/constants';
 import { cn } from '@/utils/cn';
@@ -398,6 +398,17 @@ export const Settings = ({ onBack }: SettingsProps) => {
         setNewSub(prev => ({ ...prev, [catId]: '' }));
     };
 
+    const handleLogout = async () => {
+        if (!confirm('Deseja realmente sair do sistema?')) return;
+        try {
+            await supabase.auth.signOut();
+            window.location.href = '/'; // Forçar recarregamento para limpar estados
+        } catch (err) {
+            console.error('Erro ao sair:', err);
+            alert('Erro ao sair. Tente novamente.');
+        }
+    };
+
     const onConfirmDelete = async () => {
         if (!confirmDelete) return;
 
@@ -447,9 +458,19 @@ export const Settings = ({ onBack }: SettingsProps) => {
                                 />
                             </div>
                         </div>
-                        <Button onClick={handleSaveRenda} loading={savingConfig} className="h-14 px-10 rounded-3xl font-black w-full sm:w-auto shadow-lg shadow-primary/20">
-                            Salvar Meta
-                        </Button>
+                        <div className="flex gap-3 w-full sm:w-auto">
+                            <Button onClick={handleSaveRenda} loading={savingConfig} className="h-14 px-10 rounded-3xl font-black flex-1 sm:flex-none shadow-lg shadow-primary/20">
+                                Salvar Meta
+                            </Button>
+                            <Button
+                                variant="secondary"
+                                onClick={handleLogout}
+                                className="h-14 px-6 rounded-3xl font-black text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-900/10 border-none bg-white dark:bg-slate-800"
+                                title="Sair do Sistema"
+                            >
+                                <LogOut size={24} />
+                            </Button>
+                        </div>
                     </div>
                 </Card>
             </section>
