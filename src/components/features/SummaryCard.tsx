@@ -29,70 +29,54 @@ const colors = {
 };
 
 export const SummaryCard = ({ title, value, type, percent, className }: SummaryCardProps) => {
-    const [isExpanded, setIsExpanded] = React.useState(false);
-
     return (
         <Card
             className={cn(
-                "relative overflow-hidden border-2 transition-all duration-300 cursor-pointer select-none",
-                colors[type],
-                isExpanded ? "min-w-[200px]" : "min-w-[140px]",
+                "relative overflow-hidden border border-slate-100 dark:border-slate-800 transition-all duration-300 shadow-sm",
+                "bg-white dark:bg-slate-900",
                 className
             )}
-            onClick={() => setIsExpanded(!isExpanded)}
         >
-            <div className="flex flex-col items-center justify-center py-2 text-center">
-                <div className={cn(
-                    "flex h-12 w-12 items-center justify-center rounded-xl bg-white shadow-sm dark:bg-slate-800 transition-transform duration-300",
-                    isExpanded && "scale-90"
-                )}>
-                    {icons[type]}
+            <div className="flex flex-col p-4">
+                <div className="flex items-center justify-between mb-2">
+                    <p className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">
+                        {title}
+                    </p>
+                    <div className={cn(
+                        "flex h-8 w-8 items-center justify-center rounded-lg bg-slate-50 dark:bg-slate-800 transition-transform duration-300",
+                    )}>
+                        {React.cloneElement(icons[type] as React.ReactElement<any>, { size: 18 })}
+                    </div>
                 </div>
 
-                <p className="mt-1 text-xs font-bold text-slate-500 dark:text-slate-400 capitalize tracking-wider">
-                    {title}
-                </p>
+                <div className="flex flex-col">
+                    <h3 className={cn(
+                        "text-lg font-black tracking-tight",
+                        type === 'receita' ? "text-emerald-600" : 
+                        type === 'despesa' ? "text-rose-600" : 
+                        type === 'fluxo' ? "text-blue-600" : 
+                        "text-slate-900 dark:text-white"
+                    )}>
+                        {type === 'disponibilidade' && percent !== undefined ? `${percent.toFixed(0)}%` : formatCurrency(value)}
+                    </h3>
 
-                <div className={cn(
-                    "grid transition-all duration-300 ease-in-out",
-                    isExpanded ? "grid-rows-[1fr] opacity-100 mt-1" : "grid-rows-[0fr] opacity-0"
-                )}>
-                    <div className="overflow-hidden flex flex-col items-center">
-                        <h3 className="text-xl font-black tracking-tight text-slate-900 dark:text-white">
-                            {type === 'disponibilidade' && percent !== undefined ? `${percent.toFixed(0)}%` : formatCurrency(value)}
-                        </h3>
-
-                        {type === 'disponibilidade' && percent !== undefined && (
-                            <div className="w-24 h-1.5 bg-slate-200 dark:bg-slate-800 rounded-full mt-2 overflow-hidden">
-                                <div
-                                    className={cn(
-                                        "h-full rounded-full transition-all duration-1000",
-                                        percent > 20 ? "bg-indigo-500" : "bg-rose-500"
-                                    )}
-                                    style={{ width: `${Math.min(100, Math.max(0, percent))}%` }}
-                                />
-                            </div>
-                        )}
-
-                        {type === 'disponibilidade' && isExpanded && (
-                            <span className="text-[10px] font-bold text-slate-400 mt-1">
-                                {formatCurrency(value)} livre
-                            </span>
-                        )}
-                    </div>
+                    {type === 'disponibilidade' && percent !== undefined && (
+                        <div className="w-full h-1.5 bg-slate-100 dark:bg-slate-800 rounded-full mt-2 overflow-hidden">
+                            <div
+                                className={cn(
+                                    "h-full rounded-full transition-all duration-1000",
+                                    percent > 20 ? "bg-indigo-500" : "bg-rose-500"
+                                )}
+                                style={{ width: `${Math.min(100, Math.max(0, percent))}%` }}
+                            />
+                        </div>
+                    )}
                 </div>
             </div>
 
-            {/* Indicação visual de que é expansível */}
-            {!isExpanded && (
-                <div className="absolute top-1 right-1 opacity-20">
-                    <Plus size={12} className="text-slate-400" />
-                </div>
-            )}
-
             {/* Decorative background element */}
-            <div className="absolute -right-4 -bottom-4 opacity-5 pointer-events-none">
-                {React.cloneElement(icons[type] as React.ReactElement<any>, { size: 60 })}
+            <div className="absolute -right-2 -bottom-2 opacity-[0.03] pointer-events-none">
+                {React.cloneElement(icons[type] as React.ReactElement<any>, { size: 48 })}
             </div>
         </Card>
     );

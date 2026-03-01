@@ -428,116 +428,116 @@ export const Settings = ({ onBack }: SettingsProps) => {
 
             {/* Metas Section */}
             <section className="space-y-4">
-                <div className="flex items-center gap-2 text-indigo-600 dark:text-indigo-400">
-                    <Target size={20} />
-                    <h2 className="text-xl font-bold">Metas e Perfil</h2>
+                <div className="flex items-center gap-2 text-primary px-2">
+                    <Target size={20} className="font-black" />
+                    <h2 className="text-sm font-black uppercase tracking-widest">Metas e Perfil</h2>
                 </div>
-                <Card className="p-6 border-slate-100 dark:border-slate-800">
-                    <div className="flex flex-col sm:flex-row gap-4 items-end">
-                        <div className="flex-1 space-y-2">
-                            <label className="text-sm font-medium text-slate-500">Renda Mensal Prevista (Média Salarial)</label>
+                <Card className="p-8 border-slate-100 dark:border-slate-800 rounded-3xl bg-slate-50/50 dark:bg-slate-900/50">
+                    <div className="flex flex-col sm:flex-row gap-6 items-end">
+                        <div className="flex-1 space-y-3 w-full">
+                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-4">Renda Mensal Prevista</label>
                             <div className="relative">
-                                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">R$</span>
-                                <Input
+                                <span className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-400 font-bold">R$</span>
+                                <input
                                     type="number"
                                     value={rendaPrevista}
                                     onChange={e => setRendaPrevista(e.target.value)}
-                                    className="pl-12 rounded-xl h-12"
+                                    className="w-full h-14 pl-14 pr-6 rounded-3xl border border-slate-200 bg-white px-6 font-bold dark:border-slate-800 dark:bg-slate-900 focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all"
                                     placeholder="0,00"
                                 />
                             </div>
                         </div>
-                        <Button onClick={handleSaveRenda} loading={savingConfig} className="h-12 px-8 rounded-xl">
+                        <Button onClick={handleSaveRenda} loading={savingConfig} className="h-14 px-10 rounded-3xl font-black w-full sm:w-auto shadow-lg shadow-primary/20">
                             Salvar Meta
                         </Button>
                     </div>
                 </Card>
             </section>
 
-            <div className="grid gap-8 md:grid-cols-2 lg:items-start">
+            <div className="grid gap-8 lg:grid-cols-2 lg:items-start">
                 {/* Despesas */}
                 <section className="space-y-4">
                     <button
                         onClick={() => setExpandedDespesas(!expandedDespesas)}
-                        className="flex items-center justify-between w-full text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-900/10 p-2 rounded-xl transition-all"
+                        className="flex items-center justify-between w-full text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-900/10 p-2 rounded-2xl transition-all"
                     >
                         <div className="flex items-center gap-2">
-                            <Tags size={20} />
-                            <h2 className="text-xl font-bold">Despesas</h2>
+                            <Tags size={20} className="font-black" />
+                            <h2 className="text-sm font-black uppercase tracking-widest px-2">Despesas</h2>
                         </div>
                         <ChevronDown size={24} className={cn("transition-transform duration-300", !expandedDespesas && "-rotate-90")} />
                     </button>
 
                     {expandedDespesas && (
-                        <Card className="p-4 border-slate-100 dark:border-slate-800 animate-in slide-in-from-top-2 duration-300 overflow-hidden">
-                            <form onSubmit={handleAddCat} className="flex gap-2 mb-6">
-                                <Input
+                        <Card className="p-6 border-slate-100 dark:border-slate-800 rounded-3xl animate-in slide-in-from-top-2 duration-300">
+                            <form onSubmit={handleAddCat} className="flex gap-2 mb-8">
+                                <input
                                     placeholder="Nova categoria..."
                                     value={newCat}
                                     onChange={e => setNewCat(e.target.value)}
-                                    className="rounded-xl"
+                                    className="flex-1 h-12 px-6 rounded-2xl border border-slate-200 bg-slate-50 font-bold dark:border-slate-800 dark:bg-slate-900 focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all"
                                 />
-                                <Button type="submit" size="sm" className="rounded-xl px-4">
-                                    <Plus size={20} />
+                                <Button type="submit" size="sm" className="rounded-2xl w-12 h-12 p-0 shadow-lg shadow-primary/20">
+                                    <Plus size={24} />
                                 </Button>
                             </form>
 
                             <div className="space-y-4 max-h-[60vh] overflow-y-auto pr-2 custom-scrollbar">
                                 {loadingCats ? (
-                                    <div className="h-20 flex items-center justify-center text-slate-400 text-sm">Carregando...</div>
+                                    <div className="h-20 flex items-center justify-center text-slate-400 text-sm font-bold uppercase tracking-widest">Carregando...</div>
                                 ) : categories.length === 0 ? (
-                                    <div className="h-20 flex items-center justify-center text-slate-400 text-sm italic">Nenhuma categoria cadastrada</div>
+                                    <div className="h-20 flex items-center justify-center text-slate-400 text-sm font-bold uppercase tracking-widest italic">Nenhuma categoria</div>
                                 ) : (
                                     categories.map(cat => (
-                                        <div key={cat.id} className="space-y-2 p-4 bg-slate-50 dark:bg-slate-800/50 rounded-2xl border border-slate-100 dark:border-slate-800/50 transition-all hover:shadow-md">
+                                        <div key={cat.id} className="space-y-2 p-4 bg-slate-50 dark:bg-slate-800/50 rounded-2xl border border-slate-100 dark:border-slate-800/50 transition-all">
                                             <div className="flex items-center justify-between group">
                                                 <button
                                                     onClick={() => toggleCategory(cat.id)}
-                                                    className="flex-1 flex items-center gap-2 text-left"
+                                                    className="flex-1 flex items-center gap-3 text-left"
                                                 >
                                                     <ChevronDown size={18} className={cn("transition-transform text-slate-400", !expandedCategories[cat.id] && "-rotate-90")} />
-                                                    <span className="font-bold text-slate-900 dark:text-white text-lg">{cat.nome}</span>
+                                                    <span className="font-black text-slate-900 dark:text-white uppercase text-sm tracking-wide">{cat.nome}</span>
                                                 </button>
                                                 <Button
                                                     variant="ghost"
                                                     size="sm"
                                                     onClick={() => setConfirmDelete({ id: cat.id, nome: cat.nome, type: 'category' })}
-                                                    className="text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-900/10 rounded-xl transition-colors"
+                                                    className="text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-900/10 rounded-xl"
                                                 >
                                                     <Trash2 size={18} />
                                                 </Button>
                                             </div>
 
                                             {expandedCategories[cat.id] && (
-                                                <div className="pl-4 space-y-2 border-l-2 border-slate-100 dark:border-slate-800 animate-in fade-in slide-in-from-top-1 duration-200">
+                                                <div className="pl-6 space-y-3 border-l-2 border-slate-200 dark:border-slate-800 animate-in fade-in slide-in-from-top-1 duration-200 mt-2">
                                                     {subcategories
                                                         .filter(sub => sub.categoria_id === cat.id)
                                                         .map(sub => (
                                                             <div key={sub.id} className="flex items-center justify-between group/sub py-1">
-                                                                <span className="text-sm font-medium text-slate-600 dark:text-slate-400">{sub.nome}</span>
+                                                                <span className="text-sm font-bold text-slate-600 dark:text-slate-400">{sub.nome}</span>
                                                                 <button
                                                                     onClick={() => setConfirmDelete({ id: sub.id, nome: sub.nome, type: 'subcategory' })}
                                                                     className="text-rose-400 opacity-0 group-hover/sub:opacity-100 transition-opacity hover:text-rose-600"
                                                                 >
-                                                                    <Plus size={14} className="rotate-45" />
+                                                                    <Trash2 size={14} />
                                                                 </button>
                                                             </div>
                                                         ))}
 
                                                     <div className="flex gap-2 pt-2">
-                                                        <Input
+                                                        <input
                                                             placeholder="Nova sub..."
                                                             value={newSub[cat.id] || ''}
                                                             onChange={e => setNewSub(prev => ({ ...prev, [cat.id]: e.target.value }))}
                                                             onKeyDown={e => e.key === 'Enter' && handleAddSub(cat.id)}
-                                                            className="h-8 text-xs rounded-lg"
+                                                            className="flex-1 h-10 px-4 text-sm rounded-xl border border-slate-100 bg-white font-bold dark:border-slate-800 dark:bg-slate-900 outline-none focus:border-primary transition-all"
                                                         />
                                                         <Button
                                                             size="sm"
                                                             onClick={() => handleAddSub(cat.id)}
-                                                            className="h-8 w-8 p-0 rounded-lg shrink-0"
+                                                            className="h-10 w-10 p-0 rounded-xl shrink-0"
                                                         >
-                                                            <Plus size={14} />
+                                                            <Plus size={18} />
                                                         </Button>
                                                     </div>
                                                 </div>
@@ -554,43 +554,43 @@ export const Settings = ({ onBack }: SettingsProps) => {
                 <section className="space-y-4">
                     <button
                         onClick={() => setExpandedReceitas(!expandedReceitas)}
-                        className="flex items-center justify-between w-full text-emerald-600 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-900/10 p-2 rounded-xl transition-all"
+                        className="flex items-center justify-between w-full text-emerald-600 hover:bg-emerald-50 dark:hover:bg-emerald-900/10 p-2 rounded-2xl transition-all"
                     >
                         <div className="flex items-center gap-2">
-                            <Wallet size={20} />
-                            <h2 className="text-xl font-bold">Receitas</h2>
+                            <Wallet size={20} className="font-black" />
+                            <h2 className="text-sm font-black uppercase tracking-widest px-2">Receitas</h2>
                         </div>
                         <ChevronDown size={24} className={cn("transition-transform duration-300", !expandedReceitas && "-rotate-90")} />
                     </button>
 
                     {expandedReceitas && (
-                        <Card className="p-4 border-slate-100 dark:border-slate-800 animate-in slide-in-from-top-2 duration-300 overflow-hidden">
-                            <form onSubmit={handleAddInc} className="flex gap-2 mb-6">
-                                <Input
+                        <Card className="p-6 border-slate-100 dark:border-slate-800 rounded-3xl animate-in slide-in-from-top-2 duration-300">
+                            <form onSubmit={handleAddInc} className="flex gap-2 mb-8">
+                                <input
                                     placeholder="Fonte de receita..."
                                     value={newInc}
                                     onChange={e => setNewInc(e.target.value)}
-                                    className="rounded-xl"
+                                    className="flex-1 h-12 px-6 rounded-2xl border border-slate-200 bg-slate-50 font-bold dark:border-slate-800 dark:bg-slate-900 focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all"
                                 />
-                                <Button type="submit" size="sm" className="rounded-xl px-4">
-                                    <Plus size={20} />
+                                <Button type="submit" size="sm" className="rounded-2xl w-12 h-12 p-0 shadow-lg shadow-emerald-500/20 bg-emerald-500 hover:bg-emerald-600">
+                                    <Plus size={24} />
                                 </Button>
                             </form>
 
                             <div className="space-y-2 max-h-[60vh] overflow-y-auto pr-2 custom-scrollbar">
                                 {loadingCats ? (
-                                    <div className="h-20 flex items-center justify-center text-slate-400 text-sm">Carregando...</div>
+                                    <div className="h-20 flex items-center justify-center text-slate-400 text-sm font-bold uppercase tracking-widest">Carregando...</div>
                                 ) : incomeTypes.length === 0 ? (
-                                    <div className="h-20 flex items-center justify-center text-slate-400 text-sm italic">Nenhum tipo cadastrado</div>
+                                    <div className="h-20 flex items-center justify-center text-slate-400 text-sm font-bold uppercase tracking-widest italic">Nenhum tipo</div>
                                 ) : (
                                     incomeTypes.map(inc => (
-                                        <div key={inc.id} className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-800/50 rounded-xl group transition-all hover:bg-slate-100 dark:hover:bg-slate-800 border border-transparent hover:border-slate-100 dark:hover:border-slate-700">
-                                            <span className="font-medium text-slate-700 dark:text-slate-200">{inc.nome}</span>
+                                        <div key={inc.id} className="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-800/50 rounded-2xl group transition-all hover:bg-slate-100 dark:hover:bg-slate-800">
+                                            <span className="font-black text-slate-700 dark:text-slate-200 uppercase text-xs tracking-wide">{inc.nome}</span>
                                             <Button
                                                 variant="ghost"
                                                 size="sm"
                                                 onClick={() => setConfirmDelete({ id: inc.id, nome: inc.nome, type: 'incomeType' })}
-                                                className="text-rose-500 opacity-0 group-hover:opacity-100 transition-all hover:bg-rose-50 dark:hover:bg-rose-900/10 rounded-xl"
+                                                className="text-rose-500 opacity-0 group-hover:opacity-100 transition-all rounded-xl"
                                             >
                                                 <Trash2 size={16} />
                                             </Button>
@@ -606,32 +606,30 @@ export const Settings = ({ onBack }: SettingsProps) => {
             {/* Modal de Confirmação */}
             {confirmDelete && (
                 <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-300">
-                    <Card className="w-full max-w-sm p-6 shadow-2xl border-slate-200 dark:border-slate-800 animate-in zoom-in-95 duration-200">
-                        <div className="flex flex-col items-center text-center space-y-4">
-                            <div className="w-16 h-16 rounded-full bg-rose-100 dark:bg-rose-900/30 flex items-center justify-center text-rose-600 dark:text-rose-400">
-                                <AlertTriangle size={32} />
+                    <Card className="w-full max-w-sm p-8 shadow-2xl border-slate-200 dark:border-slate-800 rounded-[2.5rem] animate-in zoom-in-95 duration-200">
+                        <div className="flex flex-col items-center text-center space-y-6">
+                            <div className="w-20 h-20 rounded-3xl bg-rose-100 dark:bg-rose-900/30 flex items-center justify-center text-rose-600">
+                                <AlertTriangle size={40} />
                             </div>
                             <div>
-                                <h3 className="text-xl font-bold text-slate-900 dark:text-white">Confirmar Exclusão?</h3>
-                                <p className="text-slate-500 dark:text-slate-400 mt-2 text-sm leading-relaxed">
-                                    Você está prestes a excluir <span className="font-bold text-slate-900 dark:text-white">"{confirmDelete.nome}"</span>.
-                                    Esta ação não pode ser desfeita e pode afetar transações já existentes.
+                                <h3 className="text-2xl font-black text-slate-900 dark:text-white uppercase tracking-tight">Confirmar Exclusão?</h3>
+                                <p className="text-slate-500 dark:text-slate-400 mt-2 text-sm font-bold leading-relaxed">
+                                    Apagar <span className="text-slate-900 dark:text-white">"{confirmDelete.nome}"</span>? Esta ação é irreversível.
                                 </p>
                             </div>
-                            <div className="flex gap-3 w-full pt-4">
+                            <div className="flex gap-4 w-full">
                                 <Button
                                     variant="ghost"
                                     onClick={() => setConfirmDelete(null)}
-                                    className="flex-1 rounded-xl h-12"
+                                    className="flex-1 rounded-2xl h-14 font-black"
                                 >
-                                    Cancelar
+                                    Sair
                                 </Button>
                                 <Button
-                                    variant="danger"
                                     onClick={onConfirmDelete}
-                                    className="flex-1 rounded-xl h-12 bg-rose-600 hover:bg-rose-700"
+                                    className="flex-1 rounded-2xl h-14 bg-rose-600 hover:bg-rose-700 font-black shadow-lg shadow-rose-600/20"
                                 >
-                                    Excluir
+                                    Apagar
                                 </Button>
                             </div>
                         </div>
@@ -642,40 +640,39 @@ export const Settings = ({ onBack }: SettingsProps) => {
             {/* Modal de Senha para Reset/Limpeza */}
             {showResetModal && (
                 <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/70 backdrop-blur-sm animate-in fade-in duration-300">
-                    <div className="w-full max-w-sm bg-white dark:bg-slate-900 rounded-3xl border border-rose-100 dark:border-rose-900/30 p-6 shadow-2xl animate-in zoom-in-95 duration-200">
-                        <div className="flex flex-col items-center text-center space-y-4">
-                            <div className="w-16 h-16 rounded-full bg-rose-100 dark:bg-rose-900/30 flex items-center justify-center text-rose-600 dark:text-rose-400">
-                                <Lock size={28} />
+                    <div className="w-full max-w-sm bg-white dark:bg-slate-950 rounded-[2.5rem] border border-slate-100 dark:border-slate-800 p-8 shadow-2xl animate-in zoom-in-95 duration-200">
+                        <div className="flex flex-col items-center text-center space-y-6">
+                            <div className="w-20 h-20 rounded-3xl bg-primary/10 flex items-center justify-center text-primary">
+                                <Lock size={36} />
                             </div>
                             <div>
-                                <h3 className="text-xl font-bold text-slate-900 dark:text-white">Ação Restrita</h3>
-                                <p className="text-sm text-slate-500 dark:text-slate-400 mt-1 leading-relaxed">
-                                    Digite a senha de administrador para apagar{' '}
-                                    <span className="font-bold text-rose-600 dark:text-rose-400">todas as transações</span>.
+                                <h3 className="text-2xl font-black text-slate-900 dark:text-white uppercase tracking-tight">Ação Restrita</h3>
+                                <p className="text-sm text-slate-500 dark:text-slate-400 mt-1 font-bold">
+                                    Digite a senha 'admin123' para resetar o sistema.
                                 </p>
                             </div>
                             <input
                                 type="password"
-                                placeholder="Senha de administrador"
+                                placeholder="••••••••"
                                 value={resetPasswordInput}
                                 onChange={e => setResetPasswordInput(e.target.value)}
                                 onKeyDown={e => e.key === 'Enter' && confirmClearTransactions()}
-                                className="w-full px-4 py-3 rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-transparent transition"
+                                className="w-full px-6 py-4 rounded-3xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white text-center text-xl font-black focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition"
                                 autoFocus
                             />
-                            <div className="flex gap-3 w-full pt-2">
+                            <div className="flex gap-4 w-full">
                                 <button
                                     onClick={() => { setShowResetModal(false); setResetPasswordInput(''); }}
-                                    className="flex-1 h-12 rounded-2xl font-bold text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
+                                    className="flex-1 h-14 rounded-2xl font-black text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-900 transition-colors"
                                 >
-                                    Cancelar
+                                    Sair
                                 </button>
                                 <button
                                     onClick={confirmClearTransactions}
                                     disabled={clearing || resetPasswordInput.length === 0}
-                                    className="flex-1 h-12 rounded-2xl font-bold text-white bg-rose-600 hover:bg-rose-700 disabled:opacity-50 transition-colors"
+                                    className="flex-1 h-14 rounded-2xl font-black text-white bg-primary hover:bg-primary/90 disabled:opacity-50 transition-colors shadow-lg shadow-primary/20"
                                 >
-                                    {clearing ? 'Apagando...' : 'Confirmar'}
+                                    {clearing ? 'Wait...' : 'Confirmar'}
                                 </button>
                             </div>
                         </div>
@@ -683,73 +680,69 @@ export const Settings = ({ onBack }: SettingsProps) => {
                 </div>
             )}
 
-            {/* Export CSV */}
-            <div className="pt-12 pb-4 border-t border-slate-100 dark:border-slate-800">
-                <div className="flex flex-col items-center text-center space-y-4">
-                    <div className="bg-emerald-50 dark:bg-emerald-900/10 p-6 rounded-3xl max-w-md w-full">
-                        <div className="w-12 h-12 rounded-2xl bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center text-emerald-600 dark:text-emerald-400 mx-auto mb-3">
-                            <Download size={22} />
+            {/* Utilitários Section */}
+            <div className="pt-12 pb-12 border-t border-slate-100 dark:border-slate-800">
+                <div className="grid gap-6 md:grid-cols-2">
+                    {/* Export */}
+                    <Card className="p-8 rounded-[2rem] border-slate-100 dark:border-slate-800 bg-emerald-50/30 dark:bg-emerald-950/10 h-full flex flex-col items-center text-center">
+                        <div className="w-16 h-16 rounded-2xl bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center text-emerald-600 mb-4">
+                            <Download size={32} />
                         </div>
-                        <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-1">Exportar Dados</h3>
-                        <p className="text-sm text-slate-500 dark:text-slate-400 mb-5">
-                            Baixe todas as suas transações em formato CSV compatível com Excel.
+                        <h3 className="text-xl font-black text-slate-900 dark:text-white uppercase mb-2">Exportar CSV</h3>
+                        <p className="text-sm text-slate-500 dark:text-slate-400 font-bold mb-8">
+                            Baixe suas transações para usar no Excel ou Google Sheets.
                         </p>
                         <Button
                             onClick={handleExportCSV}
                             loading={exporting}
-                            className="w-full gap-2 rounded-2xl h-14 font-bold bg-emerald-500 hover:bg-emerald-600 text-white border-none shadow-lg shadow-emerald-500/20"
+                            className="w-full rounded-2xl h-14 font-black bg-emerald-500 hover:bg-emerald-600 text-white shadow-lg shadow-emerald-500/20"
                         >
-                            <Download size={20} className={exporting ? 'animate-bounce' : ''} />
-                            {exporting ? 'Exportando...' : 'Baixar CSV / Excel'}
+                            Exportar Geral
                         </Button>
-                        <p className="text-[11px] text-slate-400 dark:text-slate-500 mt-3">
-                            Colunas: Categoria da Conta · Conta/Subcategoria · Tipo · Valor · Mês · Ano · Data do Registro
-                        </p>
-                    </div>
-                </div>
-            </div>
+                    </Card>
 
-            <div className="pt-6 pb-8 border-t border-slate-100 dark:border-slate-800">
-                <div className="flex flex-col items-center text-center space-y-4">
-                    <div className="bg-indigo-50 dark:bg-indigo-900/10 p-6 rounded-3xl max-w-md">
-                        <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-2">Restaurar Dados Padrão</h3>
-                        <p className="text-sm text-slate-500 dark:text-slate-400 mb-6">
-                            Clique abaixo para preencher automaticamente as categorias e subcategorias essenciais para o seu controle financeiro.
+                    {/* System */}
+                    <Card className="p-8 rounded-[2rem] border-slate-100 dark:border-slate-800 bg-primary/5 dark:bg-primary/10 h-full flex flex-col items-center text-center">
+                        <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center text-primary mb-4">
+                            <RefreshCw size={32} />
+                        </div>
+                        <h3 className="text-xl font-black text-slate-900 dark:text-white uppercase mb-2">Sistema</h3>
+                        <p className="text-sm text-slate-500 dark:text-slate-400 font-bold mb-8">
+                            Ações globais de dados e restauração de padrões.
                         </p>
-                        <Button
-                            variant="secondary"
-                            onClick={handleSeedData}
-                            loading={seeding}
-                            className="w-full gap-2 rounded-2xl h-14 font-bold text-indigo-600 dark:text-indigo-400 border-indigo-100 dark:border-indigo-800"
-                        >
-                            <RefreshCw size={20} className={cn(seeding && "animate-spin")} />
-                            Popular Padrões do Sistema
-                        </Button>
-
-                        <div className="mt-4 pt-4 border-t border-slate-100 dark:border-slate-800 space-y-3">
+                        <div className="grid grid-cols-1 w-full gap-3">
+                            <Button
+                                variant="secondary"
+                                onClick={handleSeedData}
+                                loading={seeding}
+                                className="w-full rounded-2xl h-12 font-black text-xs"
+                            >
+                                Iniciar Semeio
+                            </Button>
                             <Button
                                 variant="ghost"
                                 onClick={handleMigrateHistoricalData}
                                 loading={migrating}
-                                className="w-full gap-2 rounded-2xl h-12 text-slate-400 hover:text-indigo-600 text-xs font-bold"
+                                className="w-full rounded-2xl h-12 font-black text-[10px] text-slate-400"
                             >
-                                <RefreshCw size={16} className={cn(migrating && "animate-spin")} />
-                                Migrar Dados do Excel (Histórico)
+                                Importar Histórico
                             </Button>
-
                             <Button
                                 variant="ghost"
                                 onClick={handleClearTransactions}
                                 loading={clearing}
-                                className="w-full gap-2 rounded-2xl h-12 text-rose-300 hover:text-rose-600 text-[10px] font-medium"
+                                className="w-full rounded-2xl h-12 font-black text-[10px] text-rose-300"
                             >
-                                <Trash2 size={14} />
-                                Limpar Todas as Transações (Reset)
+                                Resetar Tudo
                             </Button>
                         </div>
-                    </div>
+                    </Card>
                 </div>
             </div>
+
+            <footer className="pb-12 text-center">
+                <p className="text-slate-300 text-[10px] font-black uppercase tracking-widest">GEFIN PWA · Premium Cloud Edition</p>
+            </footer>
         </div>
     );
 };

@@ -45,144 +45,141 @@ export const TransactionForm = ({ onClose, onSave, initialData, onDelete }: Tran
 
         if (!categoria) return [];
 
-        // Tentar buscar do banco
         const catObj = categories.find(c => c.nome === categoria);
         if (catObj) {
             const subs = subcategories.filter(s => s.categoria_id === catObj.id);
             if (subs.length > 0) return subs.map(s => s.nome);
         }
 
-        // Fallback para constantes
         return CONTAS_POR_CATEGORIA[categoria] || ['Geral'];
     };
 
     const contasDisponiveis = getContasDisponiveis();
     const categoriasExibicao = categories.length > 0 ? categories.map(c => c.nome) : CATEGORIAS_DESPESA;
 
+    const formatValue = (v: string) => {
+        const num = parseFloat(v) || 0;
+        return num.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+    };
+
     return (
-        <div className="fixed inset-0 z-[100] flex items-end justify-center bg-black/60 backdrop-blur-md sm:items-center p-4 overflow-y-auto py-8">
-            <Card className="w-full max-w-lg rounded-t-3xl sm:rounded-3xl shadow-2xl flex flex-col max-h-[90vh] sm:max-h-[85vh]">
-                <div className="flex items-center justify-between mb-6 shrink-0">
-                    <h2 className="text-xl font-bold">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-white dark:bg-black overflow-y-auto">
+            <div className="w-full max-w-lg h-full flex flex-col p-6 animate-in slide-in-from-bottom duration-500">
+                <div className="flex items-center justify-between mb-8">
+                    <Button variant="ghost" size="sm" onClick={onClose} className="h-10 w-10 p-0 rounded-full bg-slate-50 dark:bg-slate-800">
+                        <X size={20} />
+                    </Button>
+                    <h2 className="text-lg font-black uppercase tracking-widest text-slate-400">
                         {initialData ? 'Editar Lançamento' : 'Novo Lançamento'}
                     </h2>
-                    <Button variant="ghost" size="sm" onClick={onClose}>
-                        <X size={24} />
-                    </Button>
+                    <div className="w-10" />
                 </div>
 
-                <form onSubmit={handleSubmit} className="space-y-6 overflow-y-auto pr-2 custom-scrollbar">
-                    <div className="flex gap-2 p-1 bg-slate-100 dark:bg-slate-800 rounded-xl shrink-0">
+                <div className="flex flex-col items-center justify-center mb-10">
+                    <span className="text-sm font-bold text-slate-400 uppercase tracking-widest mb-2">Valor do Lançamento</span>
+                    <div className="relative w-full flex justify-center">
+                        <input
+                            type="number"
+                            step="0.01"
+                            value={valor}
+                            onChange={(e) => setValor(e.target.value)}
+                            className="bg-transparent text-5xl font-black text-center outline-none w-full text-slate-900 dark:text-white"
+                            placeholder="0,00"
+                            autoFocus
+                        />
+                    </div>
+                    <span className="text-sm font-bold text-primary mt-2">{formatValue(valor)}</span>
+                </div>
+
+                <form onSubmit={handleSubmit} className="flex-1 space-y-6">
+                    <div className="flex p-1.5 bg-slate-100 dark:bg-slate-800 rounded-3xl shrink-0">
                         <button
                             type="button"
                             onClick={() => setTipo('Receita')}
                             className={cn(
-                                "flex-1 flex items-center justify-center gap-2 h-10 rounded-lg font-medium transition-all",
+                                "flex-1 flex items-center justify-center gap-2 h-12 rounded-2xl font-bold transition-all",
                                 tipo === 'Receita' ? "bg-white text-emerald-600 shadow-sm dark:bg-slate-700 dark:text-emerald-400" : "text-slate-500"
                             )}
                         >
-                            <ArrowUpCircle size={18} /> Receita
+                            <ArrowUpCircle size={20} /> Receita
                         </button>
                         <button
                             type="button"
                             onClick={() => setTipo('Despesa')}
                             className={cn(
-                                "flex-1 flex items-center justify-center gap-2 h-10 rounded-lg font-medium transition-all",
+                                "flex-1 flex items-center justify-center gap-2 h-12 rounded-2xl font-bold transition-all",
                                 tipo === 'Despesa' ? "bg-white text-rose-600 shadow-sm dark:bg-slate-700 dark:text-rose-400" : "text-slate-500"
                             )}
                         >
-                            <ArrowDownCircle size={18} /> Despesa
+                            <ArrowDownCircle size={20} /> Despesa
                         </button>
                     </div>
 
-                    <div className="grid grid-cols-2 gap-4">
-                        <div className="space-y-2">
-                            <label className="text-sm font-medium text-slate-500">Mês</label>
-                            <select
-                                value={mes}
-                                onChange={(e) => setMes(e.target.value)}
-                                className="w-full h-12 rounded-xl border border-slate-200 bg-white px-4 dark:border-slate-800 dark:bg-slate-950"
-                            >
-                                {MESES.map(m => <option key={m} value={m}>{m.toUpperCase()}</option>)}
-                            </select>
-                        </div>
-                        <div className="space-y-2">
-                            <label className="text-sm font-medium text-slate-500">Ano</label>
-                            <Input type="number" value={ano} onChange={(e) => setAno(e.target.value)} />
-                        </div>
-                    </div>
+                    <div className="space-y-4">
+                        {tipo === 'Despesa' && (
+                            <div className="space-y-2">
+                                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-4">Categoria</label>
+                                <select
+                                    value={categoria}
+                                    onChange={(e) => {
+                                        setCategoria(e.target.value);
+                                        setConta('');
+                                    }}
+                                    className="w-full h-14 rounded-3xl border border-slate-100 bg-slate-50 px-6 font-bold dark:border-slate-800 dark:bg-slate-900 focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all"
+                                    required
+                                >
+                                    <option value="">{loadingCats ? 'Carregando...' : 'Selecione uma categoria'}</option>
+                                    {categoriasExibicao.map(c => <option key={c} value={c}>{c}</option>)}
+                                </select>
+                            </div>
+                        )}
 
-                    {tipo === 'Despesa' && (
                         <div className="space-y-2">
-                            <label className="text-sm font-medium text-slate-500">Categoria</label>
+                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-4">
+                                {tipo === 'Receita' ? 'Fonte / Conta' : 'Subcategoria / Conta'}
+                            </label>
                             <select
-                                value={categoria}
-                                onChange={(e) => {
-                                    setCategoria(e.target.value);
-                                    setConta('');
-                                }}
-                                className="w-full h-12 rounded-xl border border-slate-200 bg-white px-4 dark:border-slate-800 dark:bg-slate-950"
+                                value={conta}
+                                onChange={(e) => setConta(e.target.value)}
+                                className="w-full h-14 rounded-3xl border border-slate-100 bg-slate-50 px-6 font-bold dark:border-slate-800 dark:bg-slate-900 focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all"
                                 required
                             >
-                                <option value="">{loadingCats ? 'Carregando...' : 'Selecione uma categoria'}</option>
-                                {categoriasExibicao.map(c => <option key={c} value={c}>{c}</option>)}
+                                <option value="">Selecione uma opção</option>
+                                {contasDisponiveis.map(c => <option key={c} value={c}>{c}</option>)}
                             </select>
                         </div>
-                    )}
 
-                    <div className="space-y-2">
-                        <label className="text-sm font-medium text-slate-500">
-                            {tipo === 'Receita' ? 'Fonte da Receita' : 'Conta / Subcategoria'}
-                        </label>
-                        <select
-                            value={conta}
-                            onChange={(e) => setConta(e.target.value)}
-                            className="w-full h-12 rounded-xl border border-slate-200 bg-white px-4 dark:border-slate-800 dark:bg-slate-950"
-                            required
-                        >
-                            <option value="">Selecione uma opção</option>
-                            {contasDisponiveis.map(c => <option key={c} value={c}>{c}</option>)}
-                        </select>
-                    </div>
-
-                    <div className="space-y-2">
-                        <label className="text-sm font-medium text-slate-500">Valor</label>
-                        <div className="relative">
-                            <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-medium">R$</span>
-                            <Input
-                                type="number"
-                                step="0.01"
-                                placeholder="0,00"
-                                value={valor}
-                                onChange={(e) => setValor(e.target.value)}
-                                className="pl-12 text-lg font-bold"
-                                required
-                            />
+                        <div className="grid grid-cols-2 gap-4">
+                            <div className="space-y-2">
+                                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-4">Data</label>
+                                <Input type="date" value={data} onChange={(e) => setData(e.target.value)} required className="h-14 bg-slate-50 border-slate-100 dark:bg-slate-900 border-none px-6 font-bold" />
+                            </div>
+                            <div className="space-y-2">
+                                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-4">Mês Referência</label>
+                                <select
+                                    value={mes}
+                                    onChange={(e) => setMes(e.target.value)}
+                                    className="w-full h-14 rounded-3xl border border-slate-100 bg-slate-50 px-6 font-bold dark:border-slate-800 dark:bg-slate-900 focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all"
+                                >
+                                    {MESES.map(m => <option key={m} value={m}>{m.toUpperCase()}</option>)}
+                                </select>
+                            </div>
                         </div>
                     </div>
 
-                    <div className="space-y-2">
-                        <label className="text-sm font-medium text-slate-500">Data do Registro</label>
-                        <Input type="date" value={data} onChange={(e) => setData(e.target.value)} required />
-                    </div>
-
-                    <div className="flex gap-3 pt-6 border-t border-slate-100 dark:border-slate-800 sticky bottom-0 bg-white dark:bg-slate-900 mt-auto">
-                        {initialData && onDelete && (
-                            <Button type="button" variant="danger" className="flex-1" onClick={onDelete}>
-                                Excluir
-                            </Button>
-                        )}
-                        {!initialData && (
-                            <Button type="button" variant="secondary" className="flex-1" onClick={onClose}>
-                                Cancelar
-                            </Button>
-                        )}
-                        <Button type="submit" className="flex-[2]">
-                            {initialData ? 'Atualizar' : 'Salvar Lançamento'}
+                    <div className="flex flex-col gap-3 pt-6 mt-auto">
+                        <Button type="submit" size="lg" className="w-full h-16 rounded-3xl text-lg shadow-xl shadow-primary/20">
+                            {initialData ? 'Atualizar Lançamento' : 'Salvar Lançamento'}
                         </Button>
+
+                        {initialData && onDelete && (
+                            <Button type="button" variant="ghost" className="w-full text-rose-500 font-bold" onClick={onDelete}>
+                                Excluir Lançamento
+                            </Button>
+                        )}
                     </div>
                 </form>
-            </Card>
+            </div>
         </div>
     );
 };
