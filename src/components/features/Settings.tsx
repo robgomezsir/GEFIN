@@ -47,6 +47,7 @@ export const Settings = ({ onBack }: SettingsProps) => {
         nome: string;
         type: 'category' | 'subcategory' | 'incomeType';
     } | null>(null);
+    const [userEmail, setUserEmail] = React.useState<string | null>(null);
 
     const toggleCategory = (id: number) => {
         setExpandedCategories(prev => ({ ...prev, [id]: !prev[id] }));
@@ -359,6 +360,7 @@ export const Settings = ({ onBack }: SettingsProps) => {
                 .single();
 
             if (data) setRendaPrevista(data.valor);
+            setUserEmail(user.email ?? null);
         };
         fetchConfig();
     }, []);
@@ -435,9 +437,33 @@ export const Settings = ({ onBack }: SettingsProps) => {
                 </Button>
                 <div>
                     <h1 className="text-2xl md:text-3xl font-black text-slate-900 dark:text-white tracking-tight leading-tight">Configurações</h1>
-                    <p className="text-sm md:text-base text-slate-500 dark:text-slate-400 font-medium">Personalize suas metas e categorias</p>
+                    <p className="text-sm md:text-base text-slate-500 dark:text-slate-400 font-medium">Personalize sua experiência</p>
                 </div>
             </header>
+
+            {/* Account Section */}
+            <section className="space-y-4">
+                <div className="flex items-center gap-2 text-primary px-2">
+                    <RefreshCw size={20} className="font-black" />
+                    <h2 className="text-sm font-black uppercase tracking-widest">Sua Conta</h2>
+                </div>
+                <Card className="p-8 border-slate-100 dark:border-slate-800 rounded-3xl bg-slate-50/50 dark:bg-slate-900/50">
+                    <div className="flex flex-col sm:flex-row items-center justify-between gap-6">
+                        <div className="flex-1 text-center sm:text-left">
+                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Logado como</p>
+                            <h3 className="text-lg font-black text-slate-900 dark:text-white truncate max-w-xs">{userEmail || 'Usuário'}</h3>
+                        </div>
+                        <Button
+                            onClick={handleLogout}
+                            variant="secondary"
+                            className="w-full sm:w-auto h-14 px-8 rounded-2xl font-black text-xs uppercase tracking-widest text-rose-500 bg-rose-50 dark:bg-rose-950/20 border-rose-100 dark:border-rose-900/30 hover:bg-rose-100 transition-all flex items-center justify-center gap-2"
+                        >
+                            <LogOut size={18} />
+                            Sair do Sistema
+                        </Button>
+                    </div>
+                </Card>
+            </section>
 
             {/* Appearance Section */}
             <section className="space-y-4">
@@ -501,16 +527,8 @@ export const Settings = ({ onBack }: SettingsProps) => {
                             </div>
                         </div>
                         <div className="flex gap-3 w-full sm:w-auto">
-                            <Button onClick={handleSaveRenda} loading={savingConfig} className="h-14 px-10 rounded-3xl font-black flex-1 sm:flex-none shadow-lg shadow-primary/20">
+                            <Button onClick={handleSaveRenda} loading={savingConfig} className="w-full sm:w-auto h-14 px-10 rounded-3xl font-black shadow-lg shadow-primary/20">
                                 Salvar Meta
-                            </Button>
-                            <Button
-                                variant="secondary"
-                                onClick={handleLogout}
-                                className="h-14 px-6 rounded-3xl font-black text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-900/10 border-none bg-white dark:bg-slate-800"
-                                title="Sair do Sistema"
-                            >
-                                <LogOut size={24} />
                             </Button>
                         </div>
                     </div>
