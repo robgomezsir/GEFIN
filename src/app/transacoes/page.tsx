@@ -8,8 +8,10 @@ import { useFinanceData } from "@/hooks/useFinanceData";
 import { MESES } from "@/utils/format";
 import { Transacao } from "@/types";
 
+import { useDate } from "@/context/DateContext";
+
 export default function TransactionsPage() {
-    const [currentYear, setCurrentYear] = React.useState(new Date().getFullYear());
+    const { currentYear } = useDate();
     const [editingTransaction, setEditingTransaction] = React.useState<Transacao | null>(null);
     const [isFormOpen, setIsFormOpen] = React.useState(false);
 

@@ -9,9 +9,10 @@ import { cn } from '@/utils/cn';
 import {
     ChevronLeft, ChevronDown, ChevronRight,
     TrendingUp, TrendingDown,
-    Loader2, Wallet
+    Loader2, Wallet, Calendar
 } from 'lucide-react';
 import { Transacao } from '@/types';
+import { useDate } from '@/context/DateContext';
 
 interface MonthData {
     mes: string;
@@ -25,7 +26,6 @@ interface MonthData {
 interface TransactionsByYearProps {
     onBack: () => void;
     onEditTransaction: (t: Transacao) => void;
-    initialYear?: number;
 }
 
 const MESES_LABELS: Record<string, string> = {
@@ -222,9 +222,8 @@ function MonthCard({
     );
 }
 
-export const TransactionsByYear = ({ onBack, onEditTransaction, initialYear }: TransactionsByYearProps) => {
-    const currentYear = new Date().getFullYear();
-    const [year, setYear] = React.useState(initialYear ?? currentYear);
+export const TransactionsByYear = ({ onBack, onEditTransaction }: TransactionsByYearProps) => {
+    const { currentYear: year } = useDate();
     const [monthsData, setMonthsData] = React.useState<MonthData[]>([]);
     const [loading, setLoading] = React.useState(true);
 
@@ -262,26 +261,12 @@ export const TransactionsByYear = ({ onBack, onEditTransaction, initialYear }: T
                     </div>
                 </div>
 
-                {/* Seletor de Ano */}
-                <div className="flex items-center gap-1 bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-2xl p-1.5 shadow-sm">
-                    <Button
-                        variant="ghost" size="sm"
-                        onClick={() => setYear(y => y - 1)}
-                        className="h-9 w-9 p-0 rounded-xl"
-                    >
-                        <ChevronLeft size={18} className="text-slate-500" />
-                    </Button>
-                    <span className="px-3 font-black text-slate-900 dark:text-white text-base min-w-[56px] text-center">
+                {/* Ano Exibido */}
+                <div className="flex items-center gap-3 bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-2xl px-6 py-2.5 shadow-sm">
+                    <Calendar size={16} className="text-primary" />
+                    <span className="font-black text-slate-900 dark:text-white text-base font-mono">
                         {year}
                     </span>
-                    <Button
-                        variant="ghost" size="sm"
-                        onClick={() => setYear(y => y + 1)}
-                        disabled={year >= currentYear}
-                        className="h-9 w-9 p-0 rounded-xl disabled:opacity-40"
-                    >
-                        <ChevronRight size={18} className="text-slate-500" />
-                    </Button>
                 </div>
             </header>
 
