@@ -17,6 +17,7 @@ import {
 import { cn } from '@/utils/cn';
 import { Button } from '@/components/ui/base';
 import { UserProfile } from './UserProfile';
+import { MobileMenu } from './MobileMenu';
 import { useDate } from '@/context/DateContext';
 import { MESES } from '@/utils/format';
 
@@ -37,6 +38,7 @@ export const MainLayout = ({ children }: { children: React.ReactNode }) => {
     const pathname = usePathname();
     const router = useRouter();
     const { currentMonth, currentYear, handlePrevMonth, handleNextMonth } = useDate();
+    const [isMenuOpen, setIsMenuOpen] = React.useState(false);
     const mesNome = MESES[currentMonth];
 
     const activeItem = navItems.find(item => item.path === pathname) || navItems[0];
@@ -131,10 +133,15 @@ export const MainLayout = ({ children }: { children: React.ReactNode }) => {
                         </button>
                     </div>
 
-                    <button className="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-900 flex items-center justify-center text-slate-500">
+                    <button
+                        onClick={() => setIsMenuOpen(true)}
+                        className="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-900 flex items-center justify-center text-slate-500 active:scale-95 transition-transform"
+                    >
                         <Menu size={20} />
                     </button>
                 </header>
+
+                <MobileMenu isOpen={isMenuOpen} onClose={() => setIsMenuOpen(false)} />
 
                 {/* Page Content */}
                 <div className="relative z-10 p-4 lg:p-12 max-w-[1600px] mx-auto w-full pb-24 lg:pb-12 animate-in fade-in duration-700">
