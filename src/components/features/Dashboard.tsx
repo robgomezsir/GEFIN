@@ -154,32 +154,16 @@ export const Dashboard = () => {
         .slice(0, 5);
 
     return (
-        <div className="space-y-8 animate-in fade-in duration-500 pb-8">
-            {/* Header Section */}
-            <header className="flex flex-col md:flex-row md:items-center justify-between gap-6 bg-white dark:bg-slate-900 p-8 rounded-[2.5rem] border border-slate-100 dark:border-slate-800 shadow-sm transition-all">
-                <div>
-                    <h1 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight uppercase">
-                        Resumo Financeiro
-                    </h1>
-                    <p className="text-sm font-bold text-slate-400 mt-1 uppercase tracking-widest">
-                        {getGreeting()}, {userName || 'Usuário'}
-                    </p>
-                </div>
-
-                <div className="flex items-center gap-3 bg-slate-50 dark:bg-slate-800 p-3 rounded-3xl border border-slate-100 dark:border-slate-700 shadow-inner">
-                    <Button variant="ghost" size="sm" onClick={handlePrevMonth} className="h-10 w-10 p-0 rounded-2xl hover:bg-white dark:hover:bg-slate-700">
-                        <ChevronLeft size={20} />
-                    </Button>
-                    <div className="px-6 text-center min-w-[160px]">
-                        <span className="text-sm font-black text-primary uppercase tracking-[0.2em]">
-                            {mesNome} {currentYear}
-                        </span>
-                    </div>
-                    <Button variant="ghost" size="sm" onClick={handleNextMonth} className="h-10 w-10 p-0 rounded-2xl hover:bg-white dark:hover:bg-slate-700">
-                        <ChevronRight size={20} />
-                    </Button>
-                </div>
-            </header>
+        <div className="space-y-8 animate-in fade-in duration-500 pb-8 mt-4">
+            {/* Greeting (Subtle, aligned with Stitch suggestions) */}
+            <div className="px-4">
+                <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] mb-1">
+                    {getGreeting()}
+                </p>
+                <h2 className="text-2xl font-black text-slate-900 dark:text-white italic">
+                    {userName || 'Explorador'}
+                </h2>
+            </div>
 
             {/* Summary Cards Grid */}
             <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">

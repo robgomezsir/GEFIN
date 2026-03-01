@@ -8,9 +8,11 @@ import {
     BarChart3,
     Settings,
     LogOut,
-    ChevronRight,
     Menu,
-    X
+    X,
+    ChevronLeft as ChevronLeftIcon,
+    ChevronRight as ChevronRightIcon,
+    Calendar
 } from 'lucide-react';
 import { cn } from '@/utils/cn';
 import { Button } from '@/components/ui/base';
@@ -72,20 +74,25 @@ export const MainLayout = ({ children }: { children: React.ReactNode }) => {
                                 key={item.path}
                                 onClick={() => router.push(item.path)}
                                 className={cn(
-                                    "w-full flex items-center gap-4 p-4 rounded-2xl transition-all group relative",
+                                    "w-full flex items-center gap-4 p-4 rounded-full transition-all group relative overflow-hidden",
                                     isActive
-                                        ? "bg-primary text-white shadow-xl shadow-primary/20"
-                                        : "text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white"
+                                        ? "bg-primary text-white shadow-xl shadow-primary/30"
+                                        : "text-slate-400 dark:text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-800/50 hover:text-slate-900 dark:hover:text-white"
                                 )}
                             >
-                                <item.icon size={22} className={cn("shrink-0", isActive ? "scale-110" : "group-hover:scale-110 transition-transform")} />
+                                <div className={cn(
+                                    "absolute inset-0 bg-gradient-to-r from-primary to-indigo-600 opacity-0 transition-opacity duration-300",
+                                    isActive && "opacity-100"
+                                )} />
+
+                                <item.icon size={20} className={cn("shrink-0 relative z-10", isActive ? "scale-110" : "group-hover:scale-110 transition-transform")} />
                                 {isSidebarOpen && (
-                                    <span className="font-bold text-sm uppercase tracking-wider animate-in slide-in-from-left-2 duration-300">
+                                    <span className="font-black text-[11px] uppercase tracking-[0.2em] relative z-10 animate-in slide-in-from-left-2 duration-300">
                                         {item.label}
                                     </span>
                                 )}
                                 {isActive && !isSidebarOpen && (
-                                    <div className="absolute right-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-white rounded-l-full" />
+                                    <div className="absolute right-0 top-1/2 -translate-y-1/2 w-1.5 h-6 bg-white rounded-l-full z-10" />
                                 )}
                             </button>
                         );
@@ -101,10 +108,10 @@ export const MainLayout = ({ children }: { children: React.ReactNode }) => {
                         {isSidebarOpen ? (
                             <div className="flex items-center gap-2">
                                 <span className="text-[10px] font-black uppercase tracking-widest">Recolher</span>
-                                <ChevronRight className="rotate-180" size={16} />
+                                <ChevronRightIcon className="rotate-180" size={16} />
                             </div>
                         ) : (
-                            <ChevronRight size={20} />
+                            <ChevronRightIcon size={20} />
                         )}
                     </button>
                 </div>
@@ -114,10 +121,29 @@ export const MainLayout = ({ children }: { children: React.ReactNode }) => {
             <main className="flex-1 flex flex-col relative">
                 {/* Desktop Top Header (Hidden on Mobile) */}
                 <header className="hidden lg:flex items-center justify-between px-8 h-20 bg-white/50 dark:bg-slate-950/50 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 sticky top-0 z-30">
-                    <div>
-                        <h1 className="text-lg font-black uppercase tracking-widest text-slate-400">
-                            {activeItem.label}
-                        </h1>
+                    <div className="flex items-center gap-8">
+                        <div>
+                            <h1 className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 mb-1">
+                                GEFIN Workspace
+                            </h1>
+                            <p className="text-lg font-black text-slate-900 dark:text-white italic">
+                                {activeItem.label}
+                            </p>
+                        </div>
+
+                        {/* Date Selector (Suggested by Stitch) */}
+                        <div className="flex items-center gap-4 bg-slate-100 dark:bg-slate-900 px-4 py-2 rounded-2xl border border-slate-200 dark:border-slate-800">
+                            <button className="text-slate-400 hover:text-primary transition-colors">
+                                <ChevronLeftIcon size={16} />
+                            </button>
+                            <div className="flex items-center gap-2">
+                                <Calendar size={14} className="text-primary" />
+                                <span className="text-[10px] font-black uppercase tracking-widest">Março 2026</span>
+                            </div>
+                            <button className="text-slate-400 hover:text-primary transition-colors">
+                                <ChevronRightIcon size={16} />
+                            </button>
+                        </div>
                     </div>
 
                     <UserProfile />

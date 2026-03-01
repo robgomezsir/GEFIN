@@ -38,12 +38,14 @@ export const TrendChart = ({ data }: TrendChartProps) => {
                 <AreaChart data={chartData} margin={{ left: 0, right: 15, top: 10, bottom: 0 }}>
                     <defs>
                         <linearGradient id="colorReceitas" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="5%" stopColor="#10b981" stopOpacity={0.1} />
-                            <stop offset="95%" stopColor="#10b981" stopOpacity={0} />
+                            <stop offset="5%" stopColor="#6366f1" stopOpacity={0.3} />
+                            <stop offset="50%" stopColor="#6366f1" stopOpacity={0.1} />
+                            <stop offset="95%" stopColor="#6366f1" stopOpacity={0} />
                         </linearGradient>
                         <linearGradient id="colorDespesas" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="5%" stopColor="#f43f5e" stopOpacity={0.1} />
-                            <stop offset="95%" stopColor="#f43f5e" stopOpacity={0} />
+                            <stop offset="5%" stopColor="#a855f7" stopOpacity={0.2} />
+                            <stop offset="50%" stopColor="#a855f7" stopOpacity={0.05} />
+                            <stop offset="95%" stopColor="#a855f7" stopOpacity={0} />
                         </linearGradient>
                     </defs>
                     <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="currentColor" className="opacity-10" />
@@ -74,18 +76,21 @@ export const TrendChart = ({ data }: TrendChartProps) => {
                     <Area
                         type="monotone"
                         dataKey="receitas"
-                        stroke="#10b981"
-                        strokeWidth={3}
+                        stroke="#6366f1"
+                        strokeWidth={4}
                         fillOpacity={1}
                         fill="url(#colorReceitas)"
+                        animationDuration={2000}
                     />
                     <Area
                         type="monotone"
                         dataKey="despesas"
-                        stroke="#f43f5e"
+                        stroke="#a855f7"
                         strokeWidth={3}
+                        strokeDasharray="5 5"
                         fillOpacity={1}
                         fill="url(#colorDespesas)"
+                        animationDuration={2000}
                     />
                 </AreaChart>
             </ResponsiveContainer>

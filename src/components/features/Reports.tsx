@@ -45,32 +45,17 @@ export const Reports = ({ transactions, resumo, saldoAnterior, mes, ano, onBack,
             <header className="flex flex-col gap-4 mb-8 print:hidden">
                 {/* Linha 1: Voltar + Título */}
                 <div className="flex items-center gap-4">
-                    <Button variant="ghost" size="sm" onClick={onBack} className="rounded-xl h-12 w-12 p-0">
+                    <Button variant="ghost" size="sm" onClick={onBack} className="rounded-2xl h-14 w-14 p-0 bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 shadow-sm hover:text-primary transition-all">
                         <ChevronLeft size={24} />
                     </Button>
                     <div>
-                        <h1 className="text-2xl md:text-3xl font-black text-slate-900 dark:text-white tracking-tight leading-tight">Relatórios</h1>
-                        <p className="text-sm md:text-base text-slate-500 dark:text-slate-400 font-medium">Fluxo de caixa mensal</p>
+                        <h1 className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 mb-1">
+                            Análise Detalhada
+                        </h1>
+                        <p className="text-3xl font-black text-slate-900 dark:text-white italic">
+                            Relatórios <span className="text-primary">—</span> {mes} {ano}
+                        </p>
                     </div>
-                </div>
-
-                {/* Linha 2: Seletor de Mês/Ano */}
-                {/* Linha 2: Seletor de Mês/Ano */}
-                <div className="flex items-center gap-2 bg-white dark:bg-slate-900 px-4 py-2 rounded-2xl border border-slate-100 dark:border-slate-800 w-fit">
-                    <Button variant="ghost" size="sm" onClick={onPrevMonth} className="h-8 w-8 p-0 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800">
-                        <ChevronLeft size={18} className="text-slate-600 dark:text-slate-400" />
-                    </Button>
-                    <div className="px-2 text-center flex flex-col min-w-[100px]">
-                        <span className="text-[10px] font-black text-primary uppercase tracking-widest leading-tight">
-                            {ano}
-                        </span>
-                        <span className="text-xs font-black text-slate-800 dark:text-slate-100 uppercase leading-tight">
-                            {mes}
-                        </span>
-                    </div>
-                    <Button variant="ghost" size="sm" onClick={onNextMonth} className="h-8 w-8 p-0 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800">
-                        <ChevronLeft size={18} className="text-slate-600 dark:text-slate-400 rotate-180" />
-                    </Button>
                 </div>
             </header>
 
@@ -159,28 +144,46 @@ export const Reports = ({ transactions, resumo, saldoAnterior, mes, ano, onBack,
             </div>
 
             {/* Resultado Final no App */}
-            <Card className="p-8 bg-primary text-white rounded-[2rem] shadow-xl shadow-primary/20 mt-8 print:hidden overflow-hidden relative">
-                <div className="flex items-center justify-between relative z-10">
-                    <div>
-                        <div className="flex gap-8 mb-4">
-                            <div>
-                                <p className="text-white/60 text-[10px] font-black uppercase tracking-widest">Saldo Anterior</p>
-                                <p className="text-md font-black">{formatCurrency(saldoAnterior)}</p>
-                            </div>
-                            <div>
-                                <p className="text-white/60 text-[10px] font-black uppercase tracking-widest">Fluxo do Mês</p>
-                                <p className="text-md font-black">{formatCurrency(resumo?.fluxo_caixa || 0)}</p>
+            <Card className="p-10 bg-slate-900 border-none rounded-[3rem] shadow-2xl shadow-indigo-200 dark:shadow-none mt-8 print:hidden overflow-hidden relative group">
+                {/* Background Gradient Glow */}
+                <div className="absolute -right-20 -top-20 w-64 h-64 bg-primary blur-[100px] opacity-40 group-hover:opacity-60 transition-opacity"></div>
+
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-8 relative z-10">
+                    <div className="space-y-6">
+                        <div className="flex items-center gap-3">
+                            <div className="px-3 py-1 bg-primary/20 border border-primary/30 rounded-full text-[10px] font-black text-primary uppercase tracking-[0.2em]">
+                                Status Final do Período
                             </div>
                         </div>
-                        <p className="text-white/60 text-xs font-black uppercase tracking-widest mb-1">Saldo Final Acumulado</p>
-                        <h3 className="text-4xl font-black">{formatCurrency((resumo?.fluxo_caixa || 0) + saldoAnterior)}</h3>
+
+                        <div className="flex flex-wrap gap-10">
+                            <div>
+                                <p className="text-slate-500 text-[10px] font-black uppercase tracking-[0.2em] mb-2">Saldo Anterior</p>
+                                <p className="text-xl font-black text-white tabular-nums">{formatCurrency(saldoAnterior)}</p>
+                            </div>
+                            <div>
+                                <p className="text-slate-500 text-[10px] font-black uppercase tracking-[0.2em] mb-2">Fluxo do Mês</p>
+                                <p className={cn(
+                                    "text-xl font-black tabular-nums",
+                                    (resumo?.fluxo_caixa || 0) >= 0 ? "text-emerald-400" : "text-rose-400"
+                                )}>
+                                    {(resumo?.fluxo_caixa || 0) >= 0 ? '+' : ''}{formatCurrency(resumo?.fluxo_caixa || 0)}
+                                </p>
+                            </div>
+                        </div>
+
+                        <div>
+                            <p className="text-slate-400 text-xs font-black uppercase tracking-[0.3em] mb-2">Saldo Final Acumulado</p>
+                            <h3 className="text-5xl font-black text-white tracking-tighter tabular-nums drop-shadow-md">
+                                {formatCurrency((resumo?.fluxo_caixa || 0) + saldoAnterior)}
+                            </h3>
+                        </div>
                     </div>
-                    <div className="h-16 w-16 bg-white/20 backdrop-blur-md rounded-2xl flex items-center justify-center">
-                        <FileText size={32} />
+
+                    <div className="h-24 w-24 bg-gradient-to-br from-primary to-indigo-600 rounded-[2rem] flex items-center justify-center text-white shadow-xl shadow-primary/40 active:scale-95 transition-transform cursor-pointer">
+                        <FileText size={40} strokeWidth={2.5} />
                     </div>
                 </div>
-                {/* Decorative element */}
-                <div className="absolute -right-8 -bottom-8 bg-white/10 w-32 h-32 rounded-full blur-3xl"></div>
             </Card>
 
             <div className="flex justify-center pt-8 print:hidden">
