@@ -41,7 +41,6 @@ export default function TransactionsPage() {
         <PageLayout>
             <div className="animate-in fade-in duration-500">
                 <TransactionsByYear
-                    initialYear={currentYear}
                     onEditTransaction={handleEdit}
                     onBack={() => window.location.href = '/'}
                 />

@@ -19,7 +19,6 @@ import { TrendChart, CategoryChart } from './FinancialCharts';
 import { Settings } from './Settings';
 import { Profile } from './Profile';
 import { Reports } from './Reports';
-import { TransactionsByYear } from './TransactionsByYear';
 import { supabase } from '@/lib/supabase';
 import { Transacao } from '@/types';
 import { useDate } from '@/context/DateContext';
