@@ -14,6 +14,7 @@ import {
 } from 'lucide-react';
 import { cn } from '@/utils/cn';
 import { Button } from '@/components/ui/base';
+import { UserProfile } from './UserProfile';
 
 interface NavItem {
     label: string;
@@ -119,15 +120,7 @@ export const MainLayout = ({ children }: { children: React.ReactNode }) => {
                         </h1>
                     </div>
 
-                    <div className="flex items-center gap-6">
-                        <div className="flex flex-col items-end">
-                            <span className="text-sm font-black text-slate-900 dark:text-white">Anderson Silva</span>
-                            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Premium Account</span>
-                        </div>
-                        <div className="w-10 h-10 rounded-2xl bg-slate-200 dark:bg-slate-800 flex items-center justify-center text-slate-400 border border-slate-100 dark:border-slate-700">
-                            AS
-                        </div>
-                    </div>
+                    <UserProfile />
                 </header>
 
                 {/* Mobile Top Header (Sticky) */}
