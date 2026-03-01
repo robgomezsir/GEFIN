@@ -154,76 +154,85 @@ export const Dashboard = () => {
         .slice(0, 5);
 
     return (
-        <div className="space-y-8 animate-in fade-in duration-500 pb-8 mt-4">
-            {/* Greeting (Subtle, aligned with Stitch suggestions) */}
-            <div className="px-4">
-                <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] mb-1">
-                    {getGreeting()}
+        <div className="min-h-screen bg-grid-pattern space-y-10 animate-in fade-in duration-700 pb-12 pt-6 px-4 lg:px-12">
+            {/* Greeting (Technical Header) */}
+            <div className="max-w-[1600px] mx-auto w-full">
+                <p className="text-[10px] font-black text-primary/60 dark:text-primary/40 uppercase tracking-[0.4em] mb-2 px-1">
+                    {getGreeting()}, Rob
                 </p>
-                <h2 className="text-2xl font-black text-slate-900 dark:text-white italic">
-                    {userName || 'Explorador'}
+                <h2 className="text-3xl lg:text-4xl font-black text-slate-900 dark:text-white tracking-tighter italic">
+                    Painel <span className="text-primary italic">Financeiro.</span>
                 </h2>
             </div>
 
             {/* Summary Cards Grid */}
-            <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                <SummaryCard title="Receitas" value={data.receitas} type="receita" />
-                <SummaryCard title="Despesas" value={data.despesas} type="despesa" />
-                <SummaryCard title="Fluxo do Mês" value={data.fluxo} type="fluxo" />
-                <SummaryCard title="Saldo Acumulado" value={data.saldoDoMes} type="saldo" />
+            <section className="max-w-[1600px] mx-auto w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+                <SummaryCard title="Receitas Mensais" value={data.receitas} type="receita" />
+                <SummaryCard title="Despesas Mensais" value={data.despesas} type="despesa" />
+                <SummaryCard title="Fluxo de Caixa" value={data.fluxo} type="fluxo" />
+                <SummaryCard title="Patrimônio Líquido" value={data.saldoDoMes} type="saldo" />
             </section>
 
             {/* Middle Section: Charts */}
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div className="max-w-[1600px] mx-auto w-full grid grid-cols-1 lg:grid-cols-3 gap-10">
                 {/* Main Trend Chart */}
-                <Card className="lg:col-span-2 p-8 rounded-[2.5rem] border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm">
-                    <div className="flex items-center justify-between mb-8">
-                        <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 rounded-2xl bg-primary/10 flex items-center justify-center text-primary">
-                                <TrendingUp size={22} />
+                <Card className="lg:col-span-2 p-10 rounded-[2rem] border-slate-200 dark:border-slate-800/50 bg-white dark:bg-slate-900/40 backdrop-blur-xl shadow-2xl shadow-slate-200/50 dark:shadow-none relative overflow-hidden group">
+                    <div className="absolute top-0 right-0 p-8 opacity-5 group-hover:opacity-10 transition-opacity">
+                        <BarChart3 size={120} />
+                    </div>
+                    <div className="flex items-center justify-between mb-10 relative z-10">
+                        <div className="flex items-center gap-4">
+                            <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center text-primary shadow-inner">
+                                <TrendingUp size={24} />
                             </div>
-                            <h2 className="text-lg font-black uppercase tracking-tight">Tendência Anual</h2>
+                            <div>
+                                <h2 className="text-lg font-black uppercase tracking-tight italic">Evolução Anual</h2>
+                                <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Análise de Performance</p>
+                            </div>
                         </div>
-                        <div className="flex items-center gap-4 text-[10px] font-black uppercase tracking-widest text-slate-400">
+                        <div className="flex items-center gap-6 text-[10px] font-black uppercase tracking-[0.15em] text-slate-400">
                             <div className="flex items-center gap-2">
-                                <div className="w-2 h-2 rounded-full bg-emerald-500" /> Receitas
+                                <div className="w-2.5 h-2.5 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.4)]" /> Receitas
                             </div>
                             <div className="flex items-center gap-2">
-                                <div className="w-2 h-2 rounded-full bg-rose-500" /> Despesas
+                                <div className="w-2.5 h-2.5 rounded-full bg-rose-500 shadow-[0_0_8px_rgba(244,63,94,0.4)]" /> Despesas
                             </div>
                         </div>
                     </div>
-                    <div className="h-[350px]">
+                    <div className="h-[380px] relative z-10">
                         <TrendChart data={annualData} />
                     </div>
                 </Card>
 
                 {/* Category Distribution */}
-                <Card className="p-8 rounded-[3rem] border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm">
-                    <div className="flex items-center gap-3 mb-8">
-                        <div className="w-10 h-10 rounded-2xl bg-primary/10 flex items-center justify-center text-primary">
-                            <PieIcon size={22} />
+                <Card className="p-10 rounded-[2rem] border-slate-200 dark:border-slate-800/50 bg-white dark:bg-slate-900/40 backdrop-blur-xl shadow-2xl shadow-slate-200/50 dark:shadow-none">
+                    <div className="flex items-center gap-4 mb-10">
+                        <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center text-primary shadow-inner">
+                            <PieIcon size={24} />
                         </div>
-                        <h2 className="text-lg font-black uppercase tracking-tight">Categorias</h2>
+                        <div>
+                            <h2 className="text-lg font-black uppercase tracking-tight italic">Distribuição</h2>
+                            <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Por Categoria</p>
+                        </div>
                     </div>
-                    <div className="h-[350px] flex items-center justify-center">
+                    <div className="h-[380px] flex items-center justify-center">
                         <CategoryChart transactions={transactions} />
                     </div>
                 </Card>
             </div>
 
-            {/* Bottom Section: Transactions & Details */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                <div className="space-y-4">
-                    <div className="flex items-center justify-between px-4">
-                        <h2 className="text-xs font-black uppercase tracking-[0.2em] text-slate-400">Últimos Lançamentos</h2>
+            {/* Bottom Section: Transactions & Analysis */}
+            <div className="max-w-[1600px] mx-auto w-full grid grid-cols-1 lg:grid-cols-2 gap-10">
+                <div className="space-y-6">
+                    <div className="flex items-center justify-between px-2">
+                        <h2 className="text-[11px] font-black uppercase tracking-[0.3em] text-primary/60 dark:text-primary/40 font-mono">_Lançamentos_Recentes</h2>
                         <Button
                             variant="ghost"
                             size="sm"
-                            className="text-[10px] font-black uppercase tracking-widest text-primary"
+                            className="text-[10px] font-black uppercase tracking-widest text-primary hover:bg-primary/5 rounded-xl h-10"
                             onClick={() => window.location.href = '/transacoes'}
                         >
-                            Ver Tudo <ChevronRight size={14} className="ml-1" />
+                            Log Completo <ChevronRight size={14} className="ml-2" />
                         </Button>
                     </div>
                     <TransactionList
@@ -233,52 +242,58 @@ export const Dashboard = () => {
                 </div>
 
                 <div className="space-y-6">
-                    <div className="px-4">
-                        <h2 className="text-xs font-black uppercase tracking-[0.2em] text-slate-400">Análise de Rendimento</h2>
+                    <div className="px-2">
+                        <h2 className="text-[11px] font-black uppercase tracking-[0.3em] text-primary/60 dark:text-primary/40 font-mono">_Health_Check_AI</h2>
                     </div>
-                    <Card className="p-8 rounded-[2.5rem] border-slate-100 dark:border-slate-800 bg-primary/10 dark:bg-primary/20 backdrop-blur-sm border-2 border-primary/20">
-                        <div className="flex items-center gap-4 mb-6">
-                            <div className="w-14 h-14 rounded-3xl bg-white dark:bg-slate-900 flex items-center justify-center text-primary shadow-lg shadow-primary/20">
-                                <Target size={28} />
+                    <Card className="p-10 rounded-[2rem] border-none bg-primary/5 dark:bg-primary/10 relative overflow-hidden group">
+                        <div className="absolute -right-10 -bottom-10 w-48 h-48 bg-primary blur-[100px] opacity-20 group-hover:opacity-30 transition-opacity" />
+                        <div className="flex items-center gap-5 mb-8 relative z-10">
+                            <div className="w-16 h-16 rounded-[1.5rem] bg-white dark:bg-slate-900 flex items-center justify-center text-primary shadow-xl shadow-primary/10">
+                                <Target size={32} />
                             </div>
                             <div>
-                                <p className="text-[10px] font-black uppercase text-primary/60 tracking-widest">Status da Meta</p>
-                                <h3 className="text-xl font-black text-primary italic lowercase">Disponibilidade Real</h3>
+                                <p className="text-[10px] font-black uppercase text-primary/60 tracking-widest mb-1">Status da Meta</p>
+                                <h3 className="text-2xl font-black text-slate-900 dark:text-white italic tracking-tighter lowercase">Liquidez Disponível</h3>
                             </div>
                         </div>
 
-                        <div className="space-y-6">
+                        <div className="space-y-8 relative z-10">
                             <div className="flex items-end justify-between">
                                 <div>
-                                    <p className="text-sm font-bold text-primary/60 uppercase mb-1">Valor Livre Agora</p>
-                                    <h4 className="text-3xl font-black text-primary tracking-tighter">
+                                    <p className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-2">Ponto de Equilíbrio</p>
+                                    <h4 className="text-4xl font-black text-primary tracking-tighter tabular-nums">
                                         {formatCurrency(data.disponivelValor)}
                                     </h4>
                                 </div>
                                 <div className="text-right">
-                                    <div className={cn(
-                                        "text-xl font-black px-4 py-2 rounded-2xl shadow-sm border",
+                                    <span className={cn(
+                                        "text-2xl font-black px-5 py-3 rounded-2xl border backdrop-blur-md shadow-sm",
                                         data.percentualDisponivel > 0
-                                            ? "bg-emerald-50 text-emerald-600 border-emerald-100"
-                                            : "bg-rose-50 text-rose-600 border-rose-100"
+                                            ? "bg-emerald-500/10 text-emerald-500 border-emerald-500/20"
+                                            : "bg-rose-500/10 text-rose-500 border-rose-500/20"
                                     )}>
-                                        {data.percentualDisponivel.toFixed(1)}%
+                                        {data.percentualDisponivel > 0 ? '+' : ''}{data.percentualDisponivel.toFixed(1)}%
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div className="relative pt-2">
+                                <div className="w-full bg-slate-200/50 dark:bg-slate-800/50 h-2.5 rounded-full overflow-hidden shadow-inner flex">
+                                    <div
+                                        className={cn(
+                                            "h-full transition-all duration-1000 relative",
+                                            data.percentualDisponivel > 30 ? "bg-emerald-500 shadow-[0_0_15px_rgba(16,185,129,0.5)]" :
+                                                data.percentualDisponivel > 0 ? "bg-primary shadow-[0_0_15px_rgba(55,19,236,0.5)]" : "bg-rose-500 shadow-[0_0_15px_rgba(244,63,94,0.5)]"
+                                        )}
+                                        style={{ width: `${Math.min(100, Math.max(0, data.percentualDisponivel))}%` }}
+                                    >
+                                        <div className="absolute top-0 right-0 h-full w-2 bg-white/30 skew-x-[-20deg] blur-[1px]" />
                                     </div>
                                 </div>
                             </div>
 
-                            <div className="w-full bg-white dark:bg-slate-800 h-4 rounded-full overflow-hidden shadow-inner border border-slate-100/50 dark:border-slate-700/50">
-                                <div
-                                    className={cn(
-                                        "h-full transition-all duration-1000",
-                                        data.percentualDisponivel > 30 ? "bg-emerald-500" : data.percentualDisponivel > 0 ? "bg-amber-500" : "bg-rose-500"
-                                    )}
-                                    style={{ width: `${Math.min(100, Math.max(0, data.percentualDisponivel))}%` }}
-                                />
-                            </div>
-
-                            <p className="text-[10px] font-black text-slate-400 uppercase leading-relaxed text-center tracking-widest mt-4">
-                                Baseado na média salarial vs. despesas acumuladas
+                            <p className="text-[9px] font-black text-slate-400 dark:text-slate-500 uppercase leading-relaxed text-center tracking-[0.4em] mt-6 font-mono">
+                                [ SYSTEM_ALGORITHM: REAL_TIME_CASH_FLOW_ANALYSIS ]
                             </p>
                         </div>
                     </Card>
