@@ -17,6 +17,8 @@ import {
 import { cn } from '@/utils/cn';
 import { Button } from '@/components/ui/base';
 import { UserProfile } from './UserProfile';
+import { useDate } from '@/context/DateContext';
+import { MESES } from '@/utils/format';
 
 interface NavItem {
     label: string;
@@ -34,6 +36,8 @@ const navItems: NavItem[] = [
 export const MainLayout = ({ children }: { children: React.ReactNode }) => {
     const pathname = usePathname();
     const router = useRouter();
+    const { currentMonth, currentYear, handlePrevMonth, handleNextMonth } = useDate();
+    const mesNome = MESES[currentMonth];
 
     const activeItem = navItems.find(item => item.path === pathname) || navItems[0];
 
@@ -81,15 +85,23 @@ export const MainLayout = ({ children }: { children: React.ReactNode }) => {
 
                     <div className="flex items-center gap-10">
                         {/* Date Selector (Technical Style) */}
-                        <div className="flex items-center gap-4 bg-slate-100 dark:bg-slate-900/80 px-6 py-2.5 rounded-[1.25rem] border border-slate-200 dark:border-slate-800/80">
-                            <button className="text-slate-400 hover:text-primary transition-colors p-1 hover:bg-slate-200 dark:hover:bg-slate-800 rounded-lg">
+                        <div className="flex items-center gap-4 bg-slate-100 dark:bg-slate-900/80 px-6 py-2.5 rounded-[1.25rem] border border-slate-200 dark:border-slate-800/80 shadow-inner">
+                            <button
+                                onClick={handlePrevMonth}
+                                className="text-slate-400 hover:text-primary transition-colors p-1 hover:bg-slate-200 dark:hover:bg-slate-800 rounded-lg"
+                            >
                                 <ChevronLeftIcon size={14} />
                             </button>
-                            <div className="flex items-center gap-3">
+                            <div className="flex items-center gap-3 min-w-[120px] justify-center">
                                 <Calendar size={14} className="text-primary" />
-                                <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 dark:text-slate-400 font-mono">MAR_2026</span>
+                                <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 dark:text-slate-400 font-mono">
+                                    {mesNome}_{currentYear}
+                                </span>
                             </div>
-                            <button className="text-slate-400 hover:text-primary transition-colors p-1 hover:bg-slate-200 dark:hover:bg-slate-800 rounded-lg">
+                            <button
+                                onClick={handleNextMonth}
+                                className="text-slate-400 hover:text-primary transition-colors p-1 hover:bg-slate-200 dark:hover:bg-slate-800 rounded-lg"
+                            >
                                 <ChevronRightIcon size={14} />
                             </button>
                         </div>
@@ -101,20 +113,31 @@ export const MainLayout = ({ children }: { children: React.ReactNode }) => {
                 {/* Mobile Top Header */}
                 <header className="lg:hidden flex items-center justify-between p-5 px-6 h-20 bg-white/80 dark:bg-[#020617]/80 backdrop-blur-xl border-b border-slate-200/50 dark:border-slate-800/50 sticky top-0 z-50">
                     <div className="flex items-center gap-4">
-                        <div className="w-9 h-9 rounded-xl bg-primary flex items-center justify-center text-white text-base font-black overflow-hidden shadow-lg shadow-primary/20">
+                        <div className="w-9 h-9 rounded-xl bg-primary flex items-center justify-center text-white text-base font-black overflow-hidden shadow-lg shadow-primary/20" onClick={() => router.push('/')}>
                             G
                         </div>
-                        <h1 className="text-xs font-black uppercase tracking-[0.2em] text-slate-900 dark:text-white italic">
-                            {activeItem.label}
-                        </h1>
                     </div>
+
+                    {/* Compact Date Selector for Mobile */}
+                    <div className="flex items-center gap-2 bg-slate-100 dark:bg-slate-900 px-3 py-1.5 rounded-full border border-slate-200 dark:border-slate-800 shadow-sm">
+                        <button onClick={handlePrevMonth} className="text-slate-400 p-0.5">
+                            <ChevronLeftIcon size={12} />
+                        </button>
+                        <span className="text-[9px] font-black uppercase tracking-widest text-slate-600 dark:text-slate-400 font-mono min-w-[70px] text-center">
+                            {mesNome.substring(0, 3)}_{currentYear}
+                        </span>
+                        <button onClick={handleNextMonth} className="text-slate-400 p-0.5">
+                            <ChevronLeftIcon size={12} className="rotate-180" />
+                        </button>
+                    </div>
+
                     <button className="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-900 flex items-center justify-center text-slate-500">
                         <Menu size={20} />
                     </button>
                 </header>
 
                 {/* Page Content */}
-                <div className="relative z-10">
+                <div className="relative z-10 p-4 lg:p-12 max-w-[1600px] mx-auto w-full pb-24 lg:pb-12 animate-in fade-in duration-700">
                     {children}
                 </div>
 

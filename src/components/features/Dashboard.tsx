@@ -22,11 +22,11 @@ import { Reports } from './Reports';
 import { TransactionsByYear } from './TransactionsByYear';
 import { supabase } from '@/lib/supabase';
 import { Transacao } from '@/types';
+import { useDate } from '@/context/DateContext';
 import { useTheme } from '@/context/ThemeContext';
 
 export const Dashboard = () => {
-    const [currentMonth, setCurrentMonth] = React.useState(new Date().getMonth());
-    const [currentYear, setCurrentYear] = React.useState(new Date().getFullYear());
+    const { currentMonth, currentYear } = useDate();
     const [activeTab, setActiveTab] = React.useState<'dashboard' | 'transactions' | 'reports' | 'settings' | 'profile'>('dashboard');
     const [isMenuOpen, setIsMenuOpen] = React.useState(false);
     const [isFormOpen, setIsFormOpen] = React.useState(false);
@@ -81,24 +81,6 @@ export const Dashboard = () => {
     const loading = loadingMonth || loadingAnnual;
 
     const handleLogout = () => supabase.auth.signOut();
-
-    const handlePrevMonth = () => {
-        if (currentMonth === 0) {
-            setCurrentMonth(11);
-            setCurrentYear(prev => prev - 1);
-        } else {
-            setCurrentMonth(prev => prev - 1);
-        }
-    };
-
-    const handleNextMonth = () => {
-        if (currentMonth === 11) {
-            setCurrentMonth(0);
-            setCurrentYear(currentYear + 1);
-        } else {
-            setCurrentMonth(currentMonth + 1);
-        }
-    };
 
     const handleSaveTransaction = async (newTransaction: any) => {
         try {
