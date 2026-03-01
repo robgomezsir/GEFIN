@@ -153,101 +153,163 @@ export const Dashboard = () => {
         .sort((a, b) => Number(b.valor) - Number(a.valor))
         .slice(0, 5);
 
-    const renderDashboard = () => (
-        <div className="space-y-8 animate-in fade-in duration-500 pb-20 md:pb-8">
-            <header className="flex items-center justify-between mb-8 bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-100 dark:border-slate-800 shadow-sm">
+    return (
+        <div className="space-y-8 animate-in fade-in duration-500 pb-8">
+            {/* Header Section */}
+            <header className="flex flex-col md:flex-row md:items-center justify-between gap-6 bg-white dark:bg-slate-900 p-8 rounded-[2.5rem] border border-slate-100 dark:border-slate-800 shadow-sm transition-all">
                 <div>
-                    <h1 className="text-xl font-black text-slate-900 dark:text-white tracking-tight">
-                        GEFIN - Fluxo de Caixa
+                    <h1 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight uppercase">
+                        Resumo Financeiro
                     </h1>
+                    <p className="text-sm font-bold text-slate-400 mt-1 uppercase tracking-widest">
+                        {getGreeting()}, {userName || 'Usuário'}
+                    </p>
                 </div>
 
-                <div className="flex items-center gap-2 bg-slate-50 dark:bg-slate-800 p-2 rounded-2xl">
-                    <Button variant="ghost" size="sm" onClick={handlePrevMonth} className="h-8 w-8 p-0">
-                        <ChevronLeft size={16} />
+                <div className="flex items-center gap-3 bg-slate-50 dark:bg-slate-800 p-3 rounded-3xl border border-slate-100 dark:border-slate-700 shadow-inner">
+                    <Button variant="ghost" size="sm" onClick={handlePrevMonth} className="h-10 w-10 p-0 rounded-2xl hover:bg-white dark:hover:bg-slate-700">
+                        <ChevronLeft size={20} />
                     </Button>
-                    <span className="text-xs font-bold text-slate-700 dark:text-slate-300 uppercase">
-                        {mesNome} {currentYear}
-                    </span>
-                    <Button variant="ghost" size="sm" onClick={handleNextMonth} className="h-8 w-8 p-0">
-                        <ChevronRight size={16} />
+                    <div className="px-6 text-center min-w-[160px]">
+                        <span className="text-sm font-black text-primary uppercase tracking-[0.2em]">
+                            {mesNome} {currentYear}
+                        </span>
+                    </div>
+                    <Button variant="ghost" size="sm" onClick={handleNextMonth} className="h-10 w-10 p-0 rounded-2xl hover:bg-white dark:hover:bg-slate-700">
+                        <ChevronRight size={20} />
                     </Button>
                 </div>
             </header>
 
-            {loading && (
-                <div className="fixed top-4 right-4 z-50">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-emerald-500 shadow-lg text-white animate-spin">
-                        <Plus size={20} className="rotate-45" />
-                    </div>
-                </div>
-            )}
-
-            <section className="mt-6">
-                <div className="grid grid-cols-2 gap-4">
-                    <SummaryCard title="Receitas" value={data.receitas} type="receita" />
-                    <SummaryCard title="Despesas" value={data.despesas} type="despesa" />
-                    <SummaryCard title="Fluxo" value={data.fluxo} type="fluxo" />
-                    <SummaryCard title="Saldo Acumulado" value={data.saldoDoMes} type="saldo" />
-                </div>
+            {/* Summary Cards Grid */}
+            <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                <SummaryCard title="Receitas" value={data.receitas} type="receita" />
+                <SummaryCard title="Despesas" value={data.despesas} type="despesa" />
+                <SummaryCard title="Fluxo do Mês" value={data.fluxo} type="fluxo" />
+                <SummaryCard title="Saldo Acumulado" value={data.saldoDoMes} type="saldo" />
             </section>
 
-            <div className="fixed bottom-24 right-6 z-40">
-                <Button
-                    onClick={() => setIsFormOpen(true)}
-                    className="rounded-2xl h-14 w-14 p-0 shadow-lg shadow-primary/20 hover:scale-110 active:scale-95 transition-all flex items-center justify-center bg-primary hover:bg-primary/90 border-none"
-                >
-                    <Plus size={28} strokeWidth={3} className="text-white" />
-                </Button>
+            {/* Middle Section: Charts */}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                {/* Main Trend Chart */}
+                <Card className="lg:col-span-2 p-8 rounded-[2.5rem] border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm">
+                    <div className="flex items-center justify-between mb-8">
+                        <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 rounded-2xl bg-primary/10 flex items-center justify-center text-primary">
+                                <TrendingUp size={22} />
+                            </div>
+                            <h2 className="text-lg font-black uppercase tracking-tight">Tendência Anual</h2>
+                        </div>
+                        <div className="flex items-center gap-4 text-[10px] font-black uppercase tracking-widest text-slate-400">
+                            <div className="flex items-center gap-2">
+                                <div className="w-2 h-2 rounded-full bg-emerald-500" /> Receitas
+                            </div>
+                            <div className="flex items-center gap-2">
+                                <div className="w-2 h-2 rounded-full bg-rose-500" /> Despesas
+                            </div>
+                        </div>
+                    </div>
+                    <div className="h-[350px]">
+                        <TrendChart data={annualData} />
+                    </div>
+                </Card>
+
+                {/* Category Distribution */}
+                <Card className="p-8 rounded-[3rem] border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm">
+                    <div className="flex items-center gap-3 mb-8">
+                        <div className="w-10 h-10 rounded-2xl bg-primary/10 flex items-center justify-center text-primary">
+                            <PieIcon size={22} />
+                        </div>
+                        <h2 className="text-lg font-black uppercase tracking-tight">Categorias</h2>
+                    </div>
+                    <div className="h-[350px] flex items-center justify-center">
+                        <CategoryChart transactions={transactions} />
+                    </div>
+                </Card>
             </div>
 
-            <div className="grid gap-6 mt-8">
-                <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-100 dark:border-slate-800 p-6 shadow-sm">
-                    <div className="flex items-center gap-2 mb-6">
-                        <PieIcon className="text-primary" size={20} />
-                        <h2 className="text-lg font-bold">Despesas por Categoria</h2>
+            {/* Bottom Section: Transactions & Details */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <div className="space-y-4">
+                    <div className="flex items-center justify-between px-4">
+                        <h2 className="text-xs font-black uppercase tracking-[0.2em] text-slate-400">Últimos Lançamentos</h2>
+                        <Button
+                            variant="ghost"
+                            size="sm"
+                            className="text-[10px] font-black uppercase tracking-widest text-primary"
+                            onClick={() => window.location.href = '/transacoes'}
+                        >
+                            Ver Tudo <ChevronRight size={14} className="ml-1" />
+                        </Button>
                     </div>
-                    <CategoryChart transactions={transactions} />
+                    <TransactionList
+                        transactions={transactions.slice(0, 5)}
+                        onSelect={openEdit}
+                    />
+                </div>
+
+                <div className="space-y-6">
+                    <div className="px-4">
+                        <h2 className="text-xs font-black uppercase tracking-[0.2em] text-slate-400">Análise de Rendimento</h2>
+                    </div>
+                    <Card className="p-8 rounded-[2.5rem] border-slate-100 dark:border-slate-800 bg-primary/10 dark:bg-primary/20 backdrop-blur-sm border-2 border-primary/20">
+                        <div className="flex items-center gap-4 mb-6">
+                            <div className="w-14 h-14 rounded-3xl bg-white dark:bg-slate-900 flex items-center justify-center text-primary shadow-lg shadow-primary/20">
+                                <Target size={28} />
+                            </div>
+                            <div>
+                                <p className="text-[10px] font-black uppercase text-primary/60 tracking-widest">Status da Meta</p>
+                                <h3 className="text-xl font-black text-primary italic lowercase">Disponibilidade Real</h3>
+                            </div>
+                        </div>
+
+                        <div className="space-y-6">
+                            <div className="flex items-end justify-between">
+                                <div>
+                                    <p className="text-sm font-bold text-primary/60 uppercase mb-1">Valor Livre Agora</p>
+                                    <h4 className="text-3xl font-black text-primary tracking-tighter">
+                                        {formatCurrency(data.disponivelValor)}
+                                    </h4>
+                                </div>
+                                <div className="text-right">
+                                    <div className={cn(
+                                        "text-xl font-black px-4 py-2 rounded-2xl shadow-sm border",
+                                        data.percentualDisponivel > 0
+                                            ? "bg-emerald-50 text-emerald-600 border-emerald-100"
+                                            : "bg-rose-50 text-rose-600 border-rose-100"
+                                    )}>
+                                        {data.percentualDisponivel.toFixed(1)}%
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="w-full bg-white dark:bg-slate-800 h-4 rounded-full overflow-hidden shadow-inner border border-slate-100/50 dark:border-slate-700/50">
+                                <div
+                                    className={cn(
+                                        "h-full transition-all duration-1000",
+                                        data.percentualDisponivel > 30 ? "bg-emerald-500" : data.percentualDisponivel > 0 ? "bg-amber-500" : "bg-rose-500"
+                                    )}
+                                    style={{ width: `${Math.min(100, Math.max(0, data.percentualDisponivel))}%` }}
+                                />
+                            </div>
+
+                            <p className="text-[10px] font-black text-slate-400 uppercase leading-relaxed text-center tracking-widest mt-4">
+                                Baseado na média salarial vs. despesas acumuladas
+                            </p>
+                        </div>
+                    </Card>
                 </div>
             </div>
-        </div>
-    );
 
-    const renderContent = () => {
-        switch (activeTab) {
-            case 'transactions':
-                return (
-                    <TransactionsByYear
-                        onBack={() => setActiveTab('dashboard')}
-                        onEditTransaction={openEdit}
-                        initialYear={currentYear}
-                    />
-                );
-            case 'settings':
-                return <Settings onBack={() => setActiveTab('dashboard')} />;
-            case 'reports':
-                return (
-                    <Reports
-                        transactions={transactions}
-                        resumo={resumo}
-                        saldoAnterior={saldoAnterior}
-                        mes={mesNome}
-                        ano={currentYear}
-                        onBack={() => setActiveTab('dashboard')}
-                        onPrevMonth={handlePrevMonth}
-                        onNextMonth={handleNextMonth}
-                    />
-                );
-            default:
-                return renderDashboard();
-        }
-    };
-
-    return (
-        <div className="min-h-screen bg-white dark:bg-black text-slate-900 dark:text-white pb-32">
-            <main className="p-4 md:p-8 max-w-lg mx-auto">
-                {renderContent()}
-            </main>
+            {/* Floating Action Button */}
+            <div className="fixed bottom-10 right-10 z-50">
+                <Button
+                    onClick={() => setIsFormOpen(true)}
+                    className="rounded-[2.5rem] h-20 w-20 p-0 shadow-2xl shadow-primary/40 hover:scale-110 active:scale-95 transition-all flex items-center justify-center bg-primary hover:bg-primary/90 border-none group"
+                >
+                    <Plus size={36} strokeWidth={3} className="text-white group-hover:rotate-90 transition-transform duration-300" />
+                </Button>
+            </div>
 
             {(isFormOpen || editingTransaction) && (
                 <TransactionForm
@@ -260,53 +322,6 @@ export const Dashboard = () => {
                     onDelete={handleDeleteTransaction}
                 />
             )}
-
-            {/* Bottom Navigation for Mobile */}
-            <nav className="fixed bottom-0 left-0 right-0 z-50 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-t border-slate-100 dark:border-slate-800 px-8 py-4 flex items-center justify-between shadow-lg max-w-lg mx-auto">
-                <button
-                    onClick={() => setActiveTab('dashboard')}
-                    className={cn(
-                        "flex flex-col items-center gap-1",
-                        activeTab === 'dashboard' ? "text-primary scale-110 font-bold" : "text-slate-400"
-                    )}
-                >
-                    <Wallet size={24} />
-                    <span className="text-[10px]">Dashboard</span>
-                </button>
-
-                <button
-                    onClick={() => setActiveTab('transactions')}
-                    className={cn(
-                        "flex flex-col items-center gap-1",
-                        activeTab === 'transactions' ? "text-primary scale-110 font-bold" : "text-slate-400"
-                    )}
-                >
-                    <ArrowRightLeft size={24} />
-                    <span className="text-[10px]">Transações</span>
-                </button>
-
-                <button
-                    onClick={() => setActiveTab('reports')}
-                    className={cn(
-                        "flex flex-col items-center gap-1",
-                        activeTab === 'reports' ? "text-primary scale-110 font-bold" : "text-slate-400"
-                    )}
-                >
-                    <FileText size={24} />
-                    <span className="text-[10px]">Relatórios</span>
-                </button>
-
-                <button
-                    onClick={() => setActiveTab('settings')}
-                    className={cn(
-                        "flex flex-col items-center gap-1",
-                        activeTab === 'settings' ? "text-primary scale-110 font-bold" : "text-slate-400"
-                    )}
-                >
-                    <SettingsIcon size={24} />
-                    <span className="text-[10px]">Configurações</span>
-                </button>
-            </nav>
         </div>
     );
 };

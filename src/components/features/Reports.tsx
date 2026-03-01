@@ -41,7 +41,7 @@ export const Reports = ({ transactions, resumo, saldoAnterior, mes, ano, onBack,
     };
 
     return (
-        <div className="space-y-8 p-4 md:p-8 max-w-4xl mx-auto animate-in fade-in zoom-in duration-500 print:p-0 print:max-w-none">
+        <div className="space-y-8 p-4 lg:p-0 max-w-[1400px] mx-auto animate-in fade-in zoom-in duration-500 print:p-0 print:max-w-none">
             <header className="flex flex-col gap-4 mb-8 print:hidden">
                 {/* Linha 1: Voltar + Título */}
                 <div className="flex items-center gap-4">

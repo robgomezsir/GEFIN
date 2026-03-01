@@ -415,7 +415,7 @@ export const Settings = ({ onBack }: SettingsProps) => {
     };
 
     return (
-        <div className="space-y-8 p-4 md:p-8 max-w-4xl mx-auto animate-in slide-in-from-right duration-500">
+        <div className="space-y-8 p-4 lg:p-0 max-w-[1400px] mx-auto animate-in slide-in-from-right duration-500">
             <header className="flex items-center gap-4 mb-8">
                 <Button variant="ghost" size="sm" onClick={onBack} className="rounded-xl h-12 w-12 p-0">
                     <ChevronLeft size={24} />
